@@ -22,8 +22,15 @@ public class AuthService {
         var usuario = Usuario.builder()
                 .nombreUsuario(request.nombreUsuario())
                 .contrasena(request.contrasena())
+                .contrasena(passwordEncoder.encode(request.contrasena()))
                 .tipoUsuario(request.tipoUsuario())
                 .fechaCreacion(request.fechaCreacion())
                 .build();
+        var usuarioGuardado = usuarioRepository.save(usuario);
+        var jwtToken = jwtService.generateToken(usuario);
+        var refreshToken = jwtService.generateRefreshToken(usuario);
+        saveTokenUsuario(usuarioGuardado, jwtToken);
+        return new TokenResponse(jwtToken, refreshToken);
+    }
     }
 }
