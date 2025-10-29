@@ -1,4 +1,4 @@
-package com.clandestock.backend.Usuario.modelos;
+package com.clandestock.backend.Usuario.Modelos;
 
 import java.util.List;
 
