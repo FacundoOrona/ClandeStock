@@ -1,4 +1,4 @@
-package com.clandestock.backend.Venta.Repository;
+package com.clandestock.backend.venta.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

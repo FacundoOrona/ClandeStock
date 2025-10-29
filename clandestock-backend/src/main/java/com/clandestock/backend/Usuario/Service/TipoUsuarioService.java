@@ -1,8 +1,8 @@
-package com.clandestock.backend.Usuario.Service;
+package com.clandestock.backend.usuario.service;
 
 import org.springframework.stereotype.Service;
 
-import com.clandestock.backend.Usuario.Repository.TipoUsuarioRepository;
+import com.clandestock.backend.usuario.repository.TipoUsuarioRepository;
 
 @Service
 public class TipoUsuarioService {

@@ -1,6 +1,6 @@
-package com.clandestock.backend.Venta.Service;
+package com.clandestock.backend.venta.service;
 
-import com.clandestock.backend.Venta.Repository.ReporteRepository;
+import com.clandestock.backend.venta.repository.ReporteRepository;
 import org.springframework.stereotype.Service;
 
 @Service

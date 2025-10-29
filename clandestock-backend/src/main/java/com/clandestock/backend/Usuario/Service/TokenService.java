@@ -1,8 +1,8 @@
-package com.clandestock.backend.Usuario.Service;
+package com.clandestock.backend.usuario.service;
 
 import org.springframework.stereotype.Service;
 
-import com.clandestock.backend.Usuario.Repository.TokenRepository;
+import com.clandestock.backend.auth.repository.TokenRepository;
 
 @Service
 public class TokenService {
