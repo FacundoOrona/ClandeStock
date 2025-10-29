@@ -1,6 +1,6 @@
 package com.clandestock.backend.Producto.modelos;
 
-import com.clandestock.backend.Venta.modelos.Local;
+import com.clandestock.backend.Venta.Modelos.Local;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
