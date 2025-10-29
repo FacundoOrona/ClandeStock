@@ -3,7 +3,7 @@ package com.clandestock.backend.Producto.modelos;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.clandestock.backend.Venta.modelos.Local;
+import com.clandestock.backend.Venta.Modelos.Local;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
