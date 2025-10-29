@@ -1,4 +1,4 @@
-package com.clandestock.backend.Usuario.modelos;
+package com.clandestock.backend.Usuario.Modelos;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
