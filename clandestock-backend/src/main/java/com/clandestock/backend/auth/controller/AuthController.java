@@ -18,10 +18,17 @@ public class AuthController {
         final TokenResponse token = service.registro(request);
         return ResponseEntity.ok(token);
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<TokenResponse> authenticate(@RequestBody AuthRequest request) {
+//        final TokenResponse response = service.authenticate(request);
+//        return ResponseEntity.ok(response);
+//    }
 //
-//    @PostMapping("/register")
-//    public ResponseEntity<TokenResponse> registro(@RequestBody final RegisterRequest request) {
-//        final TokenResponse token = service.register(request);
-//        return ResponseEntity.ok(token);
+//    @PostMapping("/refresh-token")
+//    public TokenResponse refreshToken(
+//            @RequestHeader(HttpHeaders.AUTHORIZATION) final String authentication
+//    ) {
+//        return service.refreshToken(authentication);
 //    }
 }
