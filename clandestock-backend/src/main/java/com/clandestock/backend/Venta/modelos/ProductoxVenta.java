@@ -1,4 +1,4 @@
-package com.clandestock.backend.Venta.modelos;
+package com.clandestock.backend.Venta.Modelos;
 
 import java.math.BigDecimal;
 
@@ -34,6 +34,7 @@ public class ProductoxVenta {
     @Column(nullable = false, length = 100)
     private String nombreProducto;
 
+    //precioProducto = Total de producto.precio * cantidad
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precioProducto;
 
