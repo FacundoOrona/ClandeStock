@@ -30,4 +30,15 @@ public class JwtService {
         return buildToken(usuario, refreshExpiration);
     }
 
+    private String buildToken(final Usuario usuario, final long expiration) {
+        return Jwts.builder()
+                .setId(usuario.getId().toString())
+                .setClaims(Map.of("name", usuario.getNombreUsuario()))
+                .setSubject(usuario.getNombreUsuario())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey())
+                .compact();
+
+    }
 }
