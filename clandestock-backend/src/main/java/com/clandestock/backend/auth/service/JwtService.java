@@ -22,4 +22,8 @@ public class JwtService {
     @Value("${application.security.jwt.refresh-token.expiration-refresh}")
     private long refreshExpiration;
 
+    public String generateToken(final Usuario usuario){
+        return buildToken(usuario, jwtExpiration);
+    }
+
 }
