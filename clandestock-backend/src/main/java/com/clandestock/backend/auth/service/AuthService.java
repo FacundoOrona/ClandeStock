@@ -21,7 +21,6 @@ public class AuthService {
     public TokenResponse registro(RegistroRequest request) {
         var usuario = Usuario.builder()
                 .nombreUsuario(request.nombreUsuario())
-                .contrasena(request.contrasena())
                 .contrasena(passwordEncoder.encode(request.contrasena()))
                 .tipoUsuario(request.tipoUsuario())
                 .fechaCreacion(request.fechaCreacion())
@@ -32,5 +31,15 @@ public class AuthService {
         saveTokenUsuario(usuarioGuardado, jwtToken);
         return new TokenResponse(jwtToken, refreshToken);
     }
+
+    private void saveTokenUsuario(Usuario usuario, String jwtToken) {
+        var token = Token.builder()
+                .usuario(usuario)
+                .token(jwtToken)
+                .tokenType(Token.TokenType.BEARER)
+                .isExpired(false)
+                .isRevoked(false)
+                .build();
+        tokenRepository.save(token);
     }
 }
