@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService service;
+
+    @PostMapping("/register")
+    public ResponseEntity<TokenResponse> registro(@RequestBody final RegistroRequest request) {
+        final TokenResponse token = service.registro(request);
+        return ResponseEntity.ok(token);
+    }
 //
 //    @PostMapping("/register")
 //    public ResponseEntity<TokenResponse> registro(@RequestBody final RegisterRequest request) {
