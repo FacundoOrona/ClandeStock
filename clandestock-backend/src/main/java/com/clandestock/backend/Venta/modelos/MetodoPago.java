@@ -1,4 +1,4 @@
-package com.clandestock.backend.Venta.modelos;
+package com.clandestock.backend.Venta.Modelos;
 
 import java.math.BigDecimal;
 import java.util.List;
