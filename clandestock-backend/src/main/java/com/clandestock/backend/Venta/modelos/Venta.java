@@ -1,11 +1,11 @@
-package com.clandestock.backend.Venta.modelos;
+package com.clandestock.backend.Venta.Modelos;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.clandestock.backend.Producto.modelos.ProductoPrincipal;
-import com.clandestock.backend.Usuario.modelos.Usuario;
+import com.clandestock.backend.Usuario.Modelos.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
