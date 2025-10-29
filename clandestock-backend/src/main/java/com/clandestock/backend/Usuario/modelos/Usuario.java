@@ -1,9 +1,9 @@
-package com.clandestock.backend.Usuario.modelos;
+package com.clandestock.backend.Usuario.Modelos;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.clandestock.backend.Venta.modelos.Caja;
+import com.clandestock.backend.Venta.Modelos.Caja;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
