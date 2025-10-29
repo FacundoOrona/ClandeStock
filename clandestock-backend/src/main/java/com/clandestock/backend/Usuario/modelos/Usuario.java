@@ -1,19 +1,12 @@
-package com.clandestock.backend.Usuario.Modelos;
+package com.clandestock.backend.usuario.modelos;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.clandestock.backend.Venta.Modelos.Caja;
+import com.clandestock.backend.auth.repository.Token;
+import com.clandestock.backend.venta.modelos.Caja;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,9 +39,9 @@ public class Usuario {
 
     private Boolean estado;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<Caja> cajas;
 }

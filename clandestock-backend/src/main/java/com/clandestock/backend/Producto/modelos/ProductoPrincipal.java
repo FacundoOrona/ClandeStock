@@ -1,9 +1,9 @@
-package com.clandestock.backend.Producto.modelos;
+package com.clandestock.backend.producto.modelos;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.clandestock.backend.Venta.Modelos.Local;
+import com.clandestock.backend.venta.modelos.Local;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

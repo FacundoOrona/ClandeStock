@@ -1,8 +1,8 @@
-package com.clandestock.backend.Producto.service;
+package com.clandestock.backend.producto.service;
 
 import org.springframework.stereotype.Service;
 
-import com.clandestock.backend.Producto.repository.ProdSecxProdPrimRepository;
+import com.clandestock.backend.producto.repository.ProdSecxProdPrimRepository;
 
 @Service
 public class ProdSecxProdPrimService {

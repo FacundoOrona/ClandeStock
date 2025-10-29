@@ -1,4 +1,4 @@
-package com.clandestock.backend.Producto.modelos;
+package com.clandestock.backend.producto.modelos;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
