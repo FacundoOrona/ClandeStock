@@ -22,7 +22,7 @@ public class JwtService {
     @Value("${application.security.jwt.refresh-token.expiration-refresh}")
     private long refreshExpiration;
 
-    public String generateToken(final Usuario usuario){
+    public String generateToken(final Usuario usuario) {
         return buildToken(usuario, jwtExpiration);
     }
 
@@ -42,10 +42,35 @@ public class JwtService {
 
     }
 
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean isTokenValid(String token, Usuario user) {
+        final String username = extractUsername(token);
+        return (username.equals(user.getNombreUsuario())) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
     private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-
 }
