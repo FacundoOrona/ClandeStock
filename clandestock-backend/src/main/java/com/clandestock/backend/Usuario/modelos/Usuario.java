@@ -37,7 +37,8 @@ public class Usuario {
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaCreacion;
 
-    private Boolean estado;
+    @Builder.Default
+    private Boolean estado = true;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<Token> tokens;
