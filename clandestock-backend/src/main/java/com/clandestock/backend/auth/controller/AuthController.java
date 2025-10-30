@@ -1,5 +1,8 @@
 package com.clandestock.backend.auth.controller;
 
+import com.clandestock.backend.auth.dto.LoginRequest;
+import com.clandestock.backend.auth.dto.RegistroRequest;
+import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,16 +22,15 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<TokenResponse> authenticate(@RequestBody AuthRequest request) {
-//        final TokenResponse response = service.authenticate(request);
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    @PostMapping("/refresh-token")
-//    public TokenResponse refreshToken(
-//            @RequestHeader(HttpHeaders.AUTHORIZATION) final String authentication
-//    ) {
-//        return service.refreshToken(authentication);
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
+        final TokenResponse response = service.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh-token")
+    public TokenResponse refreshToken(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) final String authentication) {
+        return service.refreshToken(authentication);
+    }
 }
