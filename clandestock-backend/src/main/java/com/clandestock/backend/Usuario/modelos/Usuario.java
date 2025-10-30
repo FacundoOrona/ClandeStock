@@ -3,7 +3,7 @@ package com.clandestock.backend.usuario.modelos;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.clandestock.backend.auth.repository.Token;
+import com.clandestock.backend.auth.modelos.Token;
 import com.clandestock.backend.venta.modelos.Caja;
 
 import jakarta.persistence.*;
