@@ -7,5 +7,7 @@ import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 
 @Repository
 public interface ProductoPrincipalRepository extends JpaRepository<ProductoPrincipal, Long> {
+
+    Long countByCategoriaId(Long categortiaId);
     
 }
