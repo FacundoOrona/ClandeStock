@@ -10,7 +10,6 @@ import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.TipoUsuarioRepository;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
