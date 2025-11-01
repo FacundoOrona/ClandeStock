@@ -49,6 +49,7 @@ public class Caja {
     @Builder.Default
     private Boolean estado = true;
 
+    @Column(nullable = true)
     @OneToMany(mappedBy = "caja")
     private List<Local> locales;
 }
