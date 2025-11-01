@@ -34,7 +34,7 @@ public class Local {
     private String nombreLocal;
 
     @ManyToOne
-    @JoinColumn(name = "cajaID", nullable = false)
+    @JoinColumn(name = "cajaID", nullable = true)
     private Caja caja;
 
     @OneToMany(mappedBy = "local")
