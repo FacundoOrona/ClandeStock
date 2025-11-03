@@ -50,6 +50,19 @@ public class ProductoSecundarioService {
         return  toResponseDTO(nuevoProductoSecundario);
     }
 
+    public ProductoSecundarioResponseDTO actualizarProductoSecundario(ProductoSecundarioRequestDTO dto) {
+        ProductoSecundario productoSecundario = obtenerPorId(Long.parseLong(dto.id()));
+        Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
+
+        productoSecundario.setNombreProducto(dto.nombre_producto());
+        productoSecundario.setStock(Integer.parseInt(dto.stock()));
+        productoSecundario.setEstado(Boolean.valueOf(dto.estado()));
+        productoSecundario.setLocal(local);
+
+        ProductoSecundario actualizado = productoSecundarioRepository.save(productoSecundario);
+        return toResponseDTO(actualizado);
+    }
+
     // CASTEOS : toResponseDTO, toEntity(Sin id) y toEntity
 
     private ProductoSecundarioResponseDTO toResponseDTO(ProductoSecundario productoSecundario) {
