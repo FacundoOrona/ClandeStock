@@ -20,9 +20,9 @@ public class ProductoSecundarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody ProductoSecundarioRequestDTO dto){
+    public ResponseEntity<?> guardarProductoSecundario(@RequestBody ProductoSecundarioRequestDTO dto){
         try {
-            ProductoSecundarioResponseDTO response = productoSecundarioService.guardar(dto);
+            ProductoSecundarioResponseDTO response = productoSecundarioService.guardarProductoSecundario(dto);
             return ResponseEntity.ok(response);
         }
         catch(RuntimeException e){
