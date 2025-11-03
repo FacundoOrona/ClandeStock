@@ -3,6 +3,8 @@ package com.clandestock.backend.producto.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.dto.CategoriaRequestDTO;
@@ -38,6 +40,9 @@ public class CategoriaService {
 
     public List<CategoriaResponseDTO> obtenerCategoriaPorLocal(Long id) {
         List<Categoria> categorias = categoriaRepository.findByLocalId(id);
+        if (categorias.isEmpty()) {
+            throw new RuntimeException("No se encontraron categorias");
+        }
         return categorias.stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
@@ -54,17 +59,23 @@ public class CategoriaService {
         return toResponseDTO(catActualizada);
     }
 
-    public void eliminar(Long id){
-        if(productoPpalRepository.countByCategoriaId(id)==0L){
+    public void eliminar(Long id) {
+        if (productoPpalRepository.countByCategoriaId(id) == 0L) {
             Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Categoria no encontrada"));
+                    .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
             categoriaRepository.delete(categoria);
-        }
-        else{
+        } else {
             new RuntimeException("No se puede eliminar categoria en uso, quite todos los productos");
         }
     }
 
+    public Categoria obtenerCategoriaEntity(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
+        return categoria;
+    }
+
+    //=======================CASTEO DE ENTIDAD<--->DTO==========================
     private Categoria toEntity(CategoriaRequestDTO dto) {
         Categoria categoria = new Categoria();
         if (dto.getId() != null) {
