@@ -70,4 +70,17 @@ public class ProductoSecundarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @PutMapping("/alta/{id}")
+    public ResponseEntity<?> altaProductoSecundario (@PathVariable String id) {
+        try {
+            ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.altaProductoSecundario(id);
+            return ResponseEntity.ok(responseDTO);
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
