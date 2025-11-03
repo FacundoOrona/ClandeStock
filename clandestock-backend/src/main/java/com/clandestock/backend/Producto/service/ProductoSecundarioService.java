@@ -1,18 +1,13 @@
 package com.clandestock.backend.producto.service;
 
-import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
-import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
+import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
-import com.clandestock.backend.producto.modelos.Categoria;
-import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
-
-import java.math.BigDecimal;
 
 @Service
 public class ProductoSecundarioService {
@@ -61,5 +56,40 @@ public class ProductoSecundarioService {
         return productoSecundario;
     }
 
+    private ProductoSecundario toEntity(ProductoSecundarioRequestDTO dto) {
+        Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
+
+        ProductoSecundario.ProductoSecundarioBuilder builder = ProductoSecundario.builder()
+                .nombreProducto(dto.nombreProducto())
+                .stock(Integer.parseInt(dto.stock()))
+                .estado(Boolean.valueOf(dto.estado()))
+                .local(local);
+
+        if (dto.id() != null) {
+            builder.id(Long.parseLong(dto.id()));
+        }
+
+        return builder.build();
+    }
+
+
+//    private ProductoPrincipal toEntity(ProductoPrincipalRequestDTO dto) {
+//        ProductoPrincipal producto = new ProductoPrincipal();
+//        if (dto.getId() != null) {
+//            producto = obtenerPorId(Long.parseLong(dto.getId()));
+//        }
+//        Local local = localService.obtenerPorId(Long.parseLong(dto.getIdLocal()));
+//        producto.setLocal(local);
+//        producto.setNombreProducto(dto.getNombre());
+//        producto.setPrecioProducto(new BigDecimal(dto.getPrecio()));
+//        producto.setEstado("1".equals(dto.getEstado()) || "true".equals(dto.getEstado()));
+//        producto.setStock(Integer.parseInt(dto.getStock()));
+//        Categoria categoria = categoriaService.obtenerCategoriaEntity(Long.parseLong(dto.getIdCategoria()));
+//        if (categoria.getLocal() != local) {
+//            new RuntimeException("La categoria seleccionada corresponde a otro local");
+//        }
+//        producto.setCategoria(categoria);
+//        return producto;
+//    }
 
 }
