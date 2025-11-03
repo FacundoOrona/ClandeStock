@@ -1,7 +1,6 @@
 package com.clandestock.backend.producto.modelos;
 
-import java.math.BigDecimal;
-
+import com.clandestock.backend.venta.modelos.Local;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,4 +34,8 @@ public class ProductoSecundario {
 
     @Builder.Default
     private Boolean estado = true;
+
+    @ManyToOne
+    @JoinColumn(name = "localID", nullable = false)
+    private Local local;
 }
