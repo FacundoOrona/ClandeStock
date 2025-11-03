@@ -1,6 +1,11 @@
 package com.clandestock.backend.producto.service;
 
+import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
+import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
+import com.clandestock.backend.producto.modelos.Categoria;
+import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
+import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +37,13 @@ public class ProductoSecundarioService {
         return toResponseDTO(producto);
     }
 
-    private ProductoSecundarioResponseDTO toResponseDTO(ProductoSecundario producto) {
+    private ProductoSecundarioResponseDTO toResponseDTO(ProductoSecundario productoSecundario) {
         return new ProductoSecundarioResponseDTO(
-                producto.getId().toString(),
-                producto.getNombreProducto(),
-                String.valueOf(producto.getStock()),
-                producto.getEstado().toString()
+                productoSecundario.getId().toString(),
+                productoSecundario.getNombreProducto(),
+                String.valueOf(productoSecundario.getStock()),
+                productoSecundario.getEstado().toString(),
+                productoSecundario.getLocal().toString()
         );
     }
 
