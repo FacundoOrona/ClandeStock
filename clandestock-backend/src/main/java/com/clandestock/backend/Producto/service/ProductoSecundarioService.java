@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
 
+import java.math.BigDecimal;
+
 @Service
 public class ProductoSecundarioService {
     private ProductoSecundarioRepository productoSecundarioRepository;
@@ -20,8 +22,13 @@ public class ProductoSecundarioService {
         this.categoriaService = categoriaService;
     }
 
-    public ProductoSecundario obtenerProductoSecundarioPorId(Long id) {
+    public ProductoSecundario obtenerPorId(Long id) {
         return productoSecundarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado / inexistente"));
+    }
+
+    public ProductoSecundarioResponseDTO obtenerProductoSecundarioPorId(String id) {
+        ProductoSecundario producto = obtenerPorId(Long.parseLong(id));
+        return toResponseDTO(producto);
     }
 }
