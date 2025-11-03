@@ -4,6 +4,7 @@ public record ProductoSecundarioResponseDTO(
         String id,
         String nombre_producto,
         String stock,
-        String estado
+        String estado,
+        String local
 ) {
 }
