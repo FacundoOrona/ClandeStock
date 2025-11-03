@@ -7,5 +7,6 @@ import com.clandestock.backend.producto.modelos.ProductoSecundario;
 
 @Repository
 public interface ProductoSecundarioRepository extends JpaRepository <ProductoSecundario, Long> {
+
     
 }
