@@ -27,15 +27,11 @@ public class ProductoSecundario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "productoID", nullable = false)
-    private ProductoPrincipal productoPrincipal;
-
     @Column(nullable = false, length = 100)
     private String nombreProducto;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal precioProducto;
+    @Column(nullable = false)
+    private int stock;
 
     @Builder.Default
     private Boolean estado = true;
