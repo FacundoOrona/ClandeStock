@@ -1,5 +1,6 @@
 package com.clandestock.backend.producto.controller;
 
+import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
@@ -40,6 +41,19 @@ public class ProductoSecundarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<?> actualizar(@RequestBody ProductoSecundarioRequestDTO dto) {
+        try {
+            ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.actualizarProductoSecundario(dto);
+            return ResponseEntity.ok(responseDTO);
+        }catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
