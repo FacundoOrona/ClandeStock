@@ -35,7 +35,6 @@ public class ProductoPrincipalService {
     public ProductoPrincipalResponseDTO guardar(ProductoPrincipalRequestDTO dto) {
         ProductoPrincipal producto = toEntitySinID(dto);
         producto.setId(null);
-        ;
         ProductoPrincipal nuevoProducto = productoPrincipalRepository.save(producto);
         System.out.println("ID del nuevo producto" + nuevoProducto.getId());
         return toResponseDTO(nuevoProducto);

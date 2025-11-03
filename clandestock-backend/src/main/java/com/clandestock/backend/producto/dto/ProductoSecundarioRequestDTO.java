@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 public record ProductoSecundarioRequestDTO(
         String id,
         @NotBlank
-        String nombreProducto,
+        String nombre_producto,
         @NotBlank
         String stock,
         @NotBlank
