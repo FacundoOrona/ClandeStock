@@ -16,14 +16,11 @@ import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
 public class ProductoSecundarioService {
     private ProductoSecundarioRepository productoSecundarioRepository;
     private LocalService localService;
-    private CategoriaService categoriaService;
 
     public ProductoSecundarioService (ProductoSecundarioRepository productoSecundarioRepository,
-                                      LocalService localService,
-                                      CategoriaService categoriaService){
+                                      LocalService localService){
         this.productoSecundarioRepository = productoSecundarioRepository;
         this.localService = localService;
-        this.categoriaService = categoriaService;
     }
 
     // BUSQUEDA / SEARCH
