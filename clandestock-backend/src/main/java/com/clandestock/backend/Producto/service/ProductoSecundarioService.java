@@ -41,4 +41,18 @@ public class ProductoSecundarioService {
         );
     }
 
+    private ProductoSecundario toEnitySinID (ProductoSecundarioResponseDTO dto) {
+        Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
+
+        ProductoSecundario productoSecundario = ProductoSecundario.builder()
+                .nombreProducto(dto.nombre_producto())
+                .stock(Integer.parseInt(dto.stock()))
+                .estado(Boolean.valueOf(dto.estado()))
+                .local(local)
+                .build();
+
+        return productoSecundario;
+    }
+
+
 }
