@@ -9,6 +9,8 @@ public record ProductoSecundarioRequestDTO(
         @NotBlank
         String stock,
         @NotBlank
-        String estado
+        String estado,
+        @NotBlank
+        String local
 ) {
 }
