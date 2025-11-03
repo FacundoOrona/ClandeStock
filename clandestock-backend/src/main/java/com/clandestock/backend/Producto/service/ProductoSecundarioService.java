@@ -31,4 +31,14 @@ public class ProductoSecundarioService {
         ProductoSecundario producto = obtenerPorId(Long.parseLong(id));
         return toResponseDTO(producto);
     }
+
+    private ProductoSecundarioResponseDTO toResponseDTO(ProductoSecundario producto) {
+        return new ProductoSecundarioResponseDTO(
+                producto.getId().toString(),
+                producto.getNombreProducto(),
+                String.valueOf(producto.getStock()),
+                producto.getEstado().toString()
+        );
+    }
+
 }
