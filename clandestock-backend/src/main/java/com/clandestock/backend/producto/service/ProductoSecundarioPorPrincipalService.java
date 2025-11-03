@@ -31,6 +31,13 @@ public class ProductoSecundarioPorPrincipalService {
         this.productoSecundarioService = productoSecundarioService;
     }
 
+    //CRUD
+    public ProductoSecundarioPorPrincipalResponseDTO guardarRelacion(ProductoSecundarioPorPrincipalRequestDTO dto) {
+        ProductoSecundarioPorPrincipal entidad = toEntity(dto);
+        ProductoSecundarioPorPrincipal guardado = relacionRepository.save(entidad);
+        return toResponseDTO(guardado);
+    }
+
     //CASTEOS
     private ProductoSecundarioPorPrincipalResponseDTO toResponseDTO(ProductoSecundarioPorPrincipal entidad) {
         return new ProductoSecundarioPorPrincipalResponseDTO(
