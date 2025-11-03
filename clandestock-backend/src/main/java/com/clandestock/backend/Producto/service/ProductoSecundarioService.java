@@ -1,7 +1,10 @@
 package com.clandestock.backend.producto.service;
 
+import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
+import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
+import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
@@ -33,7 +36,24 @@ public class ProductoSecundarioService {
         return toResponseDTO(producto);
     }
 
+    public ProductoSecundarioResponseDTO guardarProductoSecundario (ProductoSecundarioRequestDTO dto) {
+        ProductoSecundario productoSecundario = toEnitySinID(dto);
+        productoSecundario.setId(null);
+        ProductoSecundario nuevoProductoSecundario = productoSecundarioRepository.save(productoSecundario);
 
+        System.out.println("Nuevo producto insertado! Numero de ID: " + nuevoProductoSecundario.getId());
+
+        return  toResponseDTO(nuevoProductoSecundario);
+    }
+
+//    public ProductoPrincipalResponseDTO guardar(ProductoPrincipalRequestDTO dto) {
+//        ProductoPrincipal producto = toEntitySinID(dto);
+//        producto.setId(null);
+//        ;
+//        ProductoPrincipal nuevoProducto = productoPrincipalRepository.save(producto);
+//        System.out.println("ID del nuevo producto" + nuevoProducto.getId());
+//        return toResponseDTO(nuevoProducto);
+//    }
 
     // CASTEOS : toResponseDTO, toEntity(Sin id) y toEntity
 
@@ -47,7 +67,7 @@ public class ProductoSecundarioService {
         );
     }
 
-    private ProductoSecundario toEnitySinID (ProductoSecundarioResponseDTO dto) {
+    private ProductoSecundario toEnitySinID (ProductoSecundarioRequestDTO dto) {
         Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
 
         ProductoSecundario productoSecundario = ProductoSecundario.builder()
@@ -64,7 +84,7 @@ public class ProductoSecundarioService {
         Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
 
         ProductoSecundario.ProductoSecundarioBuilder builder = ProductoSecundario.builder()
-                .nombreProducto(dto.nombreProducto())
+                .nombreProducto(dto.nombre_producto())
                 .stock(Integer.parseInt(dto.stock()))
                 .estado(Boolean.valueOf(dto.estado()))
                 .local(local);
