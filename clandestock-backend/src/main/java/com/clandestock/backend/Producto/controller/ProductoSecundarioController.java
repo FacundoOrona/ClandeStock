@@ -1,7 +1,5 @@
 package com.clandestock.backend.producto.controller;
 
-import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
-import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.service.ProductoSecundarioService;
