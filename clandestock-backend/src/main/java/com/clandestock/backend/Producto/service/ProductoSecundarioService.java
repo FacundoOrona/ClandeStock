@@ -63,6 +63,21 @@ public class ProductoSecundarioService {
         return toResponseDTO(actualizado);
     }
 
+
+    public ProductoSecundarioResponseDTO bajaProductoSecundario(String id_) {
+        Long id = Long.parseLong(id_);
+        ProductoSecundario producto = obtenerPorId(id);
+
+        if (producto == null) {
+            throw new RuntimeException("ProductoSecundario no encontrado con ID: " + id);
+        }
+
+        producto.setEstado(false);
+        ProductoSecundario actualizado = productoSecundarioRepository.save(producto);
+
+        return toResponseDTO(actualizado);
+    }
+
     // CASTEOS : toResponseDTO, toEntity(Sin id) y toEntity
 
     private ProductoSecundarioResponseDTO toResponseDTO(ProductoSecundario productoSecundario) {
