@@ -45,8 +45,8 @@ public class ProductoSecundarioController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> actualizar(@RequestBody ProductoSecundarioRequestDTO dto) {
+    @PutMapping("/actualizar")
+    public ResponseEntity<?> actualizarProductoSecundario(@RequestBody ProductoSecundarioRequestDTO dto) {
         try {
             ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.actualizarProductoSecundario(dto);
             return ResponseEntity.ok(responseDTO);
