@@ -1,7 +1,6 @@
 package com.clandestock.backend.producto.modelos;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.clandestock.backend.venta.modelos.Local;
 
@@ -12,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,10 +42,10 @@ public class ProductoPrincipal {
     @Builder.Default
     private Boolean estado = true;
 
+    @Column(nullable = true)
+    private int stock;
+
     @ManyToOne
     @JoinColumn(name = "categoriaID", nullable = false)
     private Categoria categoria;
-
-    @OneToMany(mappedBy = "productoPrincipal")
-    private List<ProductoSecundario> secundarios;
 }
