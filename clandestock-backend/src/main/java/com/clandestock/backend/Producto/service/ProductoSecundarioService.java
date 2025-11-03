@@ -26,6 +26,8 @@ public class ProductoSecundarioService {
         this.categoriaService = categoriaService;
     }
 
+    // BUSQUEDA / SEARCH
+
     public ProductoSecundario obtenerPorId(Long id) {
         return productoSecundarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado / inexistente"));
@@ -36,6 +38,8 @@ public class ProductoSecundarioService {
         return toResponseDTO(producto);
     }
 
+    // CRUD
+
     public ProductoSecundarioResponseDTO guardarProductoSecundario (ProductoSecundarioRequestDTO dto) {
         ProductoSecundario productoSecundario = toEnitySinID(dto);
         productoSecundario.setId(null);
@@ -45,15 +49,6 @@ public class ProductoSecundarioService {
 
         return  toResponseDTO(nuevoProductoSecundario);
     }
-
-//    public ProductoPrincipalResponseDTO guardar(ProductoPrincipalRequestDTO dto) {
-//        ProductoPrincipal producto = toEntitySinID(dto);
-//        producto.setId(null);
-//        ;
-//        ProductoPrincipal nuevoProducto = productoPrincipalRepository.save(producto);
-//        System.out.println("ID del nuevo producto" + nuevoProducto.getId());
-//        return toResponseDTO(nuevoProducto);
-//    }
 
     // CASTEOS : toResponseDTO, toEntity(Sin id) y toEntity
 
