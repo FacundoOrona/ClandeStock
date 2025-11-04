@@ -7,8 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import com.clandestock.backend.producto.modelos.ProductoSecundarioPorPrincipal;
 
+import java.util.List;
+
 @Repository
 public interface ProductoSecundarioPorPrincipalRepository extends JpaRepository<ProductoSecundarioPorPrincipal, Long> {
+
     boolean existsByProductoPrimarioAndProductoSecundario(ProductoPrincipal principal, ProductoSecundario secundario);
+
+    List<ProductoSecundarioPorPrincipal> findByProductoPrimario_Id(Long idProductoPrincipal);
 
 }
