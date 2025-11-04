@@ -8,6 +8,7 @@ import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.producto.modelos.ProductoSecundarioPorPrincipal;
 import com.clandestock.backend.producto.repository.ProductoPrincipalRepository;
 import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
+import org.springframework.security.web.webauthn.api.PublicKeyCose;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioPorPrincipalRepository;
@@ -37,6 +38,8 @@ public class ProductoSecundarioPorPrincipalService {
 
     //CRUD
     public ProductoSecundarioPorPrincipalResponseDTO guardarRelacion(ProductoSecundarioPorPrincipalRequestDTO dto) {
+//      if (relacionRepository.existsByProductoPrimarioAndProductoSecundario())
+
         ProductoSecundarioPorPrincipal entidad = toEntity(dto);
         ProductoSecundarioPorPrincipal guardado = relacionRepository.save(entidad);
         return toResponseDTO(guardado);
@@ -51,7 +54,13 @@ public class ProductoSecundarioPorPrincipalService {
                 .collect(Collectors.toList());
     }
 
+    public void eliminarRelacion (Long idRelacion) {
+        if (!relacionRepository.existsById(idRelacion)){
+            throw new RuntimeException("La relacion con ID " + idRelacion + " no existe");
+        }
 
+        relacionRepository.deleteById(idRelacion);
+    }
 
     //CASTEOS
     private ProductoSecundarioResponseDTO toProductoSecundarioDTO (ProductoSecundario producto) {
