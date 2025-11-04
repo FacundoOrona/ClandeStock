@@ -5,9 +5,8 @@ import com.clandestock.backend.auth.dto.RegistroRequest;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.modelos.Token;
 import com.clandestock.backend.auth.repository.TokenRepository;
-import com.clandestock.backend.usuario.modelos.TipoUsuario;
+import com.clandestock.backend.usuario.modelos.TipoUsuarioEnum;
 import com.clandestock.backend.usuario.modelos.Usuario;
-import com.clandestock.backend.usuario.repository.TipoUsuarioRepository;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,11 +26,13 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final TipoUsuarioRepository tipoUsuarioRepository;
 
     public TokenResponse registro(RegistroRequest request) {
-        TipoUsuario tipo = tipoUsuarioRepository.findById(request.tipoUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Tipo de usuario no encontrado"));
+        TipoUsuarioEnum tipo = request.tipoUsuario();
+
+        if (request.tipoUsuario() == null) {
+            throw new RuntimeException("Tipo de usuario invalido");
+        }
 
         System.out.println("NOM:" + request.nombreUsuario());
         var usuario = Usuario.builder()
