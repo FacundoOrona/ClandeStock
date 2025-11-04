@@ -2,6 +2,7 @@ package com.clandestock.backend.producto.service;
 
 import com.clandestock.backend.producto.dto.ProductoSecundarioPorPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioPorPrincipalResponseDTO;
+import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.producto.modelos.ProductoSecundarioPorPrincipal;
@@ -10,6 +11,9 @@ import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioPorPrincipalRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoSecundarioPorPrincipalService {
@@ -39,6 +43,16 @@ public class ProductoSecundarioPorPrincipalService {
     }
 
     //CASTEOS
+    private ProductoSecundarioResponseDTO toProductoSecundarioDTO (ProductoSecundario producto) {
+        return new ProductoSecundarioResponseDTO(
+                producto.getId().toString(),
+                producto.getNombreProducto(),
+                String.valueOf(producto.getStock()),
+                producto.getEstado().toString(),
+                producto.getLocal().getId().toString()
+        );
+    }
+
     private ProductoSecundarioPorPrincipalResponseDTO toResponseDTO(ProductoSecundarioPorPrincipal entidad) {
         return new ProductoSecundarioPorPrincipalResponseDTO(
                 entidad.getId().toString(),
