@@ -50,4 +50,17 @@ public class ProductoSecundarioPorPrincipalController {
                     .body("Error al obtener productos secundarios: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/{idRelacion}")
+    public ResponseEntity<?> eliminarFisicamenteRelacion (@PathVariable Long idRelacion) {
+        try {
+            productoSecundarioPorPrincipalService.eliminarRelacion(idRelacion);
+            return ResponseEntity.ok("Relacion eliminada correctamente. Info: ID - " + idRelacion );
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar la relación: " + e.getMessage());
+        }
+    }
 }
