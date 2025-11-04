@@ -1,4 +1,4 @@
-package com.clandestock.backend.config;
+package com.clandestock.backend.seguridad;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,26 +10,26 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.clandestock.backend.auth.repository.TokenRepository;
 import com.clandestock.backend.auth.service.JwtService;
+import com.clandestock.backend.usuario.modelos.TipoUsuarioEnum;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.List;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
     private final UsuarioRepository usuarioRepository;
 
@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/auth/**")) {
+        if (request.getServletPath().contains("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -58,27 +58,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        final UserDetails userDetails = this.userDetailsService.loadUserByUsername(nombreUsuario);
-        final boolean isTokenExpiredOrRevoked = tokenRepository.findByToken(jwt)
+        final Optional<Usuario> usuarioOpt = usuarioRepository.findByNombreUsuario(nombreUsuario);
+        if (usuarioOpt.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final Usuario usuario = usuarioOpt.get();
+        final boolean isTokenValid = jwtService.isTokenValid(jwt, usuario);
+        final boolean isTokenActive = tokenRepository.findByToken(jwt)
                 .map(token -> !token.getIsExpired() && !token.getIsRevoked())
                 .orElse(false);
 
-        if (isTokenExpiredOrRevoked) {
-            final Optional<Usuario> user = usuarioRepository.findByNombreUsuario(nombreUsuario);
+        if (isTokenValid && isTokenActive) {
+            TipoUsuarioEnum tipo = usuario.getTipoUsuario();
 
-            if (user.isPresent()) {
-                final boolean isTokenValid = jwtService.isTokenValid(jwt, user.get());
-                if (isTokenValid) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities());
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-            }
+            UsuarioContexto contexto = new UsuarioContexto(usuario.getNombreUsuario(), tipo);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    contexto,
+                    null,
+                    List.of(new SimpleGrantedAuthority(tipo.name())));
+
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
+
         filterChain.doFilter(request, response);
     }
 }

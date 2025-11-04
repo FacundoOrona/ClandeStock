@@ -70,10 +70,10 @@ public class ProductoPrincipalController {
         }
     }
 
-    @GetMapping("local/{id}")
-    public ResponseEntity<?> productosPorLocal(@PathVariable String id) {
+    @GetMapping("/todos")
+    public ResponseEntity<?> obtenerTodos() {
         try{
-            List<ProductoPrincipalResponseDTO> response = productoPrincipalService.productosPorLocal(id);
+            List<ProductoPrincipalResponseDTO> response = productoPrincipalService.obtenerTodos();
             return ResponseEntity.ok(response);
         }
         catch(RuntimeException e){

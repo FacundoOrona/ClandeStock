@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.management.RuntimeErrorException;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.dto.CategoriaRequestDTO;
@@ -12,6 +13,7 @@ import com.clandestock.backend.producto.dto.CategoriaResponseDTO;
 import com.clandestock.backend.producto.modelos.Categoria;
 import com.clandestock.backend.producto.repository.CategoriaRepository;
 import com.clandestock.backend.producto.repository.ProductoPrincipalRepository;
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
 
@@ -75,7 +77,29 @@ public class CategoriaService {
         return categoria;
     }
 
-    //=======================CASTEO DE ENTIDAD<--->DTO==========================
+    //Validado por el context
+    public List<CategoriaResponseDTO> obtenerTodas() {
+        //Se obtiene el contexto seteado cuando pasa el jwt authentication filters
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        //Se verifica si es admin general y obtiene todas
+        if (usuario.esAdminGeneral()) {
+            return categoriaRepository.findAll()
+                    .stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+
+        //Caso contario obtiene la corresponiende al local asignado
+        } else {
+            return categoriaRepository.findByLocal_NombreLocal(usuario.getLocal())
+            .stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
+        }
+    }
+
+    // =======================CASTEO DE ENTIDAD<--->DTO==========================
     private Categoria toEntity(CategoriaRequestDTO dto) {
         Categoria categoria = new Categoria();
         if (dto.getId() != null) {

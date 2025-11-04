@@ -11,4 +11,6 @@ import com.clandestock.backend.producto.modelos.Categoria;
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     List<Categoria> findByLocalId(Long id);
+
+    List<Categoria> findByLocal_NombreLocal(String local);
 }

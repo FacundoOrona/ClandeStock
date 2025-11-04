@@ -1,4 +1,4 @@
-package com.clandestock.backend.config;
+package com.clandestock.backend.seguridad;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

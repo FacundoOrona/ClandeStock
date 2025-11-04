@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
@@ -12,6 +13,7 @@ import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.modelos.Categoria;
 import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.producto.repository.ProductoPrincipalRepository;
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
 
@@ -36,7 +38,6 @@ public class ProductoPrincipalService {
         ProductoPrincipal producto = toEntitySinID(dto);
         producto.setId(null);
         ProductoPrincipal nuevoProducto = productoPrincipalRepository.save(producto);
-        System.out.println("ID del nuevo producto" + nuevoProducto.getId());
         return toResponseDTO(nuevoProducto);
     }
 
@@ -52,15 +53,25 @@ public class ProductoPrincipalService {
         return toResponseDTO(actualizado);
     }
 
-    public List<ProductoPrincipalResponseDTO> productosPorLocal(String id) {
-        List<ProductoPrincipal> productos = productoPrincipalRepository.findByLocalId(Long.parseLong(id));
+    public List<ProductoPrincipalResponseDTO> obtenerTodos() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        List<ProductoPrincipal> productos;
+
+        if (usuario.esAdminGeneral()) {
+            productos = productoPrincipalRepository.findAll();
+        } else {
+            productos = productoPrincipalRepository.findByLocal_NombreLocal(usuario.getLocal());
+        }
+
         if (productos.isEmpty()) {
             throw new RuntimeException("No se encontraron productos");
         }
-        
+
         return productos.stream()
-            .map(this::toResponseDTO)
-            .collect(Collectors.toList());
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     // =======================CASTEO DE ENTIDAD<--->DTO==========================
