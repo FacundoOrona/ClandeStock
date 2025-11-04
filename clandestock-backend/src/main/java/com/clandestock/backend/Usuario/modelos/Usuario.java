@@ -30,9 +30,9 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String contrasena;
 
-    @ManyToOne
-    @JoinColumn(name = "tipoUsuario", nullable = false)
-    private TipoUsuario tipoUsuario;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private TipoUsuarioEnum tipoUsuario;
 
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaCreacion;
