@@ -42,6 +42,17 @@ public class ProductoSecundarioPorPrincipalService {
         return toResponseDTO(guardado);
     }
 
+    public List<ProductoSecundarioResponseDTO> obtenerSecundariosPorPrincipal (Long idPrincipal) {
+        List<ProductoSecundarioPorPrincipal> relaciones =
+                relacionRepository.findByProductoPrimario_Id(idPrincipal);
+
+        return relaciones.stream()
+                .map(relacion -> toProductoSecundarioDTO(relacion.getProductoSecundario()))
+                .collect(Collectors.toList());
+    }
+
+
+
     //CASTEOS
     private ProductoSecundarioResponseDTO toProductoSecundarioDTO (ProductoSecundario producto) {
         return new ProductoSecundarioResponseDTO(
