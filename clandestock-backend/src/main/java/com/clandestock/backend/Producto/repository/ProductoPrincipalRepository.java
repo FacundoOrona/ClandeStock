@@ -13,5 +13,7 @@ public interface ProductoPrincipalRepository extends JpaRepository<ProductoPrinc
     Long countByCategoriaId(Long categortiaId);
 
     List<ProductoPrincipal> findByLocalId(long id);
+
+    List<ProductoPrincipal> findByLocal_NombreLocal(String nombreLocal);
     
 }
