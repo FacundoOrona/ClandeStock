@@ -2,13 +2,13 @@ package com.clandestock.backend.producto.controller;
 
 import com.clandestock.backend.producto.dto.ProductoSecundarioPorPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioPorPrincipalResponseDTO;
+import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.service.ProductoSecundarioPorPrincipalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/productos/relacion")
@@ -33,4 +33,21 @@ public class ProductoSecundarioPorPrincipalController {
         }
     }
 
+    @GetMapping("{idPrincipal}")
+    public ResponseEntity<?> obtenerProductosSecundariosPorPrincipal(@PathVariable Long idPrincipal) {
+        try {
+            List<ProductoSecundarioResponseDTO> secundarios =
+                    productoSecundarioPorPrincipalService.obtenerSecundariosPorPrincipal(idPrincipal);
+
+            if (secundarios.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontraron productos secundarios asociados al producto principal emitido");
+            }
+
+            return ResponseEntity.ok(secundarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener productos secundarios: " + e.getMessage());
+        }
+    }
 }
