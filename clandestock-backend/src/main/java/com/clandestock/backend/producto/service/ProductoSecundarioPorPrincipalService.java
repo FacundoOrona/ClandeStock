@@ -54,6 +54,13 @@ public class ProductoSecundarioPorPrincipalService {
                 .collect(Collectors.toList());
     }
 
+        public List<ProductoSecundarioPorPrincipal> obtenerSecundariosPorPrincipal (ProductoPrincipal pPrincipal) {
+        List<ProductoSecundarioPorPrincipal> relaciones =
+                relacionRepository.findByProductoPrimario_Id(pPrincipal.getId());
+
+        return relaciones;
+    }
+
     public void eliminarRelacion (Long idRelacion) {
         if (!relacionRepository.existsById(idRelacion)){
             throw new RuntimeException("La relacion con ID " + idRelacion + " no existe");
