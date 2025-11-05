@@ -41,9 +41,6 @@ public class ProductoSecundarioService {
         ProductoSecundario productoSecundario = toEnitySinID(dto);
         productoSecundario.setId(null);
         ProductoSecundario nuevoProductoSecundario = productoSecundarioRepository.save(productoSecundario);
-
-        System.out.println("Nuevo producto insertado! Numero de ID: " + nuevoProductoSecundario.getId());
-
         return  toResponseDTO(nuevoProductoSecundario);
     }
 
@@ -98,7 +95,7 @@ public class ProductoSecundarioService {
                 productoSecundario.getNombreProducto(),
                 String.valueOf(productoSecundario.getStock()),
                 productoSecundario.getEstado().toString(),
-                productoSecundario.getLocal().toString()
+                productoSecundario.getLocal().getId().toString()
         );
     }
 
