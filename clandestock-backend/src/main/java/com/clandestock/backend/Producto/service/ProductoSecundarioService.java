@@ -1,10 +1,7 @@
 package com.clandestock.backend.producto.service;
 
-import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
-import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
-import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;

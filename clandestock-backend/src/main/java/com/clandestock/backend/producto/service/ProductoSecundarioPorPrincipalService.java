@@ -8,7 +8,6 @@ import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.producto.modelos.ProductoSecundarioPorPrincipal;
 import com.clandestock.backend.producto.repository.ProductoPrincipalRepository;
 import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
-import org.springframework.security.web.webauthn.api.PublicKeyCose;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioPorPrincipalRepository;
@@ -25,10 +24,10 @@ public class ProductoSecundarioPorPrincipalService {
     private ProductoSecundarioService productoSecundarioService;
 
     public ProductoSecundarioPorPrincipalService(ProductoSecundarioPorPrincipalRepository relacionRepository,
-                                                 ProductoSecundarioRepository productoSecundarioRepository,
-                                                 ProductoPrincipalRepository productoPrincipalRepository,
-                                                 ProductoPrincipalService productoPrincipalService,
-                                                 ProductoSecundarioService productoSecundarioService) {
+            ProductoSecundarioRepository productoSecundarioRepository,
+            ProductoPrincipalRepository productoPrincipalRepository,
+            ProductoPrincipalService productoPrincipalService,
+            ProductoSecundarioService productoSecundarioService) {
         this.relacionRepository = relacionRepository;
         this.productoPrincipalRepository = productoPrincipalRepository;
         this.productoSecundarioRepository = productoSecundarioRepository;
@@ -36,66 +35,61 @@ public class ProductoSecundarioPorPrincipalService {
         this.productoSecundarioService = productoSecundarioService;
     }
 
-    //CRUD
+    // CRUD
     public ProductoSecundarioPorPrincipalResponseDTO guardarRelacion(ProductoSecundarioPorPrincipalRequestDTO dto) {
-//      if (relacionRepository.existsByProductoPrimarioAndProductoSecundario())
+        // if (relacionRepository.existsByProductoPrimarioAndProductoSecundario())
 
         ProductoSecundarioPorPrincipal entidad = toEntity(dto);
         ProductoSecundarioPorPrincipal guardado = relacionRepository.save(entidad);
         return toResponseDTO(guardado);
     }
 
-    public List<ProductoSecundarioResponseDTO> obtenerSecundariosPorPrincipal (Long idPrincipal) {
-        List<ProductoSecundarioPorPrincipal> relaciones =
-                relacionRepository.findByProductoPrimario_Id(idPrincipal);
+    public List<ProductoSecundarioResponseDTO> obtenerSecundariosPorPrincipal(Long idPrincipal) {
+        List<ProductoSecundarioPorPrincipal> relaciones = relacionRepository.findByProductoPrimario_Id(idPrincipal);
 
         return relaciones.stream()
                 .map(relacion -> toProductoSecundarioDTO(relacion.getProductoSecundario()))
                 .collect(Collectors.toList());
     }
 
-        public List<ProductoSecundarioPorPrincipal> obtenerSecundariosPorPrincipal (ProductoPrincipal pPrincipal) {
-        List<ProductoSecundarioPorPrincipal> relaciones =
-                relacionRepository.findByProductoPrimario_Id(pPrincipal.getId());
+    public List<ProductoSecundarioPorPrincipal> obtenerSecundariosPorPrincipal(ProductoPrincipal pPrincipal) {
+        List<ProductoSecundarioPorPrincipal> relaciones = relacionRepository
+                .findByProductoPrimario_Id(pPrincipal.getId());
 
         return relaciones;
     }
 
-    public void eliminarRelacion (Long idRelacion) {
-        if (!relacionRepository.existsById(idRelacion)){
+    public void eliminarRelacion(Long idRelacion) {
+        if (!relacionRepository.existsById(idRelacion)) {
             throw new RuntimeException("La relacion con ID " + idRelacion + " no existe");
         }
 
         relacionRepository.deleteById(idRelacion);
     }
 
-    //CASTEOS
-    private ProductoSecundarioResponseDTO toProductoSecundarioDTO (ProductoSecundario producto) {
+    // CASTEOS
+    private ProductoSecundarioResponseDTO toProductoSecundarioDTO(ProductoSecundario producto) {
         return new ProductoSecundarioResponseDTO(
                 producto.getId().toString(),
                 producto.getNombreProducto(),
                 String.valueOf(producto.getStock()),
                 producto.getEstado().toString(),
-                producto.getLocal().getId().toString()
-        );
+                producto.getLocal().getId().toString());
     }
 
     private ProductoSecundarioPorPrincipalResponseDTO toResponseDTO(ProductoSecundarioPorPrincipal entidad) {
         return new ProductoSecundarioPorPrincipalResponseDTO(
                 entidad.getId().toString(),
                 entidad.getProductoPrimario().getId().toString(),
-                entidad.getProductoSecundario().getId().toString()
-        );
+                entidad.getProductoSecundario().getId().toString());
     }
 
     private ProductoSecundarioPorPrincipal toEntitySinID(ProductoSecundarioPorPrincipalRequestDTO dto) {
         ProductoPrincipal productoPrincipal = productoPrincipalService.obtenerPorId(
-                Long.parseLong(dto.id_producto_principal())
-        );
+                Long.parseLong(dto.id_producto_principal()));
 
         ProductoSecundario productoSecundario = productoSecundarioService.obtenerPorId(
-                Long.parseLong(dto.id_producto_secundario())
-        );
+                Long.parseLong(dto.id_producto_secundario()));
 
         return ProductoSecundarioPorPrincipal.builder()
                 .productoPrimario(productoPrincipal)
@@ -105,17 +99,15 @@ public class ProductoSecundarioPorPrincipalService {
 
     private ProductoSecundarioPorPrincipal toEntity(ProductoSecundarioPorPrincipalRequestDTO dto) {
         ProductoPrincipal productoPrincipal = productoPrincipalService.obtenerPorId(
-                Long.parseLong(dto.id_producto_principal())
-        );
+                Long.parseLong(dto.id_producto_principal()));
 
         ProductoSecundario productoSecundario = productoSecundarioService.obtenerPorId(
-                Long.parseLong(dto.id_producto_secundario())
-        );
+                Long.parseLong(dto.id_producto_secundario()));
 
-        ProductoSecundarioPorPrincipal.ProductoSecundarioPorPrincipalBuilder builder =
-                ProductoSecundarioPorPrincipal.builder()
-                        .productoPrimario(productoPrincipal)
-                        .productoSecundario(productoSecundario);
+        ProductoSecundarioPorPrincipal.ProductoSecundarioPorPrincipalBuilder builder = ProductoSecundarioPorPrincipal
+                .builder()
+                .productoPrimario(productoPrincipal)
+                .productoSecundario(productoSecundario);
 
         if (dto.id() != null && !dto.id().isBlank()) {
             builder.id(Long.parseLong(dto.id()));
@@ -123,9 +115,5 @@ public class ProductoSecundarioPorPrincipalService {
 
         return builder.build();
     }
-
-
-
-
 
 }
