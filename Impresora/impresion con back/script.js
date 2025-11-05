@@ -18,6 +18,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         { producto: "Bebida", cantidad: 1, precio: 500 }
       ]
     };
+
+    // 🧾 Completar el ticket
+    document.getElementById("nroVenta").textContent = `Venta N° ${venta.id}`;
+    document.getElementById("fecha").textContent = `Fecha: ${venta.fecha}`;
+
+    const detalleDiv = document.getElementById("detalle");
+    detalleDiv.innerHTML = "";
+
+    venta.items.forEach(item => {
+      const linea = document.createElement("div");
+      linea.classList.add("item");
+      linea.innerHTML = `
+        <span>${item.producto} x${item.cantidad}</span>
+        <span>$${item.precio}</span>
+      `;
+      detalleDiv.appendChild(linea);
+    });
+
     document.getElementById("total").innerHTML = `<strong>Total: $${venta.total}</strong>`;
 
   } catch (error) {
