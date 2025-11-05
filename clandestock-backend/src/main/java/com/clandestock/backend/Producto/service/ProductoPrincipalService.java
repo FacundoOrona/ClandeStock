@@ -74,6 +74,26 @@ public class ProductoPrincipalService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductoPrincipal> obtenerTodosEntity() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        List<ProductoPrincipal> productos;
+
+        if (usuario.esAdminGeneral()) {
+            productos = productoPrincipalRepository.findAll();
+        } else {
+            productos = productoPrincipalRepository.findByLocal_NombreLocal(usuario.getLocal());
+        }
+
+        if (productos.isEmpty()) {
+            throw new RuntimeException("No se encontraron productos");
+        }
+
+        return productos;
+    }
+
+
     // =======================CASTEO DE ENTIDAD<--->DTO==========================
     private ProductoPrincipal toEntity(ProductoPrincipalRequestDTO dto) {
         ProductoPrincipal producto = new ProductoPrincipal();
