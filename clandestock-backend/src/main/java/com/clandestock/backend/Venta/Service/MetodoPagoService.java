@@ -70,6 +70,10 @@ public class MetodoPagoService {
     public List<MetodoPagoResponseDTO> listarTodosMetodosPago() {
         List<MetodoPago> lista = metodoPagoRepository.findAll();
 
+        if (lista.isEmpty()) {
+            throw new RuntimeException("No se encontraron métodos de pago");
+        }
+
         return lista.stream()
                 .map(metodo -> new MetodoPagoResponseDTO(
                         String.valueOf(metodo.getId()),
@@ -81,6 +85,25 @@ public class MetodoPagoService {
                 ))
                 .toList();
     }
+
+    public List<MetodoPagoResponseDTO> listarPorLocalId (Long localId) {
+        List<MetodoPago> lista = metodoPagoRepository.findByLocalId(localId);
+
+        if (lista.isEmpty()) {
+            throw new RuntimeException("No se encontraron métodos de pago para el local con ID " + localId);
+        }
+
+        return lista.stream()
+                .map(metodo -> new MetodoPagoResponseDTO(
+                        String.valueOf(metodo.getId()),
+                        metodo.getNombreMetodoPago(),
+                        metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
+                        metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
+                        metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
+                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null
+                ))
+                .toList();
+     }
 
     //CASTEOS
     //Metodo pago (Entidad) a DTO.
