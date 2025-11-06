@@ -21,6 +21,8 @@ public class MetodoPagoController {
         this.metodoPagoService = metodoPagoService;
     }
 
+    //Recibe id de local, y no obtiene de usuario porque el unico que va a agregar metodos de pago es el administrador
+    //Es decir, va a tener que elegir a que local, por lo tanto se enviara ID de local.
     @PostMapping
     public ResponseEntity<?> insertarMetodoPago (@RequestBody MetodoPagoRequestDTO dto) {
         try{
