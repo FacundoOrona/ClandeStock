@@ -105,7 +105,7 @@ public class MetodoPagoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.emptyList());
         }
-    } 
+    }
 
     @GetMapping("/local/{id}/activos")
     public ResponseEntity<?> obtenerMetodosPagoActivosPorLocal(@PathVariable("id") Long localId) {
