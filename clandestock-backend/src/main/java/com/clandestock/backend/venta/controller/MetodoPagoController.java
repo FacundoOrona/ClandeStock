@@ -45,4 +45,16 @@ public class MetodoPagoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/baja/{id}")
+    public ResponseEntity<?> bajaLogicaMetodoPago (@PathVariable Long id) {
+        try {
+            MetodoPagoResponseDTO response = metodoPagoService.bajaLogica(id);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
