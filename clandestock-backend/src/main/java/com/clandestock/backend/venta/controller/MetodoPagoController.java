@@ -96,6 +96,30 @@ public class MetodoPagoController {
         }
     }
 
+    @GetMapping("/activos")
+    public ResponseEntity<List<MetodoPagoResponseDTO>> obtenerMetodosPagoActivos() {
+        try {
+            List<MetodoPagoResponseDTO> lista = metodoPagoService.listarMetodosActivos();
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
+        }
+    } 
+
+    @GetMapping("/local/{id}/activos")
+    public ResponseEntity<?> obtenerMetodosPagoActivosPorLocal(@PathVariable("id") Long localId) {
+        try {
+            List<MetodoPagoResponseDTO> lista = metodoPagoService.listarActivosPorLocal(localId);
+            return ResponseEntity.ok(lista);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno: " + e.getMessage());
+        }
+    }
+
 
 
 }
