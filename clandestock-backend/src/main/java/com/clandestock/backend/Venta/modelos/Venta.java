@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.clandestock.backend.producto.modelos.ProductoPrincipal;
 import com.clandestock.backend.usuario.modelos.Usuario;
 
 import jakarta.persistence.Column;
@@ -34,26 +33,29 @@ public class Venta {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "productoId", nullable = false)
-    private ProductoPrincipal productoPrincipal;
-
-    @ManyToOne
     @JoinColumn(name = "usuarioID", nullable = false)
     private Usuario usuario;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = true, precision = 10, scale = 2)
     private BigDecimal precioTotal;
 
     @ManyToOne
-    @JoinColumn(name = "metodoDePago", nullable = false)
+    @JoinColumn(name = "metodoDePago", nullable = true)
     private MetodoPago metodoPago;
 
-    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime fechaVenta;
+    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    private LocalDateTime fechaApertura;
+
+    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = true)
+    private LocalDateTime fechaCierre;
 
     @Builder.Default
     private Boolean estadoPago = false;
 
     @OneToMany(mappedBy = "venta")
     private List<ProductoxVenta> productos;
+
+    @ManyToOne
+    @JoinColumn(name = "local_id", nullable = false)
+    private Local local;
 }
