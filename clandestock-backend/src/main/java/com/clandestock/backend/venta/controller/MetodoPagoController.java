@@ -84,5 +84,18 @@ public class MetodoPagoController {
         }
     }
 
+    @GetMapping("/local/{id}")
+    public ResponseEntity<?> obtenerMetodosPagoPorLocal(@PathVariable("id") Long localId) {
+        try {
+            List<MetodoPagoResponseDTO> lista = metodoPagoService.listarPorLocalId(localId);
+            return ResponseEntity.ok(lista);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
+        }
+    }
+
+
 
 }
