@@ -57,4 +57,18 @@ public class MetodoPagoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/alta/{id}")
+    public ResponseEntity<?> altaLogicaMetodoPago (@PathVariable Long id) {
+        try {
+            MetodoPagoResponseDTO response = metodoPagoService.altaLogica(id);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
 }
