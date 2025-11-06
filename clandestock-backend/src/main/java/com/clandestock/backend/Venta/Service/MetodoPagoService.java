@@ -52,6 +52,12 @@ public class MetodoPagoService {
         return toDTO(metodoPagoGuardado);
     }
 
+    public MetodoPagoResponseDTO bajaLogica (Long id) {
+        MetodoPago metodoPago = obtenerMetodoPagoPorID(id);
+        metodoPago.setEstado(false);
+        MetodoPago metodoPagoActualizado = metodoPagoRepository.save(metodoPago);
+        return toDTO(metodoPagoActualizado);
+    }
     //CASTEOS
     //Metodo pago (Entidad) a DTO.
     public MetodoPagoResponseDTO toDTO (MetodoPago metodoPago) {
