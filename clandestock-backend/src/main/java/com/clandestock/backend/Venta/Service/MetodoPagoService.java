@@ -34,6 +34,21 @@ public class MetodoPagoService {
         return toDTO(metodoPagoGuardado);
     }
 
+    public MetodoPagoResponseDTO actualizarMetodoPago (MetodoPagoRequestDTO dto) {
+        MetodoPago metodoPagoInicial = obtenerMetodoPagoPorID(Long.parseLong(dto.id()));
+
+
+        metodoPagoInicial.setNombreMetodoPago(dto.nombre_metodo_pago());
+        metodoPagoInicial.setDescuento(Long.parseLong(dto.descuento()));
+        metodoPagoInicial.setIncremento(Long.parseLong(dto.incremento()));
+        metodoPagoInicial.setEstado(Boolean.parseBoolean(dto.estado()));
+        if (dto.local_id() != null){
+            Local local = localRepository.findById(Long.parseLong(dto.local_id()))
+                            .orElseThrow(() -> new EntityNotFoundException("El id del local al que se quiere actualizar, no existe"));
+            metodoPagoInicial.setLocal(local);
+        }
+
+        MetodoPago metodoPagoGuardado = metodoPagoRepository.save(metodoPagoInicial);
         return toDTO(metodoPagoGuardado);
     }
 
