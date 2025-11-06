@@ -31,13 +31,14 @@ public class ProductoxVenta {
     @JoinColumn(name = "IDVenta", nullable = false)
     private Venta venta;
 
+
+    @Column(nullable = false)
+    private Long idProducto;
+    
     @Column(nullable = false, length = 100)
     private String nombreProducto;
 
     //precioProducto = Total de producto.precio * cantidad
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precioProducto;
-
-    @Column(nullable = false)
-    private Long cantidad;
 }
