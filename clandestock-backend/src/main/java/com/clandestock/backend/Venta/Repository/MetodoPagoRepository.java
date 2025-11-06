@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface MetodoPagoRepository extends JpaRepository<MetodoPago, Long> {
     List<MetodoPago> findByLocalId(Long localId);
+
+    List<MetodoPago> findByEstadoTrue();
+
+    List<MetodoPago> findByLocalIdAndEstadoTrue(Long localId);
 }
