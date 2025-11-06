@@ -92,6 +92,12 @@ public class ProductoPrincipalService {
         return productos;
     }
 
+    public void actualizarStock(ProductoPrincipal prod) {
+        ProductoPrincipal producto = obtenerPorId(prod.getId());
+        producto.setStock(prod.getStock());
+        productoPrincipalRepository.save(producto);
+    }
+
 
     // =======================CASTEO DE ENTIDAD<--->DTO==========================
     private ProductoPrincipal toEntity(ProductoPrincipalRequestDTO dto) {
