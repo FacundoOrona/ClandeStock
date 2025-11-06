@@ -109,6 +109,12 @@ public class ProductoSecundarioService {
         return productoSecundario;
     }
 
+    public void actualizarStock(ProductoSecundario prod){
+        ProductoSecundario pSecundario = obtenerPorId(prod.getId());
+        pSecundario.setStock(prod.getStock());
+        productoSecundarioRepository.save(pSecundario);
+    }
+
     private ProductoSecundario toEntity(ProductoSecundarioRequestDTO dto) {
         Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
 
