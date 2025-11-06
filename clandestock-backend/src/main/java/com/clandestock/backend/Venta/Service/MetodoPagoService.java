@@ -24,6 +24,11 @@ public class MetodoPagoService {
 
     public MetodoPagoResponseDTO insertarMetodoPago (MetodoPagoRequestDTO dto) {
 
+        MetodoPago metodoPago = toEntity(dto);
+
+        MetodoPago metodoPagoGuardado = metodoPagoRepository.save(metodoPago);
+
+        return toDTO(metodoPagoGuardado);
     }
 
     //CASTEOS
