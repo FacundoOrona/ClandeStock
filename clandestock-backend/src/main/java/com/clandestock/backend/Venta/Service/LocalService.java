@@ -15,4 +15,8 @@ public class LocalService {
     public Local obtenerPorId(Long id){
         return localRepository.findById(id).orElseThrow(()-> new RuntimeException("Local no encontrado"));
     }
+
+    public Local obtenerPorNombre(String nombreLocal){
+        return localRepository.findByNombreLocal(nombreLocal).orElseThrow(()-> new RuntimeException("Local no encontrado"));
+    }
 }
