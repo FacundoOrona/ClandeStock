@@ -39,4 +39,7 @@ public class Local {
 
     @OneToMany(mappedBy = "local")
     private List<Categoria> categorias;
+
+    @OneToMany(mappedBy = "local")
+    private List<Venta> ventas;
 }
