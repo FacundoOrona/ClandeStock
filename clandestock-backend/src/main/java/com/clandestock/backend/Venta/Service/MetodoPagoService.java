@@ -22,7 +22,11 @@ public class MetodoPagoService {
         this.localRepository = localRepository;
     }
 
-    public MetodoPagoResponseDTO insertarMetodoPago (MetodoPagoRequestDTO dto) {
+    private MetodoPago obtenerMetodoPagoPorID (Long id) {
+        MetodoPago metodoPago = metodoPagoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Metodo de pago con ID "+ id +" no encontrado."));
+        return metodoPago;
+    }
 
         MetodoPago metodoPago = toEntity(dto);
 
