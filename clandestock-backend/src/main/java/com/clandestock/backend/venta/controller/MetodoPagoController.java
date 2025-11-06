@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping("/metodopago")
 public class MetodoPagoController {
@@ -67,6 +70,17 @@ public class MetodoPagoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MetodoPagoResponseDTO>> obtenerMetodosPago () {
+        try {
+            List<MetodoPagoResponseDTO> lista = metodoPagoService.listarTodosMetodosPago();
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
         }
     }
 
