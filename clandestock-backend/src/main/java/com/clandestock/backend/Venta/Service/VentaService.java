@@ -95,7 +95,7 @@ public class VentaService {
                 .obtenerSecundariosPorPrincipal(producto);
         // Validar stock
         int stockDisponible = secundarios.isEmpty()
-                ? producto.getStock()
+                ? producto.getStock() //Si no tiene producto secundario, se guarda el stock del principal
                 : productoStockService.calcularStockDisponible(secundarios);
         if (stockDisponible < 1) {
             throw new RuntimeException("Stock insuficiente para agregar este producto");
@@ -126,6 +126,9 @@ public class VentaService {
         // Actualizar venta
         venta.getProductos().add(pxv);
         // aca hacer nueva funcion para calculo de total si hay metodo de pago
+
+
+
         BigDecimal nuevoTotal = venta.getPrecioTotal() == null
                 ? producto.getPrecioProducto()
                 : venta.getPrecioTotal().add(producto.getPrecioProducto());
@@ -164,6 +167,8 @@ public class VentaService {
         // Actualizar venta
         venta.getProductos().removeIf(p -> p.getId().equals(idProductoxVenta));
         // aca hacer nueva funcion para calculo de total si hay metodo de pago
+
+
         BigDecimal nuevoTotal = venta.getPrecioTotal().subtract(pxv.getPrecioProducto());
         venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : null);
         ventaRepository.save(venta);

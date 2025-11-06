@@ -39,6 +39,8 @@ public class Venta {
     @Column(nullable = true, precision = 10, scale = 2)
     private BigDecimal precioTotal;
 
+    // agg variable de descuento increment (precio total modificado por metodo de pago)
+
     @ManyToOne
     @JoinColumn(name = "metodoDePago", nullable = true)
     private MetodoPago metodoPago;
@@ -58,4 +60,6 @@ public class Venta {
     @ManyToOne
     @JoinColumn(name = "local_id", nullable = false)
     private Local local;
+
+    //agregar variables de pedidos / mesa
 }
