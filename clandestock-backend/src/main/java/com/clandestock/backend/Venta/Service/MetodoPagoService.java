@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.parser.Entity;
+import java.util.List;
 
 @Service
 public class MetodoPagoService {
@@ -64,6 +65,21 @@ public class MetodoPagoService {
         metodoPago.setEstado(true);
         MetodoPago metodoPagoActualizado = metodoPagoRepository.save(metodoPago);
         return toDTO(metodoPagoActualizado);
+    }
+
+    public List<MetodoPagoResponseDTO> listarTodosMetodosPago() {
+        List<MetodoPago> lista = metodoPagoRepository.findAll();
+
+        return lista.stream()
+                .map(metodo -> new MetodoPagoResponseDTO(
+                        String.valueOf(metodo.getId()),
+                        metodo.getNombreMetodoPago(),
+                        metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
+                        metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
+                        metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
+                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null
+                ))
+                .toList();
     }
 
     //CASTEOS
