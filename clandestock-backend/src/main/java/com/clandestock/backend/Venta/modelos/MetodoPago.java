@@ -33,10 +33,10 @@ public class MetodoPago {
     private String nombreMetodoPago;
 
     @Column(precision = 2, scale = 2)
-    private BigDecimal incremento;
+    private Long incremento;
 
     @Column(precision = 2, scale = 2)
-    private BigDecimal descuento;
+    private Long descuento;
 
     @Builder.Default
     private Boolean estado = true;
