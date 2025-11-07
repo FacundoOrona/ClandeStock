@@ -13,16 +13,21 @@ import com.clandestock.backend.usuario.service.UsuarioService;
 import com.clandestock.backend.venta.dto.ProductoVentaResponseDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
+import com.clandestock.backend.venta.modelos.MetodoPago;
 import com.clandestock.backend.venta.modelos.ProductoxVenta;
 import com.clandestock.backend.venta.modelos.Venta;
+import com.clandestock.backend.venta.repository.MetodoPagoRepository;
 import com.clandestock.backend.venta.repository.VentaRepository;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +43,7 @@ public class VentaService {
     private final ProductoSecundarioService productoSecundarioService;
     private final ProductoxVentaService productoxVentaService;
     private final LocalService localService;
+    private final MetodoPagoRepository metodoPagoRepository;
 
     public VentaService(
             VentaRepository ventaRepository,
@@ -48,7 +54,8 @@ public class VentaService {
             ProductoStockService prodStockService,
             ProductoSecundarioService prodSecundarioService,
             ProductoxVentaService prodxVentaService,
-            LocalService localService) {
+            LocalService localService,
+            MetodoPagoRepository metodoPagoRepository) {
         this.ventaRepository = ventaRepository;
         this.usuarioService = usuarioService;
         this.metodoPagoService = metodoPagoService;
@@ -58,6 +65,7 @@ public class VentaService {
         this.productoSecundarioService = prodSecundarioService;
         this.productoxVentaService = prodxVentaService;
         this.localService = localService;
+        this.metodoPagoRepository = metodoPagoRepository;
     }
 
     public VentaResponseDTO nueva() {
@@ -127,8 +135,6 @@ public class VentaService {
         venta.getProductos().add(pxv);
         // aca hacer nueva funcion para calculo de total si hay metodo de pago
 
-
-
         BigDecimal nuevoTotal = venta.getPrecioTotal() == null
                 ? producto.getPrecioProducto()
                 : venta.getPrecioTotal().add(producto.getPrecioProducto());
@@ -186,6 +192,8 @@ public class VentaService {
         dto.idUsuario = venta.getUsuario().getId().toString();
         dto.idMetodoPago = venta.getMetodoPago() != null ? venta.getMetodoPago().getId().toString() : null;
         dto.precioTotal = venta.getPrecioTotal() != null ? venta.getPrecioTotal().toString() : null;
+        dto.precioTotalConMetodoDePago = venta.getPrecioTotalConMetodoDePago()
+                != null ? venta.getPrecioTotalConMetodoDePago().toString() : null;
         dto.fechaApertura = venta.getFechaApertura().toString();
         dto.fechaCierre = venta.getFechaCierre() != null ? venta.getFechaCierre().toString() : null;
         dto.estadoPago = venta.getEstadoPago().toString();
@@ -198,6 +206,50 @@ public class VentaService {
             return prod;
         }).toList() : List.of();
         return dto;
+    }
+
+    // CALCULO DE PRECIO POR METODO DE PAGO.
+
+    @Transactional
+    public VentaResponseDTO asignarMetodoPagoAVenta(Long idMetodoPago, Long idVenta) {
+        MetodoPago metodoPago = metodoPagoRepository.findById(idMetodoPago)
+                .orElseThrow(() -> new EntityNotFoundException("Método de pago con ID " + idMetodoPago + " no existente"));
+
+        Venta venta = ventaRepository.findById(idVenta)
+                .orElseThrow(() -> new EntityNotFoundException("Venta con ID " + idVenta + " no existente"));
+
+        BigDecimal precioOriginal = venta.getPrecioTotal();
+        if (precioOriginal == null) {
+            throw new RuntimeException("La venta aún no tiene un precio total definido");
+        }
+
+        BigDecimal precioFinal = calcularPrecioFinal(precioOriginal, metodoPago);
+
+        venta.setMetodoPago(metodoPago);
+        venta.setPrecioTotalConMetodoDePago(precioFinal);
+
+        Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+
+        return toResponseDTO(ventaConMetodoDePagoIncluido);
+    }
+
+    private BigDecimal calcularPrecioFinal(BigDecimal precioOriginal, MetodoPago metodoPago) {
+        BigDecimal precioFinal = precioOriginal;
+
+        if (metodoPago.getDescuento() != 0) {
+            BigDecimal descuento = BigDecimal.valueOf(metodoPago.getDescuento())
+                    .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+            precioFinal = precioOriginal.subtract(precioOriginal.multiply(descuento));
+
+            System.out.println("Entro a descuento");
+        } else if (metodoPago.getIncremento() != 0) {
+            BigDecimal incremento = BigDecimal.valueOf(metodoPago.getIncremento())
+                    .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+            precioFinal = precioOriginal.add(precioOriginal.multiply(incremento));
+            System.out.println("Entro a incremento");
+        }
+
+        return precioFinal.setScale(2, RoundingMode.HALF_UP);
     }
 
 }
