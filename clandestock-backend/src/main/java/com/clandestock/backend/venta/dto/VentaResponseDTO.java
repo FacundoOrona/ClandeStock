@@ -12,4 +12,6 @@ public class VentaResponseDTO {
     public String estadoPago;
     public String localId;
     public List<ProductoVentaResponseDTO> productos;
+    public String precioTotalConMetodoDePago;
+
 }
