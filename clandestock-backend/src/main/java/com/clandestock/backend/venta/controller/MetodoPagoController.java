@@ -37,6 +37,7 @@ public class MetodoPagoController {
         }
     }
 
+
     @PutMapping
     public ResponseEntity<?> actualizarMetodoPago (@RequestBody MetodoPagoRequestDTO dto) {
         try {
@@ -119,7 +120,5 @@ public class MetodoPagoController {
                     .body("Error interno: " + e.getMessage());
         }
     }
-
-
 
 }
