@@ -40,6 +40,8 @@ public class Venta {
     private BigDecimal precioTotal;
 
     // agg variable de descuento increment (precio total modificado por metodo de pago)
+    @Column(nullable = true, precision = 10, scale = 2)
+    private BigDecimal precioTotalConMetodoDePago;
 
     @ManyToOne
     @JoinColumn(name = "metodoDePago", nullable = true)
