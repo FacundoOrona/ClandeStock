@@ -71,4 +71,18 @@ public class VentaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @PostMapping("/insertarMetodoPago/{idMetodoPago}/{idVenta}") //insertar metodo de pago en una venta
+    public ResponseEntity<?> insertarMetodoPagoEnVenta (@PathVariable Long idMetodoPago, @PathVariable Long idVenta) {
+        try {
+            VentaResponseDTO venta = ventaService.asignarMetodoPagoAVenta(idMetodoPago, idVenta);
+            System.out.println("Precio total sin modificar: $" + venta.precioTotal);
+            System.out.println("Precio total con metodo de pago efectuado: $" + venta.precioTotalConMetodoDePago);
+            return ResponseEntity.ok(venta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
