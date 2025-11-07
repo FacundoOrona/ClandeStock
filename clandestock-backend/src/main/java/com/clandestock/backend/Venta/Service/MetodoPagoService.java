@@ -35,6 +35,11 @@ public class MetodoPagoService {
 
     public MetodoPagoResponseDTO insertarMetodoPago (MetodoPagoRequestDTO dto) {
         MetodoPago metodoPago = toEntity(dto);
+
+        if (metodoPago.getIncremento() > 0 && metodoPago.getDescuento() > 0) {
+            throw new RuntimeException("Solo se debe cargar descuento o incremento, no los dos juntos.");
+        }
+
         MetodoPago metodoPagoGuardado = metodoPagoRepository.save(metodoPago);
         return toDTO(metodoPagoGuardado);
     }
