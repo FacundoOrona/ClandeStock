@@ -32,10 +32,10 @@ public class MetodoPago {
     @Column(nullable = false, length = 50)
     private String nombreMetodoPago;
 
-    @Column(precision = 2, scale = 2)
+    @Column
     private Long incremento;
 
-    @Column(precision = 2, scale = 2)
+    @Column
     private Long descuento;
 
     @Builder.Default
