@@ -2,11 +2,15 @@ package com.clandestock.backend.venta.service;
 
 import com.clandestock.backend.venta.dto.MetodoPagoRequestDTO;
 import com.clandestock.backend.venta.dto.MetodoPagoResponseDTO;
+import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.modelos.MetodoPago;
+import com.clandestock.backend.venta.modelos.Venta;
 import com.clandestock.backend.venta.repository.LocalRepository;
 import com.clandestock.backend.venta.repository.MetodoPagoRepository;
+import com.clandestock.backend.venta.repository.VentaRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.parser.Entity;
@@ -139,6 +143,8 @@ public class MetodoPagoService {
                 .toList();
     }
 
+
+
     //CASTEOS
     //Metodo pago (Entidad) a DTO.
     public MetodoPagoResponseDTO toDTO (MetodoPago metodoPago) {
@@ -148,7 +154,7 @@ public class MetodoPagoService {
                 metodoPago.getIncremento() != null ? String.valueOf(metodoPago.getIncremento()) : null,
                 metodoPago.getDescuento() != null ? String.valueOf(metodoPago.getDescuento()) : null,
                 metodoPago.getEstado() != null ? String.valueOf(metodoPago.getEstado()) : null,
-                metodoPago.getLocal() != null ? String.valueOf(metodoPago.getLocal()) : null
+                metodoPago.getLocal() != null ? String.valueOf(metodoPago.getLocal().getId()) : null
         );
     }
 
