@@ -14,4 +14,10 @@ public class ProductoPrincipalResponseDTO {
     public String stock;
 
     public String idCategoria;
+
+    public String alertaStockBajo;
+
+    public String stockBajo;
+
+    public String sinStock;
 }
