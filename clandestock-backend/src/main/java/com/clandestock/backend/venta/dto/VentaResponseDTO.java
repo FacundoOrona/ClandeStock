@@ -11,5 +11,7 @@ public class VentaResponseDTO {
     public String fechaCierre;
     public String estadoPago;
     public String localId;
+    public String tipoVenta;
+    public String detalleEntrega;
     public List<ProductoVentaResponseDTO> productos;
 }
