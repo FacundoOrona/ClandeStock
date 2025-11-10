@@ -45,6 +45,15 @@ public class ProductoPrincipal {
     @Column(nullable = true)
     private int stock;
 
+    @Builder.Default
+    private Boolean StockBajo = false;
+    
+    @Builder.Default
+    private Boolean SinStock = false;
+
+    @Column(nullable = true)
+    private int aletarStock;
+
     @ManyToOne
     @JoinColumn(name = "categoriaID", nullable = false)
     private Categoria categoria;
