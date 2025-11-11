@@ -74,7 +74,10 @@ public class ProductoSecundarioPorPrincipalService {
                 producto.getNombreProducto(),
                 String.valueOf(producto.getStock()),
                 producto.getEstado().toString(),
-                producto.getLocal().getId().toString());
+                producto.getLocal().getId().toString(),
+                Integer.toString(producto.getAletarStock()),
+                producto.getStockBajo().toString(),
+                producto.getSinStock().toString());
     }
 
     private ProductoSecundarioPorPrincipalResponseDTO toResponseDTO(ProductoSecundarioPorPrincipal entidad) {
