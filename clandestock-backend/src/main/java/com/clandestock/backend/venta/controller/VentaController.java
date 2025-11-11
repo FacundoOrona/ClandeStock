@@ -3,6 +3,7 @@ package com.clandestock.backend.venta.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.clandestock.backend.venta.dto.NuevaVentaRequestDTO;
 import com.clandestock.backend.venta.dto.ProductoPorVentaRequestDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.service.VentaService;
@@ -25,9 +26,9 @@ public class VentaController {
     }
 
     @PostMapping("/nueva")
-    public ResponseEntity<?> nueva() {
+    public ResponseEntity<?> nueva(@RequestBody NuevaVentaRequestDTO dto) {
         try {
-            VentaResponseDTO response = ventaService.nueva();
+            VentaResponseDTO response = ventaService.nueva(dto);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
