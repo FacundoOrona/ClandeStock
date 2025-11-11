@@ -12,4 +12,6 @@ public class ProductoStockResponseDTO {
     String nombreProducto;
     String stockDisponible;
     String precio;
+    String stockBajo;
+    String sinStock;
 }
