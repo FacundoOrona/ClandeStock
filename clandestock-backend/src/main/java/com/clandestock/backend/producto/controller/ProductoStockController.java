@@ -16,21 +16,40 @@ import com.clandestock.backend.producto.service.ProductoStockService;
 public class ProductoStockController {
     private ProductoStockService productoStockService;
 
-    public ProductoStockController(ProductoStockService pss){
+    public ProductoStockController(ProductoStockService pss) {
         this.productoStockService = pss;
     }
-    
+
     @GetMapping("/stock")
     public ResponseEntity<?> obtenerConStock() {
-        try{
+        try {
             List<ProductoStockResponseDTO> response = productoStockService.productosConStock();
             return ResponseEntity.ok(response);
-        }
-        catch(RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        catch(Exception e){
+    }
+
+    @GetMapping("/principal/alertas")
+    public ResponseEntity<?> obtenerAlertasPrimarios() {
+        try {
+            return ResponseEntity.ok(productoStockService.productosPrimariosEnAlerta());
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    @GetMapping("/secundario/alertas")
+    public ResponseEntity<?> obtenerAlertasSecundarios() {
+        try {
+            return ResponseEntity.ok(productoStockService.productosSecundariosEnAlerta());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
