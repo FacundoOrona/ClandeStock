@@ -12,33 +12,30 @@ import org.springframework.web.bind.annotation.*;
 public class ProductoSecundarioController {
     private ProductoSecundarioService productoSecundarioService;
 
-    public ProductoSecundarioController(ProductoSecundarioService pss){
+    public ProductoSecundarioController(ProductoSecundarioService pss) {
         this.productoSecundarioService = pss;
     }
 
     @PostMapping
-    public ResponseEntity<?> guardarProductoSecundario(@RequestBody ProductoSecundarioRequestDTO dto){
+    public ResponseEntity<?> guardarProductoSecundario(@RequestBody ProductoSecundarioRequestDTO dto) {
         try {
             ProductoSecundarioResponseDTO response = productoSecundarioService.guardarProductoSecundario(dto);
             return ResponseEntity.ok(response);
-        }
-        catch(RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerProductoSecundario (@PathVariable String id) {
+    public ResponseEntity<?> obtenerProductoSecundario(@PathVariable String id) {
         try {
             ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.obtenerProductoSecundarioPorId(id);
             return ResponseEntity.ok(responseDTO);
-        } catch(RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
@@ -48,37 +45,58 @@ public class ProductoSecundarioController {
         try {
             ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.actualizarProductoSecundario(dto);
             return ResponseEntity.ok(responseDTO);
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PutMapping("/baja/{id}")
-    public ResponseEntity<?> bajaProductoSecundario (@PathVariable String id) {
+    public ResponseEntity<?> bajaProductoSecundario(@PathVariable String id) {
         try {
             ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.bajaProductoSecundario(id);
             return ResponseEntity.ok(responseDTO);
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PutMapping("/alta/{id}")
-    public ResponseEntity<?> altaProductoSecundario (@PathVariable String id) {
+    public ResponseEntity<?> altaProductoSecundario(@PathVariable String id) {
         try {
             ProductoSecundarioResponseDTO responseDTO = productoSecundarioService.altaProductoSecundario(id);
             return ResponseEntity.ok(responseDTO);
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @PostMapping("/stockbajo/{id}")
+    public void stockBajo(@PathVariable String id) {
+        try {
+            productoSecundarioService.updateStockBajo(Long.parseLong(id));
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/sinstock/{id}")
+    public void sinStock(@PathVariable String id) {
+        try {
+            productoSecundarioService.updateSinStock(Long.parseLong(id));
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
