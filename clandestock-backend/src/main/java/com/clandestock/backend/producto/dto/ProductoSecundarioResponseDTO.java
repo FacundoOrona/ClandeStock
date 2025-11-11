@@ -5,6 +5,9 @@ public record ProductoSecundarioResponseDTO(
         String nombre_producto,
         String stock,
         String estado,
-        String local
+        String local,
+        String alertaStockBajo,
+        String stockBajo,
+        String sinStock
 ) {
 }

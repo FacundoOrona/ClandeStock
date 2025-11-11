@@ -10,11 +10,13 @@ import com.clandestock.backend.producto.service.ProductoStockService;
 import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.service.UsuarioService;
+import com.clandestock.backend.venta.dto.NuevaVentaRequestDTO;
 import com.clandestock.backend.venta.dto.ProductoVentaResponseDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.modelos.MetodoPago;
 import com.clandestock.backend.venta.modelos.ProductoxVenta;
+import com.clandestock.backend.venta.modelos.TipoVenta;
 import com.clandestock.backend.venta.modelos.Venta;
 import com.clandestock.backend.venta.repository.MetodoPagoRepository;
 import com.clandestock.backend.venta.repository.VentaRepository;
@@ -68,7 +70,7 @@ public class VentaService {
         this.metodoPagoRepository = metodoPagoRepository;
     }
 
-    public VentaResponseDTO nueva() {
+    public VentaResponseDTO nueva(NuevaVentaRequestDTO dto) {
         UsuarioContexto usuarioContexto = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         if (usuarioContexto.esAdminGeneral()) {
@@ -84,6 +86,8 @@ public class VentaService {
                 .precioTotal(null)
                 .fechaCierre(null)
                 .local(local)
+                .tipoVenta(dto.tipoVenta)
+                .detalleEntrega(dto.detalleEntrega)
                 .build();
         venta = ventaRepository.save(venta);
         return toResponseDTO(venta);
@@ -150,6 +154,9 @@ public class VentaService {
             throw new RuntimeException("La venta ya está cerrada o pagada");
         }
         ProductoxVenta pxv = productoxVentaService.obtenerPorId(idProductoxVenta);
+        if(venta != pxv.getVenta()){
+            throw new RuntimeException("Producto no corresponde a la venta seleccionada");
+        }
         ProductoPrincipal producto = productoPrincipalService.obtenerPorId(pxv.getIdProducto());
         List<ProductoSecundarioPorPrincipal> secundarios = productoSecundarioPorPrincipalService
                 .obtenerSecundariosPorPrincipal(producto);
@@ -197,6 +204,8 @@ public class VentaService {
         dto.fechaApertura = venta.getFechaApertura().toString();
         dto.fechaCierre = venta.getFechaCierre() != null ? venta.getFechaCierre().toString() : null;
         dto.estadoPago = venta.getEstadoPago().toString();
+        dto.tipoVenta = venta.getTipoVenta().toString();
+        dto.detalleEntrega = venta.getDetalleEntrega();
         dto.localId = venta.getLocal().getId().toString();
         dto.productos = venta.getProductos() != null ? venta.getProductos().stream().map(p -> {
             ProductoVentaResponseDTO prod = new ProductoVentaResponseDTO();

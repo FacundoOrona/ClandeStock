@@ -16,6 +16,8 @@ public class ProductoPrincipalRequestDTO {
     @NotBlank
     String precio;
 
+    String aletarStockBajo;
+
     @NotBlank
     String estado;
 

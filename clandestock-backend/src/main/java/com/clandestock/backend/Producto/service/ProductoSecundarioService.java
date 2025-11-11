@@ -5,6 +5,9 @@ import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
@@ -14,8 +17,8 @@ public class ProductoSecundarioService {
     private ProductoSecundarioRepository productoSecundarioRepository;
     private LocalService localService;
 
-    public ProductoSecundarioService (ProductoSecundarioRepository productoSecundarioRepository,
-                                      LocalService localService){
+    public ProductoSecundarioService(ProductoSecundarioRepository productoSecundarioRepository,
+            LocalService localService) {
         this.productoSecundarioRepository = productoSecundarioRepository;
         this.localService = localService;
     }
@@ -34,11 +37,11 @@ public class ProductoSecundarioService {
 
     // CRUD
 
-    public ProductoSecundarioResponseDTO guardarProductoSecundario (ProductoSecundarioRequestDTO dto) {
+    public ProductoSecundarioResponseDTO guardarProductoSecundario(ProductoSecundarioRequestDTO dto) {
         ProductoSecundario productoSecundario = toEnitySinID(dto);
         productoSecundario.setId(null);
         ProductoSecundario nuevoProductoSecundario = productoSecundarioRepository.save(productoSecundario);
-        return  toResponseDTO(nuevoProductoSecundario);
+        return toResponseDTO(nuevoProductoSecundario);
     }
 
     public ProductoSecundarioResponseDTO actualizarProductoSecundario(ProductoSecundarioRequestDTO dto) {
@@ -53,7 +56,6 @@ public class ProductoSecundarioService {
         ProductoSecundario actualizado = productoSecundarioRepository.save(productoSecundario);
         return toResponseDTO(actualizado);
     }
-
 
     public ProductoSecundarioResponseDTO bajaProductoSecundario(String id_) {
         Long id = Long.parseLong(id_);
@@ -83,6 +85,19 @@ public class ProductoSecundarioService {
         return toResponseDTO(actualizado);
     }
 
+    public void updateStockBajo(Long idProd) {
+        ProductoSecundario productoPrincipal = productoSecundarioRepository.findById(idProd)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        productoPrincipal.setStockBajo(!productoPrincipal.getStockBajo());
+        productoSecundarioRepository.save(productoPrincipal);
+    }
+
+    public void updateSinStock(Long idProd) {
+        ProductoSecundario productoPrincipal = productoSecundarioRepository.findById(idProd)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        productoPrincipal.setSinStock(!productoPrincipal.getSinStock());
+        productoSecundarioRepository.save(productoPrincipal);
+    }
 
     // CASTEOS : toResponseDTO, toEntity(Sin id) y toEntity
 
@@ -92,11 +107,13 @@ public class ProductoSecundarioService {
                 productoSecundario.getNombreProducto(),
                 String.valueOf(productoSecundario.getStock()),
                 productoSecundario.getEstado().toString(),
-                productoSecundario.getLocal().getId().toString()
-        );
+                productoSecundario.getLocal().getId().toString(),
+                Integer.toString(productoSecundario.getAletarStock()),
+                productoSecundario.getStockBajo().toString(),
+                productoSecundario.getSinStock().toString());
     }
 
-    private ProductoSecundario toEnitySinID (ProductoSecundarioRequestDTO dto) {
+    private ProductoSecundario toEnitySinID(ProductoSecundarioRequestDTO dto) {
         Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
 
         ProductoSecundario productoSecundario = ProductoSecundario.builder()
@@ -104,12 +121,14 @@ public class ProductoSecundarioService {
                 .stock(Integer.parseInt(dto.stock()))
                 .estado(Boolean.valueOf(dto.estado()))
                 .local(local)
+                .aletarStock((dto.aletarStockBajo() == null || dto.aletarStockBajo().isBlank() ? 1
+                        : Integer.parseInt(dto.aletarStockBajo())))
                 .build();
 
         return productoSecundario;
     }
 
-    public void actualizarStock(ProductoSecundario prod){
+    public void actualizarStock(ProductoSecundario prod) {
         ProductoSecundario pSecundario = obtenerPorId(prod.getId());
         pSecundario.setStock(prod.getStock());
         productoSecundarioRepository.save(pSecundario);
@@ -129,6 +148,10 @@ public class ProductoSecundarioService {
         }
 
         return builder.build();
+    }
+
+    public List<ProductoSecundario> obtenerTodos() {
+        return productoSecundarioRepository.findAll();
     }
 
 }

@@ -8,6 +8,8 @@ import com.clandestock.backend.usuario.modelos.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -58,6 +60,13 @@ public class Venta {
 
     @OneToMany(mappedBy = "venta")
     private List<ProductoxVenta> productos;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private TipoVenta tipoVenta;
+
+    @Column(nullable = false, length = 200)
+    private String detalleEntrega;
 
     @ManyToOne
     @JoinColumn(name = "local_id", nullable = false)

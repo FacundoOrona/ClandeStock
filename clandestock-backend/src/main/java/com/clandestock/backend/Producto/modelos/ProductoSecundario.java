@@ -35,6 +35,15 @@ public class ProductoSecundario {
     @Builder.Default
     private Boolean estado = true;
 
+    @Builder.Default
+    private Boolean StockBajo = false;
+
+    @Builder.Default
+    private Boolean SinStock = false;
+
+    @Column(nullable = true)
+    private int aletarStock;
+
     @ManyToOne
     @JoinColumn(name = "localID", nullable = false)
     private Local local;

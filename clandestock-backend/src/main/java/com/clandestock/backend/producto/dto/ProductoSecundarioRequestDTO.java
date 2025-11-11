@@ -11,6 +11,7 @@ public record ProductoSecundarioRequestDTO(
         @NotBlank
         String estado,
         @NotBlank
-        String local
+        String local,
+        String aletarStockBajo
 ) {
 }

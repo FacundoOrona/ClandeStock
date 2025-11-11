@@ -18,10 +18,13 @@ public class ProductoStockService {
 
     private ProductoPrincipalService productoPrincipalService;
     private ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService;
+    private ProductoSecundarioService productoSecundarioService;
 
-    public ProductoStockService(ProductoPrincipalService pps, ProductoSecundarioPorPrincipalService psxpps) {
+    public ProductoStockService(ProductoPrincipalService pps, ProductoSecundarioPorPrincipalService psxpps,
+            ProductoSecundarioService productoSecundarioService) {
         this.productoPrincipalService = pps;
         this.productoSecundarioPorPrincipalService = psxpps;
+        this.productoSecundarioService = productoSecundarioService;
     }
 
     // Tiene filtro de JWT aplicado(retorna segun el rol del token)
@@ -44,7 +47,9 @@ public class ProductoStockService {
                     principal.getId().toString(),
                     principal.getNombreProducto(),
                     String.valueOf(stockDisponible),
-                    principal.getPrecioProducto().toString()));
+                    principal.getPrecioProducto().toString(),
+                    principal.getStockBajo().toString(),
+                    principal.getSinStock().toString()));
         }
 
         return resultado;
@@ -76,5 +81,57 @@ public class ProductoStockService {
                 })
                 .min()
                 .orElse(0);
+    }
+
+    public List<ProductoStockResponseDTO> productosPrimariosEnAlerta() {
+        List<ProductoPrincipal> productos = productoPrincipalService.obtenerTodosEntity();
+        List<ProductoStockResponseDTO> resultado = new ArrayList<>();
+
+        for (ProductoPrincipal principal : productos) {
+            List<ProductoSecundarioPorPrincipal> secundarios = productoSecundarioPorPrincipalService
+                    .obtenerSecundariosPorPrincipal(principal);
+
+            int stockDisponible = secundarios.isEmpty()
+                    ? principal.getStock()
+                    : calcularStockDisponible(secundarios);
+
+            boolean alertaPorBooleanos = Boolean.TRUE.equals(principal.getSinStock())
+                    || Boolean.TRUE.equals(principal.getStockBajo());
+            boolean alertaPorCantidad = principal.getAletarStock() > 0 && stockDisponible <= principal.getAletarStock();
+
+            if (alertaPorBooleanos || alertaPorCantidad) {
+                resultado.add(new ProductoStockResponseDTO(
+                        principal.getId().toString(),
+                        principal.getNombreProducto(),
+                        String.valueOf(stockDisponible),
+                        principal.getPrecioProducto().toString(),
+                        principal.getStockBajo().toString(),
+                        principal.getSinStock().toString()));
+            }
+        }
+
+        return resultado;
+    }
+
+    public List<ProductoStockResponseDTO> productosSecundariosEnAlerta() {
+        List<ProductoSecundario> secundarios = productoSecundarioService.obtenerTodos();
+        List<ProductoStockResponseDTO> resultado = new ArrayList<>();
+
+        for (ProductoSecundario sec : secundarios) {
+            boolean alertaPorBooleanos = Boolean.TRUE.equals(sec.getSinStock())
+                    || Boolean.TRUE.equals(sec.getStockBajo());
+            boolean alertaPorCantidad = sec.getAletarStock() > 0 && sec.getStock() <= sec.getAletarStock();
+
+            if (alertaPorBooleanos || alertaPorCantidad) {
+                resultado.add(new ProductoStockResponseDTO(
+                        sec.getId().toString(),
+                        sec.getNombreProducto(),
+                        String.valueOf(sec.getStock()),
+                        "0.00",
+                        sec.getStockBajo().toString(),
+                        sec.getSinStock().toString()));
+            }
+        }
+        return resultado;
     }
 }
