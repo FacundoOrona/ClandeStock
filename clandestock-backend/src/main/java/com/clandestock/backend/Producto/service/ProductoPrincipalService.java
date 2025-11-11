@@ -98,6 +98,19 @@ public class ProductoPrincipalService {
         productoPrincipalRepository.save(producto);
     }
 
+    public void updateStockBajo(Long idProd) {
+        ProductoPrincipal productoPrincipal = productoPrincipalRepository.findById(idProd)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        productoPrincipal.setStockBajo(!productoPrincipal.getStockBajo());
+        productoPrincipalRepository.save(productoPrincipal);
+    }
+
+    public void updateSinStock(Long idProd) {
+        ProductoPrincipal productoPrincipal = productoPrincipalRepository.findById(idProd)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        productoPrincipal.setSinStock(!productoPrincipal.getSinStock());
+        productoPrincipalRepository.save(productoPrincipal);
+    }
 
     // =======================CASTEO DE ENTIDAD<--->DTO==========================
     private ProductoPrincipal toEntity(ProductoPrincipalRequestDTO dto) {
@@ -111,6 +124,9 @@ public class ProductoPrincipalService {
         producto.setPrecioProducto(new BigDecimal(dto.getPrecio()));
         producto.setEstado("1".equals(dto.getEstado()) || "true".equals(dto.getEstado()));
         producto.setStock(Integer.parseInt(dto.getStock()));
+        String alertaStockStr = dto.getAletarStockBajo();
+        int alertaStock = (alertaStockStr == null || alertaStockStr.isBlank()) ? 1 : Integer.parseInt(alertaStockStr);
+        producto.setAletarStock(alertaStock);
         Categoria categoria = categoriaService.obtenerCategoriaEntity(Long.parseLong(dto.getIdCategoria()));
         if (categoria.getLocal() != local) {
             new RuntimeException("La categoria seleccionada corresponde a otro local");
@@ -128,6 +144,9 @@ public class ProductoPrincipalService {
         dto.estado = producto.getEstado().toString();
         dto.stock = String.valueOf(producto.getStock());
         dto.idCategoria = producto.getCategoria().getId().toString();
+        dto.alertaStockBajo = String.valueOf(producto.getAletarStock());
+        dto.sinStock = producto.getSinStock().toString();
+        dto.stockBajo = producto.getStockBajo().toString();
         return dto;
     }
 
@@ -139,6 +158,9 @@ public class ProductoPrincipalService {
         producto.setPrecioProducto(new BigDecimal(dto.getPrecio()));
         producto.setEstado("1".equals(dto.getEstado()) || "true".equals(dto.getEstado()));
         producto.setStock(Integer.parseInt(dto.getStock()));
+        String alertaStockStr = dto.getAletarStockBajo();
+        int alertaStock = (alertaStockStr == null || alertaStockStr.isBlank()) ? 1 : Integer.parseInt(alertaStockStr);
+        producto.setAletarStock(alertaStock);
         Categoria categoria = categoriaService.obtenerCategoriaEntity(Long.parseLong(dto.getIdCategoria()));
         if (categoria.getLocal() != local) {
             new RuntimeException("La categoria seleccionada corresponde a otro local");
