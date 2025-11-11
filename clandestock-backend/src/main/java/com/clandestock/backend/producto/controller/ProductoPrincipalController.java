@@ -53,7 +53,7 @@ public class ProductoPrincipalController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -66,7 +66,7 @@ public class ProductoPrincipalController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -80,7 +80,33 @@ public class ProductoPrincipalController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PostMapping("/stockbajo/{id}")
+    public void stockBajo(@PathVariable String id) {
+        try {
+            productoPrincipalService.updateStockBajo(Long.parseLong(id));
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/sinstock/{id}")
+    public void sinStock(@PathVariable String id) {
+        try {
+            productoPrincipalService.updateSinStock(Long.parseLong(id));
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    
 }
