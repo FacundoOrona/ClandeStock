@@ -13,10 +13,10 @@ import com.clandestock.backend.usuario.service.UsuarioService;
 import com.clandestock.backend.venta.dto.NuevaVentaRequestDTO;
 import com.clandestock.backend.venta.dto.ProductoVentaResponseDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
+import com.clandestock.backend.venta.modelos.Caja;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.modelos.MetodoPago;
 import com.clandestock.backend.venta.modelos.ProductoxVenta;
-import com.clandestock.backend.venta.modelos.TipoVenta;
 import com.clandestock.backend.venta.modelos.Venta;
 import com.clandestock.backend.venta.repository.MetodoPagoRepository;
 import com.clandestock.backend.venta.repository.VentaRepository;
@@ -46,6 +46,7 @@ public class VentaService {
     private final ProductoxVentaService productoxVentaService;
     private final LocalService localService;
     private final MetodoPagoRepository metodoPagoRepository;
+    private final CajaService cajaService;
 
     public VentaService(
             VentaRepository ventaRepository,
@@ -57,7 +58,8 @@ public class VentaService {
             ProductoSecundarioService prodSecundarioService,
             ProductoxVentaService prodxVentaService,
             LocalService localService,
-            MetodoPagoRepository metodoPagoRepository) {
+            MetodoPagoRepository metodoPagoRepository,
+            CajaService cajaService) {
         this.ventaRepository = ventaRepository;
         this.usuarioService = usuarioService;
         this.metodoPagoService = metodoPagoService;
@@ -68,6 +70,7 @@ public class VentaService {
         this.productoxVentaService = prodxVentaService;
         this.localService = localService;
         this.metodoPagoRepository = metodoPagoRepository;
+        this.cajaService = cajaService;
     }
 
     public VentaResponseDTO nueva(NuevaVentaRequestDTO dto) {
@@ -77,7 +80,8 @@ public class VentaService {
             throw new RuntimeException("Usuario administrador no puede iniciar venta");
         }
         Usuario usuario = usuarioService.obtenerPorNombreUsuario(usuarioContexto.getNombreUsuario());
-        Local local = localService.obtenerPorNombre(usuarioContexto.getLocal());;
+        Local local = localService.obtenerPorNombre(usuarioContexto.getLocal());
+        Caja caja = cajaService.obtenerPorLocal(local,true);
         Venta venta = Venta.builder()
                 .usuario(usuario)
                 .metodoPago(null)
@@ -88,6 +92,7 @@ public class VentaService {
                 .local(local)
                 .tipoVenta(dto.tipoVenta)
                 .detalleEntrega(dto.detalleEntrega)
+                .caja(caja)
                 .build();
         venta = ventaRepository.save(venta);
         return toResponseDTO(venta);
@@ -260,5 +265,4 @@ public class VentaService {
 
         return precioFinal.setScale(2, RoundingMode.HALF_UP);
     }
-
 }
