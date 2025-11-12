@@ -9,8 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -33,9 +31,8 @@ public class Local {
     @Column(nullable = false, length = 100)
     private String nombreLocal;
 
-    @ManyToOne
-    @JoinColumn(name = "cajaID", nullable = true)
-    private Caja caja;
+    @OneToMany(mappedBy = "local")
+    private List<Caja> cajas;
 
     @OneToMany(mappedBy = "local")
     private List<Categoria> categorias;
