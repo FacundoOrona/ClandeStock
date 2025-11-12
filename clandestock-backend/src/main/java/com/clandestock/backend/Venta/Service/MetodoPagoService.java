@@ -2,18 +2,13 @@ package com.clandestock.backend.venta.service;
 
 import com.clandestock.backend.venta.dto.MetodoPagoRequestDTO;
 import com.clandestock.backend.venta.dto.MetodoPagoResponseDTO;
-import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.modelos.MetodoPago;
-import com.clandestock.backend.venta.modelos.Venta;
 import com.clandestock.backend.venta.repository.LocalRepository;
 import com.clandestock.backend.venta.repository.MetodoPagoRepository;
-import com.clandestock.backend.venta.repository.VentaRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.List;
 
 @Service
@@ -22,18 +17,18 @@ public class MetodoPagoService {
     private LocalRepository localRepository;
 
     public MetodoPagoService(MetodoPagoRepository metodoPagoRepository,
-                             LocalRepository localRepository) {
+            LocalRepository localRepository) {
         this.metodoPagoRepository = metodoPagoRepository;
         this.localRepository = localRepository;
     }
 
-    private MetodoPago obtenerMetodoPagoPorID (Long id) {
+    private MetodoPago obtenerMetodoPagoPorID(Long id) {
         MetodoPago metodoPago = metodoPagoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Metodo de pago con ID "+ id +" no encontrado."));
+                .orElseThrow(() -> new EntityNotFoundException("Metodo de pago con ID " + id + " no encontrado."));
         return metodoPago;
     }
 
-    public MetodoPagoResponseDTO insertarMetodoPago (MetodoPagoRequestDTO dto) {
+    public MetodoPagoResponseDTO insertarMetodoPago(MetodoPagoRequestDTO dto) {
         MetodoPago metodoPago = toEntity(dto);
 
         if (metodoPago.getIncremento() > 0 && metodoPago.getDescuento() > 0) {
@@ -44,17 +39,17 @@ public class MetodoPagoService {
         return toDTO(metodoPagoGuardado);
     }
 
-    public MetodoPagoResponseDTO actualizarMetodoPago (MetodoPagoRequestDTO dto) {
+    public MetodoPagoResponseDTO actualizarMetodoPago(MetodoPagoRequestDTO dto) {
         MetodoPago metodoPagoInicial = obtenerMetodoPagoPorID(Long.parseLong(dto.id()));
-
 
         metodoPagoInicial.setNombreMetodoPago(dto.nombre_metodo_pago());
         metodoPagoInicial.setDescuento(Long.parseLong(dto.descuento()));
         metodoPagoInicial.setIncremento(Long.parseLong(dto.incremento()));
         metodoPagoInicial.setEstado(Boolean.parseBoolean(dto.estado()));
-        if (dto.local_id() != null){
+        if (dto.local_id() != null) {
             Local local = localRepository.findById(Long.parseLong(dto.local_id()))
-                            .orElseThrow(() -> new EntityNotFoundException("El id del local al que se quiere actualizar, no existe"));
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "El id del local al que se quiere actualizar, no existe"));
             metodoPagoInicial.setLocal(local);
         }
 
@@ -62,14 +57,14 @@ public class MetodoPagoService {
         return toDTO(metodoPagoGuardado);
     }
 
-    public MetodoPagoResponseDTO bajaLogica (Long id) {
+    public MetodoPagoResponseDTO bajaLogica(Long id) {
         MetodoPago metodoPago = obtenerMetodoPagoPorID(id);
         metodoPago.setEstado(false);
         MetodoPago metodoPagoActualizado = metodoPagoRepository.save(metodoPago);
         return toDTO(metodoPagoActualizado);
     }
 
-    public MetodoPagoResponseDTO altaLogica (Long id) {
+    public MetodoPagoResponseDTO altaLogica(Long id) {
         MetodoPago metodoPago = obtenerMetodoPagoPorID(id);
         metodoPago.setEstado(true);
         MetodoPago metodoPagoActualizado = metodoPagoRepository.save(metodoPago);
@@ -90,12 +85,11 @@ public class MetodoPagoService {
                         metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
                         metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
                         metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
-                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null
-                ))
+                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null))
                 .toList();
     }
 
-    public List<MetodoPagoResponseDTO> listarPorLocalId (Long localId) {
+    public List<MetodoPagoResponseDTO> listarPorLocalId(Long localId) {
         List<MetodoPago> lista = metodoPagoRepository.findByLocalId(localId);
 
         if (lista.isEmpty()) {
@@ -109,10 +103,9 @@ public class MetodoPagoService {
                         metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
                         metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
                         metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
-                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null
-                ))
+                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null))
                 .toList();
-     }
+    }
 
     public List<MetodoPagoResponseDTO> listarMetodosActivos() {
         List<MetodoPago> lista = metodoPagoRepository.findByEstadoTrue();
@@ -124,8 +117,7 @@ public class MetodoPagoService {
                         metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
                         metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
                         metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
-                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null
-                ))
+                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null))
                 .toList();
     }
 
@@ -143,28 +135,24 @@ public class MetodoPagoService {
                         metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
                         metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
                         metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
-                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null
-                ))
+                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null))
                 .toList();
     }
 
-
-
-    //CASTEOS
-    //Metodo pago (Entidad) a DTO.
-    public MetodoPagoResponseDTO toDTO (MetodoPago metodoPago) {
+    // CASTEOS
+    // Metodo pago (Entidad) a DTO.
+    public MetodoPagoResponseDTO toDTO(MetodoPago metodoPago) {
         return new MetodoPagoResponseDTO(
                 String.valueOf(metodoPago.getId()),
                 metodoPago.getNombreMetodoPago(),
                 metodoPago.getIncremento() != null ? String.valueOf(metodoPago.getIncremento()) : null,
                 metodoPago.getDescuento() != null ? String.valueOf(metodoPago.getDescuento()) : null,
                 metodoPago.getEstado() != null ? String.valueOf(metodoPago.getEstado()) : null,
-                metodoPago.getLocal() != null ? String.valueOf(metodoPago.getLocal().getId()) : null
-        );
+                metodoPago.getLocal() != null ? String.valueOf(metodoPago.getLocal().getId()) : null);
     }
 
-    //DTO a MetodoPago (Entidad)
-    public MetodoPago toEntity (MetodoPagoRequestDTO dto) {
+    // DTO a MetodoPago (Entidad)
+    public MetodoPago toEntity(MetodoPagoRequestDTO dto) {
         Local local = localRepository.findById(Long.parseLong(dto.local_id()))
                 .orElseThrow(() -> new EntityNotFoundException("Local con ID " + dto.local_id() + "no encontrado"));
 
@@ -173,7 +161,7 @@ public class MetodoPagoService {
                 .nombreMetodoPago(dto.nombre_metodo_pago())
                 .incremento(dto.incremento() != null ? Long.parseLong(dto.incremento()) : null)
                 .descuento(dto.descuento() != null ? Long.parseLong(dto.descuento()) : null)
-                .estado(dto.estado() != null ? Boolean.parseBoolean(dto.estado()) :null)
+                .estado(dto.estado() != null ? Boolean.parseBoolean(dto.estado()) : null)
                 .local(local)
                 .build();
     }
