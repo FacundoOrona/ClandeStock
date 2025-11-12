@@ -43,13 +43,13 @@ public class Caja {
     @Column(precision = 10, scale = 2)
     private BigDecimal montoApertura;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal montoCierre;
-
     @Builder.Default
     private Boolean estado = true;
 
-    @Column(nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "local_id", nullable = false)
+    private Local local;
+
     @OneToMany(mappedBy = "caja")
-    private List<Local> locales;
+    private List<Venta> ventas;
 }

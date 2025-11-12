@@ -27,6 +27,7 @@ public class Token {
     private String token;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     public TokenType tokenType = TokenType.BEARER;
 
     private String refreshToken;

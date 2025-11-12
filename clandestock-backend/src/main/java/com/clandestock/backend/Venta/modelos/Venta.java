@@ -41,7 +41,8 @@ public class Venta {
     @Column(nullable = true, precision = 10, scale = 2)
     private BigDecimal precioTotal;
 
-    // agg variable de descuento increment (precio total modificado por metodo de pago)
+    // agg variable de descuento increment (precio total modificado por metodo de
+    // pago)
     @Column(nullable = true, precision = 10, scale = 2)
     private BigDecimal precioTotalConMetodoDePago;
 
@@ -72,5 +73,7 @@ public class Venta {
     @JoinColumn(name = "local_id", nullable = false)
     private Local local;
 
-    //agregar variables de pedidos / mesa
+    @ManyToOne
+    @JoinColumn(name = "caja_id", nullable = false)
+    private Caja caja;
 }

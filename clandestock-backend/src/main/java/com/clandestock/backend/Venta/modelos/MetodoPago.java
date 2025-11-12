@@ -1,6 +1,5 @@
 package com.clandestock.backend.venta.modelos;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.Column;
