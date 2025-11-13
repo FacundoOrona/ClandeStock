@@ -77,8 +77,8 @@ public class VentaController {
     public ResponseEntity<?> insertarMetodoPagoEnVenta (@PathVariable Long idMetodoPago, @PathVariable Long idVenta) {
         try {
             VentaResponseDTO venta = ventaService.asignarMetodoPagoAVenta(idMetodoPago, idVenta);
-            System.out.println("Precio total sin modificar: $" + venta.precioTotal);
-            System.out.println("Precio total con metodo de pago efectuado: $" + venta.precioTotalConMetodoDePago);
+            //System.out.println("Precio total sin modificar: $" + venta.precioTotal);
+            //System.out.println("Precio total con metodo de pago efectuado: $" + venta.precioTotalConMetodoDePago);
             return ResponseEntity.ok(venta);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
