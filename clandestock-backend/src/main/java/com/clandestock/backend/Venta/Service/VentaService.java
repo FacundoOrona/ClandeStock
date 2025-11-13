@@ -142,7 +142,15 @@ public class VentaService {
         productoxVentaService.guardar(pxv);
         // Actualizar venta
         venta.getProductos().add(pxv);
-        // aca hacer nueva funcion para calculo de total si hay metodo de pago
+
+        // Actualizar monto en caso de tener metodo de pago insertado
+        if (venta.getMetodoPago() != null){
+            BigDecimal precioFinal = calcularPrecioFinal(venta.getPrecioTotal(), venta.getMetodoPago());
+
+            venta.setPrecioTotalConMetodoDePago(precioFinal);
+
+            Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+        }
 
         BigDecimal nuevoTotal = venta.getPrecioTotal() == null
                 ? producto.getPrecioProducto()
