@@ -1,5 +1,6 @@
 package com.clandestock.backend.venta.controller;
 
+import com.clandestock.backend.venta.dto.VentaFiltroDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/venta")
@@ -96,6 +99,16 @@ public class VentaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/filtrar")
+    public ResponseEntity<?> filtrarVentas(@RequestBody VentaFiltroDTO filtros) {
+        try {
+            List<VentaResponseDTO> ventas = ventaService.filtrarVentas(filtros);
+            return ResponseEntity.ok(ventas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al filtrar las ventas: " + e.getMessage());
         }
     }
 }
