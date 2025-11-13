@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -305,6 +306,33 @@ public class VentaService {
     }
 
     public List<VentaResponseDTO> filtrarVentas(VentaFiltroDTO filtros) {
-        
+        Specification<Venta> spec = Specification.where(null);
+
+        if (filtros.usuarioId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("usuario").get("id"), Long.parseLong(filtros.usuarioId())));
+        }
+        if (filtros.metodoPagoId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("metodoPago").get("id"), Long.parseLong(filtros.metodoPagoId())));
+        }
+        if (filtros.localId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("local").get("id"), Long.parseLong(filtros.localId())));
+        }
+        if (filtros.cajaId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("caja").get("id"), Long.parseLong(filtros.cajaId())));
+        }
+        if (filtros.fechaDesde() != null && filtros.fechaHasta() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.between(root.get("fechaApertura"), filtros.fechaDesde(), filtros.fechaHasta()));
+        }
+
+        List<Venta> ventas = ventaRepository.findAll();
+
+        return ventas.stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 }
