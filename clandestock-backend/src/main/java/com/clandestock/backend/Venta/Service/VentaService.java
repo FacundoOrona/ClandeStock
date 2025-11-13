@@ -167,9 +167,9 @@ public class VentaService {
             throw new RuntimeException("La venta ya está cerrada o pagada");
         }
         ProductoxVenta pxv = productoxVentaService.obtenerPorId(idProductoxVenta);
-        if(venta != pxv.getVenta()){
-            throw new RuntimeException("Producto no corresponde a la venta seleccionada");
-        }
+//        if(venta != pxv.getVenta()){
+//            throw new RuntimeException("Producto no corresponde a la venta seleccionada");
+//        }
         ProductoPrincipal producto = productoPrincipalService.obtenerPorId(pxv.getIdProducto());
         List<ProductoSecundarioPorPrincipal> secundarios = productoSecundarioPorPrincipalService
                 .obtenerSecundariosPorPrincipal(producto);
