@@ -265,6 +265,9 @@ public class VentaService {
 
         return precioFinal.setScale(2, RoundingMode.HALF_UP);
     }
+
+    //CERRAR VENTA
+
     public VentaResponseDTO cerrarVenta (Long idVenta) {
         Venta ventaPorCerrar = ventaRepository.findById(idVenta)
                 .orElseThrow(() -> new EntityNotFoundException("Venta con ID "+ idVenta + " no existente "));
