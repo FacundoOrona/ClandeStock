@@ -12,6 +12,7 @@ import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.service.UsuarioService;
 import com.clandestock.backend.venta.dto.NuevaVentaRequestDTO;
 import com.clandestock.backend.venta.dto.ProductoVentaResponseDTO;
+import com.clandestock.backend.venta.dto.VentaFiltroDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.modelos.Caja;
 import com.clandestock.backend.venta.modelos.Local;
@@ -287,8 +288,8 @@ public class VentaService {
         Venta ventaPorCerrar = ventaRepository.findById(idVenta)
                 .orElseThrow(() -> new EntityNotFoundException("Venta con ID "+ idVenta + " no existente "));
 
-        if (ventaPorCerrar.getFechaCierre() != null && ventaPorCerrar.getEstadoPago() != null) {
-            throw new RuntimeException("La venta que desea cerrar ya esta cerrada");
+        if (ventaPorCerrar.getFechaCierre() != null && Boolean.TRUE.equals(ventaPorCerrar.getEstadoPago())) {
+            throw new IllegalStateException("La venta ya está cerrada");
         }
 
         if(ventaPorCerrar.getMetodoPago() == null && ventaPorCerrar.getPrecioTotalConMetodoDePago() == null) {
@@ -303,4 +304,7 @@ public class VentaService {
         return toResponseDTO(ventaCerrada);
     }
 
+    public List<VentaResponseDTO> filtrarVentas(VentaFiltroDTO filtros) {
+        
+    }
 }
