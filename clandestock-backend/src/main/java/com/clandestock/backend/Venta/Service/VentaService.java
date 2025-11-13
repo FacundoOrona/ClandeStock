@@ -145,6 +145,12 @@ public class VentaService {
         // Actualizar venta
         venta.getProductos().add(pxv);
 
+        BigDecimal nuevoTotal = venta.getPrecioTotal() == null
+                ? producto.getPrecioProducto()
+                : venta.getPrecioTotal().add(producto.getPrecioProducto());
+        venta.setPrecioTotal(nuevoTotal);
+        ventaRepository.save(venta);
+
         // Actualizar monto en caso de tener metodo de pago insertado
         if (venta.getMetodoPago() != null){
             BigDecimal precioFinal = calcularPrecioFinal(venta.getPrecioTotal(), venta.getMetodoPago());
@@ -154,11 +160,6 @@ public class VentaService {
             Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
         }
 
-        BigDecimal nuevoTotal = venta.getPrecioTotal() == null
-                ? producto.getPrecioProducto()
-                : venta.getPrecioTotal().add(producto.getPrecioProducto());
-        venta.setPrecioTotal(nuevoTotal);
-        ventaRepository.save(venta);
         return toResponseDTO(venta);
     }
 
@@ -169,9 +170,9 @@ public class VentaService {
             throw new RuntimeException("La venta ya está cerrada o pagada");
         }
         ProductoxVenta pxv = productoxVentaService.obtenerPorId(idProductoxVenta);
-//        if(venta != pxv.getVenta()){
-//            throw new RuntimeException("Producto no corresponde a la venta seleccionada");
-//        }
+        if(venta != pxv.getVenta()){
+            throw new RuntimeException("Producto no corresponde a la venta seleccionada");
+        }
         ProductoPrincipal producto = productoPrincipalService.obtenerPorId(pxv.getIdProducto());
         List<ProductoSecundarioPorPrincipal> secundarios = productoSecundarioPorPrincipalService
                 .obtenerSecundariosPorPrincipal(producto);
@@ -195,6 +196,10 @@ public class VentaService {
         // Actualizar venta
         venta.getProductos().removeIf(p -> p.getId().equals(idProductoxVenta));
 
+        BigDecimal nuevoTotal = venta.getPrecioTotal().subtract(pxv.getPrecioProducto());
+        venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : null);
+        ventaRepository.save(venta);
+
         // Actualizar monto en caso de tener metodo de pago insertado
         if (venta.getMetodoPago() != null){
             BigDecimal precioFinal = calcularPrecioFinal(venta.getPrecioTotal(), venta.getMetodoPago());
@@ -204,9 +209,6 @@ public class VentaService {
             Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
         }
 
-        BigDecimal nuevoTotal = venta.getPrecioTotal().subtract(pxv.getPrecioProducto());
-        venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : null);
-        ventaRepository.save(venta);
         return toResponseDTO(venta);
     }
 
