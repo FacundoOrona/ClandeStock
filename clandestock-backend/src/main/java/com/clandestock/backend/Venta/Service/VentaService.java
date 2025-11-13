@@ -192,8 +192,15 @@ public class VentaService {
         productoxVentaService.eliminar(pxv.getId());
         // Actualizar venta
         venta.getProductos().removeIf(p -> p.getId().equals(idProductoxVenta));
-        // aca hacer nueva funcion para calculo de total si hay metodo de pago
 
+        // Actualizar monto en caso de tener metodo de pago insertado
+        if (venta.getMetodoPago() != null){
+            BigDecimal precioFinal = calcularPrecioFinal(venta.getPrecioTotal(), venta.getMetodoPago());
+
+            venta.setPrecioTotalConMetodoDePago(precioFinal);
+
+            Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+        }
 
         BigDecimal nuevoTotal = venta.getPrecioTotal().subtract(pxv.getPrecioProducto());
         venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : null);
@@ -263,12 +270,12 @@ public class VentaService {
                     .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
             precioFinal = precioOriginal.subtract(precioOriginal.multiply(descuento));
 
-            System.out.println("Entro a descuento");
+            //System.out.println("Entro a descuento");
         } else if (metodoPago.getIncremento() != 0) {
             BigDecimal incremento = BigDecimal.valueOf(metodoPago.getIncremento())
                     .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
             precioFinal = precioOriginal.add(precioOriginal.multiply(incremento));
-            System.out.println("Entro a incremento");
+            //System.out.println("Entro a incremento");
         }
 
         return precioFinal.setScale(2, RoundingMode.HALF_UP);
