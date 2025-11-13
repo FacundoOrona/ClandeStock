@@ -272,6 +272,14 @@ public class VentaService {
         Venta ventaPorCerrar = ventaRepository.findById(idVenta)
                 .orElseThrow(() -> new EntityNotFoundException("Venta con ID "+ idVenta + " no existente "));
 
+        if (ventaPorCerrar.getFechaCierre() != null && ventaPorCerrar.getEstadoPago() != null) {
+            throw new RuntimeException("La venta que desea cerrar ya esta cerrada");
+        }
+
+        if(ventaPorCerrar.getMetodoPago() == null && ventaPorCerrar.getPrecioTotalConMetodoDePago() == null) {
+            throw new RuntimeException("La venta que desea cerrar aun no tiene asignado un metodo de pago");
+        }
+
         ventaPorCerrar.setFechaCierre(LocalDateTime.now());
         ventaPorCerrar.setEstadoPago(true);
 
