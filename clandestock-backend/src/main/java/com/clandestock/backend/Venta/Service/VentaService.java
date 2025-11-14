@@ -12,6 +12,7 @@ import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.service.UsuarioService;
 import com.clandestock.backend.venta.dto.NuevaVentaRequestDTO;
 import com.clandestock.backend.venta.dto.ProductoVentaResponseDTO;
+import com.clandestock.backend.venta.dto.VentaFiltroDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
 import com.clandestock.backend.venta.modelos.Caja;
 import com.clandestock.backend.venta.modelos.Local;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -142,13 +144,22 @@ public class VentaService {
         productoxVentaService.guardar(pxv);
         // Actualizar venta
         venta.getProductos().add(pxv);
-        // aca hacer nueva funcion para calculo de total si hay metodo de pago
 
         BigDecimal nuevoTotal = venta.getPrecioTotal() == null
                 ? producto.getPrecioProducto()
                 : venta.getPrecioTotal().add(producto.getPrecioProducto());
         venta.setPrecioTotal(nuevoTotal);
         ventaRepository.save(venta);
+
+        // Actualizar monto en caso de tener metodo de pago insertado
+        if (venta.getMetodoPago() != null){
+            BigDecimal precioFinal = calcularPrecioFinal(venta.getPrecioTotal(), venta.getMetodoPago());
+
+            venta.setPrecioTotalConMetodoDePago(precioFinal);
+
+            Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+        }
+
         return toResponseDTO(venta);
     }
 
@@ -184,12 +195,20 @@ public class VentaService {
         productoxVentaService.eliminar(pxv.getId());
         // Actualizar venta
         venta.getProductos().removeIf(p -> p.getId().equals(idProductoxVenta));
-        // aca hacer nueva funcion para calculo de total si hay metodo de pago
-
 
         BigDecimal nuevoTotal = venta.getPrecioTotal().subtract(pxv.getPrecioProducto());
         venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : null);
         ventaRepository.save(venta);
+
+        // Actualizar monto en caso de tener metodo de pago insertado
+        if (venta.getMetodoPago() != null){
+            BigDecimal precioFinal = calcularPrecioFinal(venta.getPrecioTotal(), venta.getMetodoPago());
+
+            venta.setPrecioTotalConMetodoDePago(precioFinal);
+
+            Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+        }
+
         return toResponseDTO(venta);
     }
 
@@ -255,14 +274,67 @@ public class VentaService {
                     .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
             precioFinal = precioOriginal.subtract(precioOriginal.multiply(descuento));
 
-            System.out.println("Entro a descuento");
+            //System.out.println("Entro a descuento");
         } else if (metodoPago.getIncremento() != 0) {
             BigDecimal incremento = BigDecimal.valueOf(metodoPago.getIncremento())
                     .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
             precioFinal = precioOriginal.add(precioOriginal.multiply(incremento));
-            System.out.println("Entro a incremento");
+            //System.out.println("Entro a incremento");
         }
 
         return precioFinal.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    //CERRAR VENTA
+
+    public VentaResponseDTO cerrarVenta (Long idVenta) {
+        Venta ventaPorCerrar = ventaRepository.findById(idVenta)
+                .orElseThrow(() -> new EntityNotFoundException("Venta con ID "+ idVenta + " no existente "));
+
+        if (ventaPorCerrar.getFechaCierre() != null && Boolean.TRUE.equals(ventaPorCerrar.getEstadoPago())) {
+            throw new IllegalStateException("La venta ya está cerrada");
+        }
+
+        if(ventaPorCerrar.getMetodoPago() == null && ventaPorCerrar.getPrecioTotalConMetodoDePago() == null) {
+            throw new RuntimeException("La venta que desea cerrar aun no tiene asignado un metodo de pago");
+        }
+
+        ventaPorCerrar.setFechaCierre(LocalDateTime.now());
+        ventaPorCerrar.setEstadoPago(true);
+
+        Venta ventaCerrada = ventaRepository.save(ventaPorCerrar);
+
+        return toResponseDTO(ventaCerrada);
+    }
+
+    public List<VentaResponseDTO> filtrarVentas(VentaFiltroDTO filtros) {
+        Specification<Venta> spec = Specification.where(null);
+
+        if (filtros.usuarioId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("usuario").get("id"), Long.parseLong(filtros.usuarioId())));
+        }
+        if (filtros.metodoPagoId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("metodoPago").get("id"), Long.parseLong(filtros.metodoPagoId())));
+        }
+        if (filtros.localId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("local").get("id"), Long.parseLong(filtros.localId())));
+        }
+        if (filtros.cajaId() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("caja").get("id"), Long.parseLong(filtros.cajaId())));
+        }
+        if (filtros.fechaDesde() != null && filtros.fechaHasta() != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.between(root.get("fechaApertura"), filtros.fechaDesde(), filtros.fechaHasta()));
+        }
+
+        List<Venta> ventas = ventaRepository.findAll();
+
+        return ventas.stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 }

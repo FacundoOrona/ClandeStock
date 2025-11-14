@@ -1,5 +1,6 @@
 package com.clandestock.backend.venta.controller;
 
+import com.clandestock.backend.venta.dto.VentaFiltroDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/venta")
@@ -77,13 +80,35 @@ public class VentaController {
     public ResponseEntity<?> insertarMetodoPagoEnVenta (@PathVariable Long idMetodoPago, @PathVariable Long idVenta) {
         try {
             VentaResponseDTO venta = ventaService.asignarMetodoPagoAVenta(idMetodoPago, idVenta);
-            System.out.println("Precio total sin modificar: $" + venta.precioTotal);
-            System.out.println("Precio total con metodo de pago efectuado: $" + venta.precioTotalConMetodoDePago);
+            //System.out.println("Precio total sin modificar: $" + venta.precioTotal);
+            //System.out.println("Precio total con metodo de pago efectuado: $" + venta.precioTotalConMetodoDePago);
             return ResponseEntity.ok(venta);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/cerrar/{idVenta}")
+    public ResponseEntity<?> cerarVenta (@PathVariable Long idVenta) {
+        try {
+            VentaResponseDTO venta = ventaService.cerrarVenta(idVenta);
+            return ResponseEntity.ok(venta);
+        } catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/filtrar")
+    public ResponseEntity<?> filtrarVentas(@RequestBody VentaFiltroDTO filtros) {
+        try {
+            List<VentaResponseDTO> ventas = ventaService.filtrarVentas(filtros);
+            return ResponseEntity.ok(ventas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al filtrar las ventas: " + e.getMessage());
         }
     }
 }
