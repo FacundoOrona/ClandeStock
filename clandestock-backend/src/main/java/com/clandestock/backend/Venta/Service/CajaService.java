@@ -3,6 +3,8 @@ package com.clandestock.backend.venta.service;
 import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.service.UsuarioService;
+import com.clandestock.backend.venta.dto.DetalleCajaResponseDTO;
+import com.clandestock.backend.venta.dto.ReporteCajaResponseDTO;
 import com.clandestock.backend.venta.dto.CajaResponseDTO;
 import com.clandestock.backend.venta.modelos.Caja;
 import com.clandestock.backend.venta.modelos.Local;
@@ -11,6 +13,10 @@ import com.clandestock.backend.venta.repository.VentaRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +29,8 @@ public class CajaService {
     private LocalService localService;
     private final VentaRepository ventaRepository;
 
-    public CajaService(CajaRepository cajaRepository, UsuarioService usuarioService, LocalService localService, VentaRepository ventaRepository) {
+    public CajaService(CajaRepository cajaRepository, UsuarioService usuarioService, LocalService localService,
+            VentaRepository ventaRepository) {
         this.cajaRepository = cajaRepository;
         this.usuarioService = usuarioService;
         this.localService = localService;
@@ -79,7 +86,54 @@ public class CajaService {
 
     private boolean cajaPoseeVentasAbiertas(Caja caja) {
         return ventaRepository.existsByCajaAndEstadoPago(caja, false)
-                && ventaRepository.existsByCajaAndFechaCierreIsNull(caja);
+                || ventaRepository.existsByCajaAndFechaCierreIsNull(caja);
+    }
+
+    public List<ReporteCajaResponseDTO> listarCajasCerradas() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (!usuario.esAdminGeneral()) {
+            throw new RuntimeException("Se necesita permiso de administrador");
+        }
+
+        List<Object[]> resultados = ventaRepository.obtenerTotalesPorCajaYMetodo();
+        Map<Long, ReporteCajaResponseDTO> reporteMap = new HashMap<>();
+
+        for (Object[] fila : resultados) {
+            Long cajaId = (Long) fila[0];
+            String metodoPago = (String) fila[1];
+            BigDecimal total = (BigDecimal) fila[2];
+            ReporteCajaResponseDTO reporte = reporteMap.getOrDefault(cajaId,
+                    new ReporteCajaResponseDTO(cajaId, BigDecimal.ZERO, new ArrayList<>()));
+            reporte.detallePorMetodo.add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
+            reporte.totalGeneral = reporte.totalGeneral.add(total);
+            reporteMap.put(cajaId, reporte);
+        }
+        return new ArrayList<>(reporteMap.values());
+    }
+
+    public List<ReporteCajaResponseDTO> listarCajasAbiertas() {
+
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (!usuario.esAdminGeneral()) {
+            throw new RuntimeException("Se necesita permiso de administrador");
+        }
+
+        List<Object[]> resultados = ventaRepository.obtenerTotalesPorCajaAbiertaYMetodo();
+        Map<Long, ReporteCajaResponseDTO> reporteMap = new HashMap<>();
+
+        for (Object[] fila : resultados) {
+            Long cajaId = (Long) fila[0];
+            String metodoPago = (String) fila[1];
+            BigDecimal total = (BigDecimal) fila[2];
+            ReporteCajaResponseDTO reporte = reporteMap.computeIfAbsent(
+                    cajaId,
+                    id -> new ReporteCajaResponseDTO(id, BigDecimal.ZERO, new ArrayList<>()));
+            reporte.detallePorMetodo.add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
+            reporte.totalGeneral = reporte.totalGeneral.add(total);
+        }
+        return new ArrayList<>(reporteMap.values());
     }
 
     private CajaResponseDTO toDTO(Caja entity) {
