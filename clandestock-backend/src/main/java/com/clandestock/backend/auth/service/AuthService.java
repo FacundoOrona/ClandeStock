@@ -50,6 +50,24 @@ public class AuthService {
         return new TokenResponse(jwtToken, refreshToken);
     }
 
+    public RegistroResponse registrarModerador (RegistroRequest request){
+        TipoUsuarioEnum tipoUsuario = request.tipoUsuario();
+
+        if (tipoUsuario == null) {
+            throw new IllegalArgumentException("El tipo de usuario no puede ser nulo");
+        }
+
+        var moderador = Usuario.builder()
+                .nombreUsuario(request.nombreUsuario())
+                .tipoUsuario(tipoUsuario)
+                .contrasena(passwordEncoder.encode(request.contrasena()))
+                .fechaCreacion(LocalDateTime.now())
+                .build();
+        var moderadorGuardado = usuarioRepository.save(moderador);
+
+        return toResponse(moderadorGuardado);
+    }
+
     private void saveTokenUsuario(Usuario usuario, String jwtToken) {
         var token = Token.builder()
                 .usuario(usuario)
