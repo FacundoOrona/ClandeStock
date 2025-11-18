@@ -34,6 +34,6 @@ public class Reporte {
     @JoinColumn(name = "usuarioEmisor", nullable = false)
     private Usuario usuarioEmisor;
 
-    @Column(length = 20)
-    private String estado;
+    @Column(nullable = false)
+    private Boolean estado = false;
 }
