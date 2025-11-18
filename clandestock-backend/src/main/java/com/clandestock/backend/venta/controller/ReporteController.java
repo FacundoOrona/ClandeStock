@@ -14,4 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/reporte")
 public class ReporteController {
+
+    private final ReporteService reporteService;
+    public ReporteController(ReporteService reporteService){
+        this.reporteService = reporteService;
+    }
+
 }
