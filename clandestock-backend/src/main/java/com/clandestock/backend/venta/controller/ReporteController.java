@@ -32,4 +32,16 @@ public class ReporteController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ReporteResponse> checkReporte(@PathVariable Long id) {
+        try {
+            ReporteResponse reporteResponse = reporteService.checkReporte(id);
+            return ResponseEntity.ok(reporteResponse);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }
