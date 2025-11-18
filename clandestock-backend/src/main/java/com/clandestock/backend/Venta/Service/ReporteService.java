@@ -17,5 +17,15 @@ public class ReporteService {
 
     public ReporteService(ReporteRepository reporteRepository, UsuarioRepository usuarioRepository) {
         this.reporteRepository = reporteRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public ReporteResponse cargarReporte (ReporteRequest request){
+        Reporte reporte = toEntity(request);
+        reporte.setEstado(false);
+        Reporte reporteGuardado = reporteRepository.save(reporte);
+        return toResponse(reporteGuardado);
+    }
+
     }
 }
