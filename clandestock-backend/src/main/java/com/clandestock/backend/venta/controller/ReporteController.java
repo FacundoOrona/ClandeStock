@@ -44,4 +44,16 @@ public class ReporteController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReporte(@PathVariable Long id) {
+        try {
+            reporteService.deleteReporte(id);
+            return ResponseEntity.ok("Reporte eliminado correctamente");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
+        }
+    }
+
 }
