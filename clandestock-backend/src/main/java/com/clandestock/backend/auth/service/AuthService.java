@@ -68,6 +68,14 @@ public class AuthService {
         return toResponse(moderadorGuardado);
     }
 
+    public RegistroResponse toResponse(Usuario usuario) {
+        return new RegistroResponse(
+                usuario.getNombreUsuario(),
+                usuario.getTipoUsuario().name(), // devuelve el nombre del enum
+                usuario.getFechaCreacion().toString()
+        );
+    }
+
     private void saveTokenUsuario(Usuario usuario, String jwtToken) {
         var token = Token.builder()
                 .usuario(usuario)
