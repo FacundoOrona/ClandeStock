@@ -38,5 +38,12 @@ public class ReporteService {
     }
 
     public ReporteResponse toResponse (Reporte reporte){
+        return new ReporteResponse(
+                reporte.getDescripcion(),
+                reporte.getUsuarioEmisor().getNombreUsuario(),
+                reporte.getEstado().toString()
+        );
+    }
+
     }
 }
