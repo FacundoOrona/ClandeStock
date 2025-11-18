@@ -27,4 +27,9 @@ public enum TipoUsuarioEnum {
     public boolean puedeVerLocal(String localSolicitado) {
         return esAdminGeneral() || (local != null && local.equalsIgnoreCase(localSolicitado));
     }
+
+    @Override
+    public String toString() {
+        return local != null ? local : "admin_general";
+    }
 }
