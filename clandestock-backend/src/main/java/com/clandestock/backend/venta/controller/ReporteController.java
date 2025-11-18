@@ -20,4 +20,16 @@ public class ReporteController {
         this.reporteService = reporteService;
     }
 
+    @PostMapping
+    public ResponseEntity<?> cargarReporte (@RequestBody ReporteRequest reporteRequest){
+        try {
+            ReporteResponse reporteResponse = reporteService.cargarReporte(reporteRequest);
+            return ResponseEntity.ok(reporteResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }
