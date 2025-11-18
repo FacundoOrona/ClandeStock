@@ -45,5 +45,13 @@ public class ReporteService {
         );
     }
 
+    public ReporteResponse checkReporte (Long idReporte) {
+        Reporte reporte = reporteRepository.findById(idReporte)
+                .orElseThrow(() -> new EntityNotFoundException("Reporte con ID inexistente"));
+        reporte.setEstado(true);
+        Reporte reporteCheck = reporteRepository.save(reporte);
+        return toResponse(reporteCheck);
+    }
+
     }
 }
