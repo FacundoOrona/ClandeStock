@@ -27,7 +27,7 @@ export default function Login() {
 
     return (
         <div className="container mt-5">
-            <form onSubmit={handleSubmit} className="bg-light login-box mx-auto p-4 rounded shadow">
+            <form onSubmit={handleSubmit} className="bg-light login-box mx-5 p-4 rounded shadow">
                 <Title text="Iniciar sesión" />
 
                 <div className="mb-3">
