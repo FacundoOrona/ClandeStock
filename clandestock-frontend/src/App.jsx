@@ -1,10 +1,7 @@
+import AppRouter from './routes/AppRouter';
+
 function App() {
-  return (
-    <>
-      <h1 className="container text-center">
-        Clandestock
-      </h1>
-    </>
-  )
+  return <AppRouter />;
 }
-export default App
+
+export default App;
