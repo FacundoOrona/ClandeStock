@@ -2,6 +2,7 @@ package com.clandestock.backend.auth.service;
 
 import com.clandestock.backend.auth.dto.LoginRequest;
 import com.clandestock.backend.auth.dto.RegistroRequest;
+import com.clandestock.backend.auth.dto.RegistroResponse;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.modelos.Token;
 import com.clandestock.backend.auth.repository.TokenRepository;
@@ -11,7 +12,9 @@ import com.clandestock.backend.usuario.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,12 +37,11 @@ public class AuthService {
             throw new RuntimeException("Tipo de usuario invalido");
         }
 
-        System.out.println("NOM:" + request.nombreUsuario());
         var usuario = Usuario.builder()
                 .nombreUsuario(request.nombreUsuario())
                 .contrasena(passwordEncoder.encode(request.contrasena()))
                 .tipoUsuario(tipo)
-                .fechaCreacion(request.fechaCreacion())
+                .fechaCreacion(LocalDateTime.now())
                 .build();
         var usuarioGuardado = usuarioRepository.save(usuario);
         var jwtToken = jwtService.generateToken(usuario);
