@@ -14,7 +14,7 @@ export default function Login() {
         e.preventDefault();
         try {
             await login(username, contrasena);
-            if (user?.tipoUsuario === 'ADMIN_GENERAL') {
+            if (user.tipoUsuario === 'ADMIN_GENERAL') {
                 navigate('/admin');
             } else {
                 navigate('/moderador');
