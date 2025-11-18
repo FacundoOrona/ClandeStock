@@ -53,5 +53,9 @@ public class ReporteService {
         return toResponse(reporteCheck);
     }
 
+    public void deleteReporte (Long idReporte) {
+        Reporte reporte = reporteRepository.findById(idReporte)
+                .orElseThrow(()-> new EntityNotFoundException("Reporte no existente"));
+        reporteRepository.delete(reporte);
     }
 }
