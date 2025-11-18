@@ -2,8 +2,10 @@ package com.clandestock.backend.auth.controller;
 
 import com.clandestock.backend.auth.dto.LoginRequest;
 import com.clandestock.backend.auth.dto.RegistroRequest;
+import com.clandestock.backend.auth.dto.RegistroResponse;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,12 @@ public class AuthController {
     public ResponseEntity<TokenResponse> registro(@RequestBody final RegistroRequest request) {
         final TokenResponse token = service.registro(request);
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/register-mod")
+    public ResponseEntity<?> registroModerador(@RequestBody RegistroRequest mod){
+        RegistroResponse modResponse = service.registrarModerador(mod);
+        return ResponseEntity.ok(modResponse);
     }
 
     @PostMapping("/login")
