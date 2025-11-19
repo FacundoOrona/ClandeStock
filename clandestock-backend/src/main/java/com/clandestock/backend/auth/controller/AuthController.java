@@ -5,12 +5,12 @@ import com.clandestock.backend.auth.dto.RegistroRequest;
 import com.clandestock.backend.auth.dto.RegistroResponse;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.service.AuthService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
