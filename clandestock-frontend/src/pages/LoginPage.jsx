@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Title from '../components/Title';
@@ -7,14 +7,14 @@ import PrimaryButton from '../components/PrimaryButtonSubmit';
 export default function Login() {
     const [username, setUsername] = useState('');
     const [contrasena, setContrasena] = useState('');
-    const { login, user } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(username, contrasena);
-            if (user.tipoUsuario === 'ADMIN_GENERAL') {
+            const { tipoUsuario } = await login(username, contrasena);
+            if (tipoUsuario === 'ADMIN_GENERAL') {
                 navigate('/admin');
             } else {
                 navigate('/moderador');

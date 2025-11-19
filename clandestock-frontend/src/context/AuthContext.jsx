@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { login as loginService } from '../api/auth';
 import { jwtDecode } from 'jwt-decode';
 
@@ -6,6 +6,21 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                setUser({ username: decoded.sub, tipoUsuario: decoded.tipoUsuario });
+            } catch (err) {
+                console.error("Error decodificando token:", err);
+                setUser(null);
+            }
+        }
+        setLoading(false);
+    }, []);
 
     const login = async (username, contrasena) => {
         const data = await loginService(username, contrasena);
@@ -25,10 +40,10 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const isAuthenticated = !!localStorage.getItem('access_token');
+    const isAuthenticated = !!user;
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading }}>
             {children}
         </AuthContext.Provider>
     );
