@@ -4,7 +4,7 @@ import { ModeradorPage } from "../pages/ModeradorPage";
 import { AdminPage } from "../pages/AdminPage";
 import PrivateModeradorRoute from "./PrivateModeradorRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
-import RegistrarModeradorPage from "../pages/RegistrarModeradorPage"; // nuevo import
+import RegistrarModeradorPage from "../pages/pagesAdministrador/RegistrarModeradorPage";
 
 export default function AppRouter() {
   return (
