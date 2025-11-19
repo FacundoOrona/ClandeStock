@@ -9,21 +9,16 @@ import RegistrarModeradorPage from "../pages/pagesAdministrador/RegistrarModerad
 export default function AppRouter() {
   return (
     <Routes>
+      {/* ACCESO GENERAL */}
       <Route path="/login" element={<Login />} />
+
+      {/* ACCESO ADMINISTRADOR */}
       <Route
         path="/admin"
         element={
           <PrivateAdminRoute>
             <AdminPage />
           </PrivateAdminRoute>
-        }
-      />
-      <Route
-        path="/moderador"
-        element={
-          <PrivateModeradorRoute>
-            <ModeradorPage />
-          </PrivateModeradorRoute>
         }
       />
       <Route
@@ -34,6 +29,17 @@ export default function AppRouter() {
           </PrivateAdminRoute>
         }
       />
+
+      {/* ACCESO MODERADOR */}
+      <Route
+        path="/moderador"
+        element={
+          <PrivateModeradorRoute>
+            <ModeradorPage />
+          </PrivateModeradorRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
