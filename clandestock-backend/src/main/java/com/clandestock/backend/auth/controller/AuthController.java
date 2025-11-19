@@ -8,6 +8,7 @@ import com.clandestock.backend.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
@@ -24,6 +25,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
     @PostMapping("/register-mod")
     public ResponseEntity<?> registroModerador(@RequestBody RegistroRequest mod){
         RegistroResponse modResponse = service.registrarModerador(mod);
