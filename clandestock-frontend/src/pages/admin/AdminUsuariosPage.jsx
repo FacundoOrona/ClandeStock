@@ -105,9 +105,9 @@ export const AdminUsuariosPage = () => {
 
   return (
     <div className="container mt-5">
-      <div className="row">
+      <div className="row align-items-start">
         {/* 📊 Columna izquierda: listado */}
-        <div className="col-md-8">
+        <div className="col-lg-9">
           <h2 className="text-warning mb-4 gothic-font">Lista de usuarios</h2>
           <table className="table table-striped table-bordered shadow">
             <thead className="table-warning">
@@ -139,21 +139,21 @@ export const AdminUsuariosPage = () => {
                     </td>
                     <td>
                       <button
-                        className="btn btn-sm btn-outline-primary me-2"
+                        className="btn btn-primary btn-sm me-2"
                         onClick={() => handleEditar(usuario)}
                       >
                         Editar
                       </button>
                       {isActivo ? (
                         <button
-                          className="btn btn-sm btn-outline-danger"
+                          className="btn btn-danger btn-sm"
                           onClick={() => handleToggleEstado(usuario.id, true)}
                         >
                           Desactivar
                         </button>
                       ) : (
                         <button
-                          className="btn btn-sm btn-outline-success"
+                          className="btn btn-success btn-sm"
                           onClick={() => handleToggleEstado(usuario.id, false)}
                         >
                           Activar
@@ -168,7 +168,7 @@ export const AdminUsuariosPage = () => {
         </div>
 
         {/* 📌 Columna derecha: acciones + panel de edición */}
-        <div className="col-md-4">
+        <div className="col-lg-3">
           <div className="card shadow p-3 mb-4">
             <h5 className="text-warning gothic-font mb-3">Acciones rápidas</h5>
             <button className="btn btn-warning w-100" onClick={irARegistro}>
@@ -201,6 +201,7 @@ export const AdminUsuariosPage = () => {
                   value={tipoUsuarioEdit}
                   onChange={(e) => setTipoUsuarioEdit(e.target.value)}
                 >
+                  <option value="">-- Seleccionar --</option>
                   <option value="MODERADOR_TENEDOR_LIBRE">
                     Moderador Tenedor Libre
                   </option>
