@@ -1,6 +1,7 @@
 package com.clandestock.backend.venta.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,15 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
                         "WHERE v.caja.estado = true " +
                         "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago")
         List<Object[]> obtenerTotalesPorCajaAbiertaYMetodo();
+
+        @Query("SELECT v.caja.id, v.metodoPago.nombreMetodoPago, SUM(v.precioTotalConMetodoDePago) " +
+                        "FROM Venta v " +
+                        "WHERE v.caja.estado = true AND v.caja.local.nombreLocal = :nombreLocal " +
+                        "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago")
+        List<Object[]> obtenerTotalesPorCajaAbiertaYMetodoPorLocal(String nombreLocal);
+
+        List<Venta> findByEstadoPagoIsFalse();
+
+        List<Venta> findByLocal_NombreLocalAndEstadoPagoIsFalse(String local);
+
 }
