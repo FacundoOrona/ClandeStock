@@ -1,18 +1,16 @@
-import { useNavigate } from "react-router-dom";
-import PrimaryButton from "../components/PrimaryButtonSubmit";
+import { useContext } from "react";
+import { AuthContext } from "./../context/AuthContext";
+import "./../styles/adminPage.css"; // nuevo archivo de estilos
 
 export const AdminPage = () => {
-  const navigate = useNavigate();
-
-  const irARegistro = () => {
-    navigate("/admin/registrar-moderador");
-  };
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="container mt-5 text-center">
-      <button className="btn btn-warning" onClick={irARegistro}>
-        Registrar Moderador
-      </button>
+      <h1 className="admin-welcome text-warning">
+        Bienvenido al panel de administrador de{" "}
+        <span className="brand">ClandeStock</span>, {user?.username}
+      </h1>
     </div>
   );
 };
