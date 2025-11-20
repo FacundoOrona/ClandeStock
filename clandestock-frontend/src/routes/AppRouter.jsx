@@ -9,6 +9,7 @@ import { AdminProductosPage } from "./../pages/admin/AdminProductosPage";
 import { AdminReportesPage } from "../pages/admin/AdminReportesPage";
 import { AdminVentasPage } from "../pages/admin/AdminVentasPage";
 import { AdminUsuariosPage } from "./../pages/admin/AdminUsuariosPage";
+import AdminEstadisticasPage from "../pages/admin/AdminEstadisticasPage";
 
 export default function AppRouter() {
   return (
@@ -62,6 +63,14 @@ export default function AppRouter() {
         element={
           <PrivateAdminRoute>
             <AdminReportesPage />
+          </PrivateAdminRoute>
+        }
+      />
+      <Route
+        path="/admin/estadisticas"
+        element={
+          <PrivateAdminRoute>
+            <AdminEstadisticasPage />
           </PrivateAdminRoute>
         }
       />
