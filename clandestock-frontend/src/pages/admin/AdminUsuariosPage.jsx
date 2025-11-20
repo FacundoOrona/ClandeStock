@@ -12,7 +12,6 @@ export const AdminUsuariosPage = () => {
 
   const token = localStorage.getItem("access_token");
 
-  // 🔐 Cargar usuarios
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
@@ -33,7 +32,6 @@ export const AdminUsuariosPage = () => {
     navigate("/admin/registrar-moderador");
   };
 
-  // ✏️ Editar usuario
   const handleEditar = (usuario) => {
     setEditingUser(usuario);
     setNombreUsuarioEdit(usuario.nombreUsuario);
@@ -82,7 +80,6 @@ export const AdminUsuariosPage = () => {
     }
   };
 
-  // 🔄 Activar / Desactivar usuario
   const handleToggleEstado = async (id, isActivo) => {
     try {
       const endpoint = isActivo
@@ -107,12 +104,14 @@ export const AdminUsuariosPage = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container-fluid mt-4">
       <div className="row align-items-start">
         {/* 📊 Columna izquierda: listado */}
-        <div className="col-8 ms-0">
+        <div className="col-lg-8 col-md-7 ps-4">
+          {" "}
+          {/* margen/padding más amplio */}
           <h2 className="text-warning mb-4 gothic-font">Lista de usuarios</h2>
-          <table className="table table-striped table-bordered shadow">
+          <table className="table table-hover table-bordered shadow w-100">
             <thead className="table-warning">
               <tr>
                 <th>Nombre Usuario</th>
@@ -152,7 +151,7 @@ export const AdminUsuariosPage = () => {
                           className="btn btn-danger btn-sm"
                           onClick={() => handleToggleEstado(usuario.id, true)}
                         >
-                          Desactivar
+                          Dar baja
                         </button>
                       ) : (
                         <button
@@ -171,16 +170,19 @@ export const AdminUsuariosPage = () => {
         </div>
 
         {/* 📌 Columna derecha: acciones + panel de edición */}
-        <div className="col-4 mt-5">
+        <div className="col-lg-4 col-md-5 mt-5">
+          {" "}
+          {/* bajamos más los paneles */}
           <div className="card shadow p-3 mb-4">
             <h5 className="text-warning gothic-font mb-3">Acciones rápidas</h5>
             <button className="btn btn-warning w-100" onClick={irARegistro}>
               Registrar Moderador
             </button>
           </div>
-
           {editingUser && (
-            <div className="card shadow p-4 mt-4">
+            <div className="card shadow p-4 mt-5">
+              {" "}
+              {/* más espacio arriba */}
               <h5 className="text-warning gothic-font mb-3">
                 Editar Usuario: {editingUser.nombreUsuario}
               </h5>
