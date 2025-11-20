@@ -80,4 +80,21 @@ public class UsuarioService {
 
         return toResponse(usuario);
     }
+
+    public UsuarioResponseDTO editarUsuario(Long id, UsuarioRequestDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+
+        // Actualizamos solo nombre y tipo
+        if (dto.nombreUsuario() != null) {
+            usuario.setNombreUsuario(dto.nombreUsuario());
+        }
+        if (dto.tipoUsuario() != null) {
+            usuario.setTipoUsuario(TipoUsuarioEnum.valueOf(dto.tipoUsuario()));
+        }
+
+        usuarioRepository.save(usuario);
+
+        return toResponse(usuario);
+    }
 }

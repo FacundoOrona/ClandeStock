@@ -1,5 +1,6 @@
 package com.clandestock.backend.usuario.controller;
 
+import com.clandestock.backend.usuario.dto.UsuarioRequestDTO;
 import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.usuario.service.UsuarioService;
@@ -49,6 +50,20 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al dar de alta el usuario");
+        }
+    }
+
+    @PutMapping("/{id}/editar")
+    public ResponseEntity<?> editarUsuario(@PathVariable Long id,
+                                           @RequestBody UsuarioRequestDTO dto) {
+        try {
+            UsuarioResponseDTO response = usuarioService.editarUsuario(id, dto);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al editar el usuario");
         }
     }
 }

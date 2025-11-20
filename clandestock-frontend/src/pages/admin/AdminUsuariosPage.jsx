@@ -6,6 +6,9 @@ export const AdminUsuariosPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [usuarios, setUsuarios] = useState([]);
+  const [editingUser, setEditingUser] = useState(null); // usuario en edición
+  const [nombreUsuarioEdit, setNombreUsuarioEdit] = useState("");
+  const [tipoUsuarioEdit, setTipoUsuarioEdit] = useState("");
 
   const token = localStorage.getItem("access_token");
 
@@ -31,17 +34,60 @@ export const AdminUsuariosPage = () => {
     navigate("/admin/registrar-moderador");
   };
 
-  const handleEditar = (id) => {
-    alert(`Editar usuario con ID: ${id}`);
-    // Aquí podrías redirigir a un formulario de edición
+  const handleEditar = (usuario) => {
+    setEditingUser(usuario);
+    setNombreUsuarioEdit(usuario.nombreUsuario);
+    setTipoUsuarioEdit(usuario.tipoUsuario);
   };
 
-  const handleToggleEstado = async (id, estadoActual) => {
+  const handleGuardarCambios = async () => {
+    if (!editingUser) return;
     try {
-      const endpoint =
-        estadoActual === "false" || estadoActual === false
-          ? `http://localhost:8080/usuario/${id}/alta`
-          : `http://localhost:8080/usuario/${id}/baja`;
+      const body = {
+        nombreUsuario: nombreUsuarioEdit || null,
+        tipoUsuario: tipoUsuarioEdit || null,
+      };
+
+      const response = await fetch(
+        `http://localhost:8080/usuario/${editingUser.id}/editar`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (!response.ok) throw new Error("Error al editar usuario");
+
+      // Actualizar lista en frontend
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.id === editingUser.id
+            ? {
+                ...u,
+                nombreUsuario: nombreUsuarioEdit,
+                tipoUsuario: tipoUsuarioEdit,
+              }
+            : u
+        )
+      );
+
+      alert("Cambios guardados correctamente");
+      setEditingUser(null); // cerrar panel
+    } catch (err) {
+      console.error("Error guardando cambios:", err);
+      alert("Error al guardar cambios");
+    }
+  };
+
+  const handleToggleEstado = async (id, isActivo) => {
+    try {
+      const endpoint = isActivo
+        ? `http://localhost:8080/usuario/${id}/baja`
+        : `http://localhost:8080/usuario/${id}/alta`;
 
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -52,18 +98,9 @@ export const AdminUsuariosPage = () => {
 
       if (!response.ok) throw new Error("Error cambiando estado");
 
-      // Actualizar estado en frontend
       setUsuarios((prev) =>
         prev.map((u) =>
-          u.id === id
-            ? {
-                ...u,
-                estado:
-                  estadoActual === "false" || estadoActual === false
-                    ? "true"
-                    : "false",
-              }
-            : u
+          u.id === id ? { ...u, estado: isActivo ? false : true } : u
         )
       );
     } catch (err) {
@@ -108,7 +145,7 @@ export const AdminUsuariosPage = () => {
                     <td>
                       <button
                         className="btn btn-sm btn-outline-primary me-2"
-                        onClick={() => handleEditar(usuario.id)}
+                        onClick={() => handleEditar(usuario)}
                       >
                         Editar
                       </button>
@@ -145,6 +182,53 @@ export const AdminUsuariosPage = () => {
           </div>
         </div>
       </div>
+
+      {/* 📝 Minipanel de edición */}
+      {editingUser && (
+        <div className="card shadow p-4 mt-4">
+          <h5 className="text-warning gothic-font mb-3">
+            Editar Usuario: {editingUser.nombreUsuario}
+          </h5>
+          <div className="mb-3">
+            <label className="form-label text-warning">Nombre de Usuario</label>
+            <input
+              type="text"
+              className="form-control border-warning shadow-none"
+              value={nombreUsuarioEdit}
+              onChange={(e) => setNombreUsuarioEdit(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label text-warning">Tipo de Usuario</label>
+            <select
+              className="form-select border-warning shadow-none"
+              value={tipoUsuarioEdit}
+              onChange={(e) => setTipoUsuarioEdit(e.target.value)}
+            >
+              <option value="">-- Seleccionar --</option>
+              <option value="MODERADOR_TENEDOR_LIBRE">
+                Moderador Tenedor Libre
+              </option>
+              <option value="MODERADOR_TERMAS">Moderador Termas</option>
+              <option value="MODERADOR_HELADERIA">Moderador Heladería</option>
+            </select>
+          </div>
+          <div className="text-center">
+            <button
+              className="btn btn-success me-2"
+              onClick={handleGuardarCambios}
+            >
+              Guardar cambios
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setEditingUser(null)}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
