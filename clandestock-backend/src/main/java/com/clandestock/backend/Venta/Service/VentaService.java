@@ -240,101 +240,124 @@ public class VentaService {
         }).toList() : List.of();
         return dto;
     }
-
+    
     // CALCULO DE PRECIO POR METODO DE PAGO.
-
+    
     @Transactional
     public VentaResponseDTO asignarMetodoPagoAVenta(Long idMetodoPago, Long idVenta) {
         MetodoPago metodoPago = metodoPagoRepository.findById(idMetodoPago)
-                .orElseThrow(() -> new EntityNotFoundException("Método de pago con ID " + idMetodoPago + " no existente"));
-
+        .orElseThrow(() -> new EntityNotFoundException("Método de pago con ID " + idMetodoPago + " no existente"));
+        
         Venta venta = ventaRepository.findById(idVenta)
-                .orElseThrow(() -> new EntityNotFoundException("Venta con ID " + idVenta + " no existente"));
-
+        .orElseThrow(() -> new EntityNotFoundException("Venta con ID " + idVenta + " no existente"));
+        
         BigDecimal precioOriginal = venta.getPrecioTotal();
         if (precioOriginal == null) {
             throw new RuntimeException("La venta aún no tiene un precio total definido");
         }
-
+        
         BigDecimal precioFinal = calcularPrecioFinal(precioOriginal, metodoPago);
-
+        
         venta.setMetodoPago(metodoPago);
         venta.setPrecioTotalConMetodoDePago(precioFinal);
-
+        
         Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
-
+        
         return toResponseDTO(ventaConMetodoDePagoIncluido);
     }
-
+    
     private BigDecimal calcularPrecioFinal(BigDecimal precioOriginal, MetodoPago metodoPago) {
         BigDecimal precioFinal = precioOriginal;
-
+        
         if (metodoPago.getDescuento() != 0) {
             BigDecimal descuento = BigDecimal.valueOf(metodoPago.getDescuento())
-                    .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
             precioFinal = precioOriginal.subtract(precioOriginal.multiply(descuento));
-
+            
             //System.out.println("Entro a descuento");
         } else if (metodoPago.getIncremento() != 0) {
             BigDecimal incremento = BigDecimal.valueOf(metodoPago.getIncremento())
-                    .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+            .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
             precioFinal = precioOriginal.add(precioOriginal.multiply(incremento));
             //System.out.println("Entro a incremento");
         }
-
+        
         return precioFinal.setScale(2, RoundingMode.HALF_UP);
     }
-
+    
     //CERRAR VENTA
-
+    
     public VentaResponseDTO cerrarVenta (Long idVenta) {
         Venta ventaPorCerrar = ventaRepository.findById(idVenta)
-                .orElseThrow(() -> new EntityNotFoundException("Venta con ID "+ idVenta + " no existente "));
-
+        .orElseThrow(() -> new EntityNotFoundException("Venta con ID "+ idVenta + " no existente "));
+        
         if (ventaPorCerrar.getFechaCierre() != null && Boolean.TRUE.equals(ventaPorCerrar.getEstadoPago())) {
             throw new IllegalStateException("La venta ya está cerrada");
         }
-
+        
         if(ventaPorCerrar.getMetodoPago() == null && ventaPorCerrar.getPrecioTotalConMetodoDePago() == null) {
             throw new RuntimeException("La venta que desea cerrar aun no tiene asignado un metodo de pago");
         }
-
+        
         ventaPorCerrar.setFechaCierre(LocalDateTime.now());
         ventaPorCerrar.setEstadoPago(true);
-
+        
         Venta ventaCerrada = ventaRepository.save(ventaPorCerrar);
-
+        
         return toResponseDTO(ventaCerrada);
     }
-
+    
     public List<VentaResponseDTO> filtrarVentas(VentaFiltroDTO filtros) {
         Specification<Venta> spec = Specification.where(null);
-
+        
         if (filtros.usuarioId() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("usuario").get("id"), Long.parseLong(filtros.usuarioId())));
+            cb.equal(root.get("usuario").get("id"), Long.parseLong(filtros.usuarioId())));
         }
         if (filtros.metodoPagoId() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("metodoPago").get("id"), Long.parseLong(filtros.metodoPagoId())));
+            cb.equal(root.get("metodoPago").get("id"), Long.parseLong(filtros.metodoPagoId())));
         }
         if (filtros.localId() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("local").get("id"), Long.parseLong(filtros.localId())));
+            cb.equal(root.get("local").get("id"), Long.parseLong(filtros.localId())));
         }
         if (filtros.cajaId() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("caja").get("id"), Long.parseLong(filtros.cajaId())));
+            cb.equal(root.get("caja").get("id"), Long.parseLong(filtros.cajaId())));
         }
         if (filtros.fechaDesde() != null && filtros.fechaHasta() != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.between(root.get("fechaApertura"), filtros.fechaDesde(), filtros.fechaHasta()));
+            cb.between(root.get("fechaApertura"), filtros.fechaDesde(), filtros.fechaHasta()));
         }
-
+        
         List<Venta> ventas = ventaRepository.findAll();
-
+        
         return ventas.stream()
-                .map(this::toResponseDTO)
-                .toList();
+        .map(this::toResponseDTO)
+        .toList();
+    }
+    
+    public List<VentaResponseDTO> obtenerAbiertas() {
+        //Se obtiene el contexto seteado cuando pasa el jwt authentication filters
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        //Se verifica si es admin general y obtiene todas
+        if (usuario.esAdminGeneral()) {
+            return ventaRepository.findByEstadoPagoIsFalse()
+                    .stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+
+        //Caso contario obtiene la corresponiende al local asignado
+        } else {
+
+            return ventaRepository.findByLocal_NombreLocalAndEstadoPagoIsFalse(usuario.getLocal())
+            .stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
+        }
+        
     }
 }
