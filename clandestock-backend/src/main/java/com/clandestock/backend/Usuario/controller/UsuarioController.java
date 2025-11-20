@@ -3,6 +3,7 @@ package com.clandestock.backend.usuario.controller;
 import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.usuario.service.UsuarioService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,27 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("baja/{id}")
-    public ResponseEntity<?> darBajaModerador 
+    @PutMapping("/{id}/baja")
+    public ResponseEntity<?> darDeBaja(@PathVariable Long id) {
+        try {
+            UsuarioResponseDTO response = usuarioService.darDeBaja(id);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al dar de baja el usuario");
+        }
+    }
+
+    @PutMapping("/{id}/alta")
+    public ResponseEntity<?> darDeAlta(@PathVariable Long id) {
+        try {
+            UsuarioResponseDTO response = usuarioService.darDeAlta(id);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al dar de alta el usuario");
+        }
+    }
 }
