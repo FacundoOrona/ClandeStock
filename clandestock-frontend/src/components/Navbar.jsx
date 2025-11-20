@@ -1,27 +1,12 @@
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import logo from '../assets/lc-logo2.png';
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import AdminNavbar from "./navbars/AdminNavbar";
+import LoginNavbar from "./navbars/LoginNavbar";
 
 export default function Navbar() {
-    const { logout, isAuthenticated } = useContext(AuthContext);
-    const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-    const handleLogout = () => {
-        logout();              // borra tokens y limpia el user
-        navigate('/login');    // redirige al login
-    };
-
-    return (
-        <nav className="navbar navbar-light bg-light px-3 shadow-sm">
-            <a className="navbar-brand" href="/">
-                <img src={logo} alt="Logo" height="40" />
-            </a>
-            {isAuthenticated && (
-                <button className="btn btn-outline-danger" onClick={handleLogout}>
-                    Cerrar sesión
-                </button>
-            )}
-        </nav>
-    );
+  if (!user) return <LoginNavbar />;
+  if (user.tipoUsuario === "ADMIN_GENERAL") return <AdminNavbar />;
+  return null; // Si es moderador, no mostramos navbar TODAVIA, agregar en el futuro
 }
