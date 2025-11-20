@@ -60,4 +60,24 @@ public class UsuarioService {
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
+
+    public UsuarioResponseDTO darDeBaja(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+
+        usuario.setEstado(false);
+        usuarioRepository.save(usuario);
+
+        return toResponse(usuario);
+    }
+
+    public UsuarioResponseDTO darDeAlta(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+
+        usuario.setEstado(true);
+        usuarioRepository.save(usuario);
+
+        return toResponse(usuario);
+    }
 }
