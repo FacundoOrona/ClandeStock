@@ -7,7 +7,6 @@ export const AdminUsuariosPage = () => {
   const { user } = useContext(AuthContext);
   const [usuarios, setUsuarios] = useState([]);
 
-  // 🔐 Obtener token del localStorage
   const token = localStorage.getItem("access_token");
 
   useEffect(() => {
@@ -38,20 +37,34 @@ export const AdminUsuariosPage = () => {
   };
 
   const handleToggleEstado = async (id, estadoActual) => {
-    const nuevoEstado = estadoActual === "ACTIVO" ? "INACTIVO" : "ACTIVO";
     try {
-      // Ejemplo de llamada PUT/PATCH al backend
-      await fetch(`http://localhost:8080/usuario/${id}/estado`, {
-        method: "PATCH",
+      const endpoint =
+        estadoActual === "false" || estadoActual === false
+          ? `http://localhost:8080/usuario/${id}/alta`
+          : `http://localhost:8080/usuario/${id}/baja`;
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ estado: nuevoEstado }),
       });
+
+      if (!response.ok) throw new Error("Error cambiando estado");
+
       // Actualizar estado en frontend
       setUsuarios((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, estado: nuevoEstado } : u))
+        prev.map((u) =>
+          u.id === id
+            ? {
+                ...u,
+                estado:
+                  estadoActual === "false" || estadoActual === false
+                    ? "true"
+                    : "false",
+              }
+            : u
+        )
       );
     } catch (err) {
       console.error("Error cambiando estado:", err);
@@ -75,34 +88,49 @@ export const AdminUsuariosPage = () => {
               </tr>
             </thead>
             <tbody>
-              {usuarios.map((usuario) => (
-                <tr key={usuario.id}>
-                  <td>{usuario.nombreUsuario}</td>
-                  <td>{usuario.tipoUsuario}</td>
-                  <td>{usuario.fechaCreacion}</td>
-                  <td>{usuario.estado}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-outline-primary me-2"
-                      onClick={() => handleEditar(usuario.id)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className={`btn btn-sm ${
-                        usuario.estado === "ACTIVO"
-                          ? "btn-outline-danger"
-                          : "btn-outline-success"
-                      }`}
-                      onClick={() =>
-                        handleToggleEstado(usuario.id, usuario.estado)
-                      }
-                    >
-                      {usuario.estado === "ACTIVO" ? "Desactivar" : "Activar"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {usuarios.map((usuario) => {
+                const isActivo =
+                  usuario.estado === "true" || usuario.estado === true;
+                return (
+                  <tr key={usuario.id}>
+                    <td>{usuario.nombreUsuario}</td>
+                    <td>{usuario.tipoUsuario}</td>
+                    <td>{usuario.fechaCreacion}</td>
+                    <td>
+                      <span
+                        className={`fw-bold ${
+                          isActivo ? "text-success" : "text-danger"
+                        }`}
+                      >
+                        {isActivo ? "Activo" : "Desactivo"}
+                      </span>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-outline-primary me-2"
+                        onClick={() => handleEditar(usuario.id)}
+                      >
+                        Editar
+                      </button>
+                      {isActivo ? (
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleToggleEstado(usuario.id, true)}
+                        >
+                          Desactivar
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-sm btn-outline-success"
+                          onClick={() => handleToggleEstado(usuario.id, false)}
+                        >
+                          Activar
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
