@@ -4,7 +4,11 @@ import { ModeradorPage } from "../pages/ModeradorPage";
 import { AdminPage } from "../pages/AdminPage";
 import PrivateModeradorRoute from "./PrivateModeradorRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
-import RegistrarModeradorPage from "../pages/pagesAdministrador/RegistrarModeradorPage";
+import RegistrarModeradorPage from "../pages/admin/RegistrarModeradorPage";
+import { AdminProductosPage } from "./../pages/admin/AdminProductosPage";
+import { AdminReportesPage } from "../pages/admin/AdminReportesPage";
+import { AdminVentasPage } from "../pages/admin/AdminVentasPage";
+import { AdminUsuariosPage } from "./../pages/admin/AdminUsuariosPage";
 
 export default function AppRouter() {
   return (
@@ -26,6 +30,38 @@ export default function AppRouter() {
         element={
           <PrivateAdminRoute>
             <RegistrarModeradorPage />
+          </PrivateAdminRoute>
+        }
+      />
+      <Route
+        path="/admin/productos"
+        element={
+          <PrivateAdminRoute>
+            <AdminProductosPage />
+          </PrivateAdminRoute>
+        }
+      />
+      <Route
+        path="/admin/usuarios"
+        element={
+          <PrivateAdminRoute>
+            <AdminUsuariosPage />
+          </PrivateAdminRoute>
+        }
+      />
+      <Route
+        path="/admin/ventas"
+        element={
+          <PrivateAdminRoute>
+            <AdminVentasPage />
+          </PrivateAdminRoute>
+        }
+      />
+      <Route
+        path="/admin/reportes"
+        element={
+          <PrivateAdminRoute>
+            <AdminReportesPage />
           </PrivateAdminRoute>
         }
       />
