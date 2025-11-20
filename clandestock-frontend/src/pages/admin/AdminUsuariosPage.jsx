@@ -6,7 +6,7 @@ export const AdminUsuariosPage = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [usuarios, setUsuarios] = useState([]);
-  const [editingUser, setEditingUser] = useState(null); // usuario en edición
+  const [editingUser, setEditingUser] = useState(null);
   const [nombreUsuarioEdit, setNombreUsuarioEdit] = useState("");
   const [tipoUsuarioEdit, setTipoUsuarioEdit] = useState("");
 
@@ -16,9 +16,7 @@ export const AdminUsuariosPage = () => {
     const fetchUsuarios = async () => {
       try {
         const response = await fetch("http://localhost:8080/usuario", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) throw new Error("Error al obtener usuarios");
         const data = await response.json();
@@ -62,7 +60,6 @@ export const AdminUsuariosPage = () => {
 
       if (!response.ok) throw new Error("Error al editar usuario");
 
-      // Actualizar lista en frontend
       setUsuarios((prev) =>
         prev.map((u) =>
           u.id === editingUser.id
@@ -76,7 +73,7 @@ export const AdminUsuariosPage = () => {
       );
 
       alert("Cambios guardados correctamente");
-      setEditingUser(null); // cerrar panel
+      setEditingUser(null);
     } catch (err) {
       console.error("Error guardando cambios:", err);
       alert("Error al guardar cambios");
@@ -91,9 +88,7 @@ export const AdminUsuariosPage = () => {
 
       const response = await fetch(endpoint, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!response.ok) throw new Error("Error cambiando estado");
@@ -111,8 +106,8 @@ export const AdminUsuariosPage = () => {
   return (
     <div className="container mt-5">
       <div className="row">
-        {/* 📊 Tabla de usuarios */}
-        <div className="col-md-9">
+        {/* 📊 Columna izquierda: listado */}
+        <div className="col-md-8">
           <h2 className="text-warning mb-4 gothic-font">Lista de usuarios</h2>
           <table className="table table-striped table-bordered shadow">
             <thead className="table-warning">
@@ -172,63 +167,67 @@ export const AdminUsuariosPage = () => {
           </table>
         </div>
 
-        {/* 📌 Panel lateral de botones */}
-        <div className="col-md-3 text-center">
-          <div className="card shadow p-3">
+        {/* 📌 Columna derecha: acciones + panel de edición */}
+        <div className="col-md-4">
+          <div className="card shadow p-3 mb-4">
             <h5 className="text-warning gothic-font mb-3">Acciones rápidas</h5>
             <button className="btn btn-warning w-100" onClick={irARegistro}>
               Registrar Moderador
             </button>
           </div>
+
+          {editingUser && (
+            <div className="card shadow p-4">
+              <h5 className="text-warning gothic-font mb-3">
+                Editar Usuario: {editingUser.nombreUsuario}
+              </h5>
+              <div className="mb-3">
+                <label className="form-label text-warning">
+                  Nombre de Usuario
+                </label>
+                <input
+                  type="text"
+                  className="form-control border-warning shadow-none"
+                  value={nombreUsuarioEdit}
+                  onChange={(e) => setNombreUsuarioEdit(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label text-warning">
+                  Tipo de Usuario
+                </label>
+                <select
+                  className="form-select border-warning shadow-none"
+                  value={tipoUsuarioEdit}
+                  onChange={(e) => setTipoUsuarioEdit(e.target.value)}
+                >
+                  <option value="MODERADOR_TENEDOR_LIBRE">
+                    Moderador Tenedor Libre
+                  </option>
+                  <option value="MODERADOR_TERMAS">Moderador Termas</option>
+                  <option value="MODERADOR_HELADERIA">
+                    Moderador Heladería
+                  </option>
+                </select>
+              </div>
+              <div className="text-center">
+                <button
+                  className="btn btn-success me-2"
+                  onClick={handleGuardarCambios}
+                >
+                  Guardar cambios
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setEditingUser(null)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* 📝 Minipanel de edición */}
-      {editingUser && (
-        <div className="card shadow p-4 mt-4">
-          <h5 className="text-warning gothic-font mb-3">
-            Editar Usuario: {editingUser.nombreUsuario}
-          </h5>
-          <div className="mb-3">
-            <label className="form-label text-warning">Nombre de Usuario</label>
-            <input
-              type="text"
-              className="form-control border-warning shadow-none"
-              value={nombreUsuarioEdit}
-              onChange={(e) => setNombreUsuarioEdit(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label text-warning">Tipo de Usuario</label>
-            <select
-              className="form-select border-warning shadow-none"
-              value={tipoUsuarioEdit}
-              onChange={(e) => setTipoUsuarioEdit(e.target.value)}
-            >
-              <option value="">-- Seleccionar --</option>
-              <option value="MODERADOR_TENEDOR_LIBRE">
-                Moderador Tenedor Libre
-              </option>
-              <option value="MODERADOR_TERMAS">Moderador Termas</option>
-              <option value="MODERADOR_HELADERIA">Moderador Heladería</option>
-            </select>
-          </div>
-          <div className="text-center">
-            <button
-              className="btn btn-success me-2"
-              onClick={handleGuardarCambios}
-            >
-              Guardar cambios
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setEditingUser(null)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
