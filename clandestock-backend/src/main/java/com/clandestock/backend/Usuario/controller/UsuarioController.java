@@ -4,10 +4,7 @@ import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.usuario.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,4 +26,7 @@ public class UsuarioController {
             throw new RuntimeException(e);
         }
     }
+
+    @PutMapping("baja/{id}")
+    public ResponseEntity<?> darBajaModerador 
 }
