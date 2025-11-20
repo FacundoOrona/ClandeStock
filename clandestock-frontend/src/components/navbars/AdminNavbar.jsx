@@ -19,7 +19,6 @@ export default function AdminNavbar() {
           <img src={logo} alt="Logo" height="40" />
         </Link>
 
-        {/* Botón hamburguesa para colapsar en mobile */}
         <button
           className="navbar-toggler"
           type="button"
@@ -32,7 +31,6 @@ export default function AdminNavbar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Menú colapsable */}
         <div className="collapse navbar-collapse" id="adminNavbar">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
@@ -53,6 +51,11 @@ export default function AdminNavbar() {
             <li className="nav-item">
               <Link className="nav-link" to="/admin/reportes">
                 Reportes
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/estadisticas">
+                Estadísticas
               </Link>
             </li>
           </ul>
