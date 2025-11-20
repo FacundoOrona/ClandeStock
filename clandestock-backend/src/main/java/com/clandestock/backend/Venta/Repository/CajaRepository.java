@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface CajaRepository extends JpaRepository<Caja, Long> {
 
     Optional<Caja> findByLocalAndEstado(Local local, boolean b);
-    
+    Optional<Caja> findByLocal_NombreLocalAndEstado(String nombreLocal, boolean estado);
 }
