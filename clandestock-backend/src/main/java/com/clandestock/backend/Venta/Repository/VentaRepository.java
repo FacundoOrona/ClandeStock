@@ -31,7 +31,9 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
 
         @Query("SELECT v.caja.id, v.metodoPago.nombreMetodoPago, SUM(v.precioTotalConMetodoDePago) " +
                         "FROM Venta v " +
-                        "WHERE v.caja.estado = true AND v.caja.local.nombreLocal = :nombreLocal " +
+                        "WHERE v.caja.estado = true " +
+                        "AND v.estadoPago = true " +
+                        "AND v.caja.local.nombreLocal = :nombreLocal " +
                         "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago")
         List<Object[]> obtenerTotalesPorCajaAbiertaYMetodoPorLocal(String nombreLocal);
 
