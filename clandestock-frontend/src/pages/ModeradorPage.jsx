@@ -39,7 +39,7 @@ export const ModeradorPage = () => {
     <div className="container-fluid" style={{ height: 'calc(100vh - 67px)' }}>
       <div className="row h-100">
         <div className="col-4 bg-dark text-light p-3 d-flex flex-column">
-          <FuncionesModerador cajaAbierta={cajaAbierta} caja={caja} detalleCaja={detalleCaja} setVistaActiva={setVistaActiva}/>
+          <FuncionesModerador cajaAbierta={cajaAbierta} caja={caja} detalleCaja={detalleCaja} setVistaActiva={setVistaActiva} />
         </div>
         <div className="col-8 bg-light text-muted">
           {vistaActiva === "pedidos" && (
