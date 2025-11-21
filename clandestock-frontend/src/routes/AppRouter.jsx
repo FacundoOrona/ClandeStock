@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/LoginPage";
-import { ModeradorPage } from "../pages/ModeradorPage";
+import { ModeradorPage } from "../pages/moderador/ModeradorPage";
 import { AdminPage } from "../pages/AdminPage";
 import PrivateModeradorRoute from "./PrivateModeradorRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";

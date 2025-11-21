@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import FuncionesModerador from '../components/FuncionesModerador';
-import PanelPedidos from '../components/PanelPedidos';
-import { getEstadoCaja, getDetalleCaja } from '../api/caja';
-import { getVentasActivas } from '../api/pedidos';
+import FuncionesModerador from '../../components/FuncionesModerador';
+import PanelPedidos from '../../components/PanelPedidos';
+import { getEstadoCaja, getDetalleCaja } from '../../api/caja';
+import { getVentasActivas } from '../../api/pedidos';
 
 export const ModeradorPage = () => {
   const [cajaAbierta, setCajaAbierta] = useState(false);
