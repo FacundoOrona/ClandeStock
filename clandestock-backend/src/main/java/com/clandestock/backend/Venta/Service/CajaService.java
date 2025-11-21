@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -113,28 +114,52 @@ public class CajaService {
     }
 
     public List<ReporteCajaResponseDTO> listarCajasAbiertas() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        if (!usuario.esAdminGeneral()) {
-            throw new RuntimeException("Se necesita permiso de administrador");
+        List<Object[]> resultados;
+
+        if (usuario.esAdminGeneral()) {
+            // Admin general ve todas las cajas abiertas
+            resultados = ventaRepository.obtenerTotalesPorCajaAbiertaYMetodo();
+        } else {
+            // Moderador: obtiene solo la caja abierta de su local
+            String nombreLocal = usuario.getLocal(); // viene del contexto
+            resultados = ventaRepository.obtenerTotalesPorCajaAbiertaYMetodoPorLocal(nombreLocal);
         }
 
-        List<Object[]> resultados = ventaRepository.obtenerTotalesPorCajaAbiertaYMetodo();
         Map<Long, ReporteCajaResponseDTO> reporteMap = new HashMap<>();
 
         for (Object[] fila : resultados) {
             Long cajaId = (Long) fila[0];
             String metodoPago = (String) fila[1];
             BigDecimal total = (BigDecimal) fila[2];
+
             ReporteCajaResponseDTO reporte = reporteMap.computeIfAbsent(
-                    cajaId,
-                    id -> new ReporteCajaResponseDTO(id, BigDecimal.ZERO, new ArrayList<>()));
+                cajaId,
+                id -> new ReporteCajaResponseDTO(id, BigDecimal.ZERO, new ArrayList<>())
+            );
+
             reporte.detallePorMetodo.add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
             reporte.totalGeneral = reporte.totalGeneral.add(total);
         }
+
         return new ArrayList<>(reporteMap.values());
     }
+
+    public List<CajaResponseDTO> abierta() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        
+        if (usuario.esAdminGeneral()) {
+            throw new RuntimeException("Usted es administrador general");
+        } else {
+            return cajaRepository.findByLocal_NombreLocalAndEstado(usuario.getLocal(), true)
+            .stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
+    }
+}
 
     private CajaResponseDTO toDTO(Caja entity) {
         CajaResponseDTO dto = new CajaResponseDTO();

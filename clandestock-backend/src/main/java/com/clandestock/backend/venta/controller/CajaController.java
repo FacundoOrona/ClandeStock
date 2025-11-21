@@ -62,7 +62,8 @@ public class CajaController {
         }
     }
     
-    @GetMapping("/abiertas")
+    
+    @GetMapping("/detalle")
     public ResponseEntity<?> listarAbiertas() {
         try {
             List<ReporteCajaResponseDTO> response = cajaService.listarCajasAbiertas();
@@ -73,5 +74,15 @@ public class CajaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-    
+    @GetMapping("/abierta")
+    public ResponseEntity<?> abierta() {
+        try {
+            List<CajaResponseDTO> response = cajaService.abierta();
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
