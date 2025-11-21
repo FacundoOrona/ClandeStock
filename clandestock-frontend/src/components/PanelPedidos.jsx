@@ -19,6 +19,7 @@ export default function PanelPedidos({ pedidos, cajaAbierta }) {
                         className={`card h-100 border-${coloresPanel[tipo].border}`}
                         style={{ position: "relative" }}
                     >
+
                         <div
                             className={`card-header bg-${coloresPanel[tipo].bg} text-${coloresPanel[tipo].text}`}
                         >
