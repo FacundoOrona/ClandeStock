@@ -8,6 +8,7 @@ public record ProductoSecundarioResponseDTO(
         String local,
         String alertaStockBajo,
         String stockBajo,
-        String sinStock
+        String sinStock,
+        String idRelacion
 ) {
 }
