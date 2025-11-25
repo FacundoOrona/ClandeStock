@@ -15,37 +15,28 @@ export default function FormEditarProductoSecundario({ producto, onClose }) {
         idCategoria: ""
     });
 
-    const [categorias, setCategorias] = useState([]);
-
-    // Cargar datos del producto
+    
     useEffect(() => {
-        if (producto) {
-            setFormData({
-                id: producto.id,
-                nombre_producto: producto.nombre_producto || "",
-                stock: producto.stock || "",
-                estado: producto.estado === "true",
-                local: producto.local || "",
-                alertaStockBajo: producto.alertaStockBajo || "",
-                precio: producto.precio || "",
-                idCategoria: producto.idCategoria || "" // si no viene, queda vacío
-            });
-        }
-    }, [producto]);
+        const cargarDatos = async () => {
+            if (!producto) return;
 
-    // Cargar categorías del local
-    useEffect(() => {
-        const cargarCategorias = async () => {
-            if (!producto?.local) return;
             try {
-                const data = await getCategoriaPorLocal(producto.local);
-                setCategorias(data);
+                setFormData({
+                    id: producto.id,
+                    nombre_producto: producto.nombre_producto || "",
+                    stock: producto.stock || "",
+                    estado: producto.estado === "true",
+                    local: producto.local || "",
+                    alertaStockBajo: producto.alertaStockBajo || "",
+                    precio: producto.precio || ""
+                });
             } catch (err) {
-                console.error("Error cargando categorías:", err);
+                console.error("Error cargando datos del producto:", err);
             }
         };
-        cargarCategorias();
-    }, [producto?.local]);
+
+        cargarDatos();
+    }, [producto]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,25 +82,6 @@ export default function FormEditarProductoSecundario({ producto, onClose }) {
                     value={formData.stock}
                     onChange={handleChange}
                 />
-            </div>
-
-            {/* Categoría */}
-            <div className="mb-3">
-                <label className="form-label">Categoría</label>
-                <select
-                    name="idCategoria"
-                    className="form-select"
-                    value={formData.idCategoria}
-                    onChange={handleChange}
-                    required
-                >
-                    <option value="">Seleccione una categoría</option>
-                    {categorias.map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.nombre_categoria}
-                        </option>
-                    ))}
-                </select>
             </div>
 
             {/* Alerta stock bajo */}
