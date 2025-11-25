@@ -111,7 +111,8 @@ public class ProductoSecundarioService {
                 productoSecundario.getLocal().getId().toString(),
                 Integer.toString(productoSecundario.getAletarStock()),
                 productoSecundario.getStockBajo().toString(),
-                productoSecundario.getSinStock().toString());
+                productoSecundario.getSinStock().toString(),
+                null);
     }
 
     private ProductoSecundario toEnitySinIDEstadoTrue(ProductoSecundarioRequestDTO dto) {
@@ -158,9 +159,9 @@ public class ProductoSecundarioService {
     public List<ProductoSecundarioResponseDTO> obtenerTodosDTO() {
         List<ProductoSecundario> todosEntity = productoSecundarioRepository.findAll();
         return todosEntity
-            .stream()
-            .map(this::toResponseDTO)
-            .collect(Collectors.toList());
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
 }
