@@ -13,3 +13,8 @@ export const guardarProductoPrincipal = async (producto) => {
     const response = await axios.post('/producto/principal', producto);
     return response.data;
 };
+
+export const putProductosPrimario = async (producto) => {
+    const response = await axios.put('/producto/principal', producto);
+    return response.data;
+};
