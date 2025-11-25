@@ -14,15 +14,17 @@ import java.util.List;
 @RequestMapping("/productos/relacion")
 public class ProductoSecundarioPorPrincipalController {
     private ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService;
-    public ProductoSecundarioPorPrincipalController(ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService){
+
+    public ProductoSecundarioPorPrincipalController(
+            ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService) {
         this.productoSecundarioPorPrincipalService = productoSecundarioPorPrincipalService;
     }
 
     @PostMapping
-    public ResponseEntity<?> guardarRelacionProductos (@RequestBody ProductoSecundarioPorPrincipalRequestDTO dto) {
+    public ResponseEntity<?> guardarRelacionProductos(@RequestBody ProductoSecundarioPorPrincipalRequestDTO dto) {
         try {
-            ProductoSecundarioPorPrincipalResponseDTO responseDTO =
-                    productoSecundarioPorPrincipalService.guardarRelacion(dto);
+            ProductoSecundarioPorPrincipalResponseDTO responseDTO = productoSecundarioPorPrincipalService
+                    .guardarRelacion(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -36,15 +38,12 @@ public class ProductoSecundarioPorPrincipalController {
     @GetMapping("{idPrincipal}")
     public ResponseEntity<?> obtenerProductosSecundariosPorPrincipal(@PathVariable Long idPrincipal) {
         try {
-            List<ProductoSecundarioResponseDTO> secundarios =
-                    productoSecundarioPorPrincipalService.obtenerSecundariosPorPrincipal(idPrincipal);
-
-            if (secundarios.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No se encontraron productos secundarios asociados al producto principal emitido");
-            }
+            List<ProductoSecundarioResponseDTO> secundarios = productoSecundarioPorPrincipalService
+                    .obtenerSecundariosPorPrincipal(idPrincipal);
 
             return ResponseEntity.ok(secundarios);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al obtener productos secundarios: " + e.getMessage());
@@ -52,10 +51,10 @@ public class ProductoSecundarioPorPrincipalController {
     }
 
     @DeleteMapping("/{idRelacion}")
-    public ResponseEntity<?> eliminarFisicamenteRelacion (@PathVariable Long idRelacion) {
+    public ResponseEntity<?> eliminarFisicamenteRelacion(@PathVariable Long idRelacion) {
         try {
             productoSecundarioPorPrincipalService.eliminarRelacion(idRelacion);
-            return ResponseEntity.ok("Relacion eliminada correctamente. Info: ID - " + idRelacion );
+            return ResponseEntity.ok("Relacion eliminada correctamente. Info: ID - " + idRelacion);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
