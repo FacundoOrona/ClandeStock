@@ -8,7 +8,6 @@ public record ProductoSecundarioRequestDTO(
         String nombre_producto,
         @NotBlank
         String stock,
-        @NotBlank
         String estado,
         @NotBlank
         String local,
