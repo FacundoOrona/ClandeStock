@@ -7,6 +7,7 @@ import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,7 @@ public class ProductoSecundarioService {
     // CRUD
 
     public ProductoSecundarioResponseDTO guardarProductoSecundario(ProductoSecundarioRequestDTO dto) {
-        ProductoSecundario productoSecundario = toEnitySinID(dto);
+        ProductoSecundario productoSecundario = toEnitySinIDEstadoTrue(dto);
         productoSecundario.setId(null);
         ProductoSecundario nuevoProductoSecundario = productoSecundarioRepository.save(productoSecundario);
         return toResponseDTO(nuevoProductoSecundario);
@@ -113,13 +114,13 @@ public class ProductoSecundarioService {
                 productoSecundario.getSinStock().toString());
     }
 
-    private ProductoSecundario toEnitySinID(ProductoSecundarioRequestDTO dto) {
+    private ProductoSecundario toEnitySinIDEstadoTrue(ProductoSecundarioRequestDTO dto) {
         Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
 
         ProductoSecundario productoSecundario = ProductoSecundario.builder()
                 .nombreProducto(dto.nombre_producto())
                 .stock(Integer.parseInt(dto.stock()))
-                .estado(Boolean.valueOf(dto.estado()))
+                .estado(true)
                 .local(local)
                 .aletarStock((dto.aletarStockBajo() == null || dto.aletarStockBajo().isBlank() ? 1
                         : Integer.parseInt(dto.aletarStockBajo())))
@@ -152,6 +153,14 @@ public class ProductoSecundarioService {
 
     public List<ProductoSecundario> obtenerTodos() {
         return productoSecundarioRepository.findAll();
+    }
+
+    public List<ProductoSecundarioResponseDTO> obtenerTodosDTO() {
+        List<ProductoSecundario> todosEntity = productoSecundarioRepository.findAll();
+        return todosEntity
+            .stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
     }
 
 }
