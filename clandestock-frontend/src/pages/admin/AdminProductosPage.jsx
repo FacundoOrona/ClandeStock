@@ -3,7 +3,7 @@ import FormProductoSecundario from "../../components/productos/FormNuevoProducto
 
 import { guardarProductoSecundario } from "../../api/productoSecundario";
 import ListadoProductos from "../../components/productos/ListadoProductos";
-import FormNuevoProductoPrimario from "../../components/productos/FormNuevoProductoPrimario";
+import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProductoPrincipal";
 import { guardarProductoPrincipal } from "../../api/productoPrimario";
 import AdminCategorias from "../../components/productos/AdminCategorias";
 
@@ -21,7 +21,7 @@ export const AdminProductosPage = () => {
     }
   };
 
-  const handleNuevoProductoPrimario = async (producto) => {
+  const handleNuevoProductoPrincipal = async (producto) => {
     try {
       const saved = await guardarProductoPrincipal(producto);
     } catch (error) {
@@ -43,9 +43,9 @@ export const AdminProductosPage = () => {
           </button>
           <button
             className="btn btn-outline-light mb-2 flex-shrink-0"
-            onClick={() => setVistaActiva("primario")}
+            onClick={() => setVistaActiva("principal")}
           >
-            Agregar producto primario
+            Agregar producto principal
           </button>
           <button
             className="btn btn-outline-light mb-2 flex-shrink-0"
@@ -63,13 +63,13 @@ export const AdminProductosPage = () => {
 
         {/* Panel dinámico */}
         <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 overflow-auto">
-          {vistaActiva === "primario" && (
+          {vistaActiva === "principal" && (
             <div className="card flex-grow-1 d-flex flex-column">
               <div className="card-header bg-warning text-dark">
-                Agregar producto primario
+                Agregar producto principal
               </div>
               <div className="card-body overflow-auto">
-                <FormNuevoProductoPrimario onSubmit={handleNuevoProductoPrimario} />
+                <FormNuevoProductoPrincipal onSubmit={handleNuevoProductoPrincipal} />
               </div>
             </div>
           )}
