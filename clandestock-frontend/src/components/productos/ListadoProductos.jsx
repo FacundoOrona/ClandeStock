@@ -3,6 +3,8 @@ import ProductoCard from "./ProductoCard";
 import { getAllProductosSecundarios, getProductosSecundarioPorId } from "../../api/productoSecundario";
 import { getAllProductosPrimarios, getProductosPrimariosPorId } from "../../api/productoPrimario";
 import FormEditarProductoSecundario from "./FormEditarProductoSecundario";
+import FormEditarProductoPrincipal from "./FormEditarProductoPrincipal";
+
 
 export default function ListadoProductos() {
     const [productos, setProductos] = useState([]);
@@ -11,6 +13,8 @@ export default function ListadoProductos() {
     const [orden, setOrden] = useState("");
     const [productoEditando, setProductoEditando] = useState(null);
     const [filtroTipo, setFiltroTipo] = useState("");
+    const [filtroEstado, setFiltroEstado] = useState("");
+
 
     const localesMap = {
         "1": "Tenedor Libre",
@@ -18,36 +22,37 @@ export default function ListadoProductos() {
         "3": "Heladería"
     };
 
+    const cargar = async () => {
+        try {
+            const principales = await getAllProductosPrimarios();
+            const secundarios = await getAllProductosSecundarios();
+
+            const productosUnificados = [
+                ...principales.map(p => ({
+                    tipo: "principal",
+                    id: p.id,
+                    nombre: p.nombre_producto,
+                    stock: parseInt(p.stock, 10),
+                    estado: p.estado === "true" ? "activo" : "inactivo",
+                    local: p.idLocal,
+                })),
+                ...secundarios.map(p => ({
+                    tipo: "secundario",
+                    id: p.id,
+                    nombre: p.nombre_producto,
+                    stock: parseInt(p.stock, 10),
+                    estado: p.estado === "true" ? "activo" : "inactivo",
+                    local: p.local,
+                })),
+            ];
+
+            setProductos(productosUnificados);
+        } catch (err) {
+            console.error("Error cargando productos:", err);
+        }
+    };
+
     useEffect(() => {
-        const cargar = async () => {
-            try {
-                const principales = await getAllProductosPrimarios();
-                const secundarios = await getAllProductosSecundarios();
-
-                const productosUnificados = [
-                    ...secundarios.map(p => ({
-                        tipo: "secundario",
-                        id: p.id,
-                        nombre: p.nombre_producto,
-                        stock: parseInt(p.stock, 10),
-                        estado: p.estado,
-                        local: p.local,
-                    })),
-                    ...principales.map(p => ({
-                        tipo: "principal",
-                        id: p.id,
-                        nombre: p.nombre_producto,
-                        stock: parseInt(p.stock, 10),
-                        estado: p.estado,
-                        local: p.idLocal,
-                    })),
-                ];
-
-                setProductos(productosUnificados);
-            } catch (err) {
-                console.error("Error cargando productos:", err);
-            }
-        };
         cargar();
     }, []);
 
@@ -55,8 +60,10 @@ export default function ListadoProductos() {
     let productosFiltrados = productos.filter(p =>
         p.nombre.toLowerCase().includes(filtroNombre.toLowerCase()) &&
         (filtroLocal === "" || p.local === filtroLocal) &&
-        (filtroTipo === "" || p.tipo === filtroTipo)
+        (filtroTipo === "" || p.tipo === filtroTipo) &&
+        (filtroEstado === "" || p.estado === filtroEstado || p.estado === (filtroEstado === "activo"))
     );
+
 
     // Ordenamiento
     if (orden === "stockDesc") {
@@ -122,6 +129,26 @@ export default function ListadoProductos() {
                     </select>
                     <select
                         className="form-select"
+                        value={filtroTipo}
+                        onChange={e => setFiltroTipo(e.target.value)}
+                    >
+                        <option value="">Todos los tipos</option>
+                        <option value="principal">Solo principales</option>
+                        <option value="secundario">Solo secundarios</option>
+                    </select>
+
+                    <select
+                        className="form-select"
+                        value={filtroEstado}
+                        onChange={e => setFiltroEstado(e.target.value)}
+                    >
+                        <option value="">Todos los estados</option>
+                        <option value="activo">Activos</option>
+                        <option value="inactivo">Inactivos</option>
+                    </select>
+
+                    <select
+                        className="form-select"
                         value={orden}
                         onChange={e => setOrden(e.target.value)}
                     >
@@ -133,15 +160,7 @@ export default function ListadoProductos() {
                         <option value="nombreAsc">Producto: A → Z</option>
                         <option value="nombreDesc">Producto: Z → A</option>
                     </select>
-                    <select
-                        className="form-select"
-                        value={filtroTipo}
-                        onChange={e => setFiltroTipo(e.target.value)}
-                    >
-                        <option value="">Todos los tipos</option>
-                        <option value="principal">Solo principales</option>
-                        <option value="secundario">Solo secundarios</option>
-                    </select>
+
                 </div>
 
                 {/* Lista o edición */}
@@ -149,12 +168,12 @@ export default function ListadoProductos() {
                     productoEditando.tipo === "secundario" ? (
                         <FormEditarProductoSecundario
                             producto={productoEditando}
-                            onClose={() => setProductoEditando(null)}
+                            onClose={() => { setProductoEditando(null); cargar(); }}
                         />
                     ) : (
-                        <FormEditarProductoPrimario
+                        <FormEditarProductoPrincipal
                             producto={productoEditando}
-                            onClose={() => setProductoEditando(null)}
+                            onClose={() => { setProductoEditando(null); cargar(); }}
                         />
                     )
                 ) : productosFiltrados.length === 0 ? (
