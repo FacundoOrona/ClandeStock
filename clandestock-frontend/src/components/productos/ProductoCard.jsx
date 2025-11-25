@@ -23,11 +23,18 @@ export default function ProductoCard({ producto, onEditarClick }) {
         >
             <div className="card-body">
                 {/* Badge arriba */}
-                <div className="d-flex justify-content-end mb-2">
-                    <span className={`badge ${producto.tipo === "principal" ? "bg-primary" : "bg-secondary"}`}>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                    {/* Badge tipo (izquierda) */}
+                    <span className={`badge px-2 ${producto.tipo === "principal" ? "bg-primary" : "bg-secondary"}`}>
                         {producto.tipo}
                     </span>
+
+                    {/* Badge estado (derecha) */}
+                    <span className={`badge px-2 ${producto.estado === true || producto.estado === "activo" ? "bg-success" : "bg-danger"}`}>
+                        {producto.estado === true || producto.estado === "activo" ? "activo" : "inactivo"}
+                    </span>
                 </div>
+
 
                 {/* Nombre sin truncar */}
                 <h5 className="card-title mb-2" style={{ wordBreak: "break-word" }}>
