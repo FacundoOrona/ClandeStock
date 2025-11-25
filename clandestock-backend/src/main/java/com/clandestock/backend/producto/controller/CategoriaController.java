@@ -42,7 +42,7 @@ public class CategoriaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
+    
     //validad que sea admin gral o el moderador adecuado
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable String id) {
@@ -57,7 +57,7 @@ public class CategoriaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
+    
     //validad que sea admin gral o el moderador adecuado
     @GetMapping("/local/{id}")
     public ResponseEntity<?> obtenerPorLocal(@PathVariable String id) {
@@ -72,7 +72,8 @@ public class CategoriaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
+    
+    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
     @PutMapping()
     public ResponseEntity<?> actualizarPorId(@RequestBody CategoriaRequestDTO dto) {
         try{

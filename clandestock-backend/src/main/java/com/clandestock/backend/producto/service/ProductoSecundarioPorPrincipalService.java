@@ -48,7 +48,7 @@ public class ProductoSecundarioPorPrincipalService {
         List<ProductoSecundarioPorPrincipal> relaciones = relacionRepository.findByProductoPrimario_Id(idPrincipal);
 
         return relaciones.stream()
-                .map(relacion -> toProductoSecundarioDTO(relacion.getProductoSecundario()))
+                .map(relacion -> toProductoSecundarioDTO(relacion.getProductoSecundario(), relacion.getId()))
                 .collect(Collectors.toList());
     }
 
@@ -68,7 +68,7 @@ public class ProductoSecundarioPorPrincipalService {
     }
 
     // CASTEOS
-    private ProductoSecundarioResponseDTO toProductoSecundarioDTO(ProductoSecundario producto) {
+    private ProductoSecundarioResponseDTO toProductoSecundarioDTO(ProductoSecundario producto, Long idRelacion) {
         return new ProductoSecundarioResponseDTO(
                 producto.getId().toString(),
                 producto.getNombreProducto(),
@@ -77,7 +77,8 @@ public class ProductoSecundarioPorPrincipalService {
                 producto.getLocal().getId().toString(),
                 Integer.toString(producto.getAletarStock()),
                 producto.getStockBajo().toString(),
-                producto.getSinStock().toString());
+                producto.getSinStock().toString(),
+                idRelacion.toString());
     }
 
     private ProductoSecundarioPorPrincipalResponseDTO toResponseDTO(ProductoSecundarioPorPrincipal entidad) {
