@@ -76,4 +76,8 @@ public class Venta {
     @ManyToOne
     @JoinColumn(name = "caja_id", nullable = false)
     private Caja caja;
+
+    @ManyToOne
+    @JoinColumn(name = "mesa_id", nullable = true) // puede ser null si la venta no está asociada a una mesa
+    private Mesa mesa;
 }
