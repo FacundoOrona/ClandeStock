@@ -49,7 +49,8 @@ public class ProductoStockService {
                     String.valueOf(stockDisponible),
                     principal.getPrecioProducto().toString(),
                     principal.getStockBajo().toString(),
-                    principal.getSinStock().toString()));
+                    principal.getSinStock().toString(),
+                    principal.getLocal().getId().toString()));
         }
 
         return resultado;
@@ -106,7 +107,8 @@ public class ProductoStockService {
                         String.valueOf(stockDisponible),
                         principal.getPrecioProducto().toString(),
                         principal.getStockBajo().toString(),
-                        principal.getSinStock().toString()));
+                        principal.getSinStock().toString(),
+                        principal.getLocal().getId().toString()));
             }
         }
 
@@ -129,7 +131,8 @@ public class ProductoStockService {
                         String.valueOf(sec.getStock()),
                         "0.00",
                         sec.getStockBajo().toString(),
-                        sec.getSinStock().toString()));
+                        sec.getSinStock().toString(),
+                        sec.getLocal().getId().toString()));
             }
         }
         return resultado;
