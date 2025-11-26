@@ -6,6 +6,7 @@ import ListadoProductos from "../../components/productos/ListadoProductos";
 import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProductoPrincipal";
 import { guardarProductoPrincipal } from "../../api/productoPrimario";
 import AdminCategorias from "../../components/productos/AdminCategorias";
+import StockVentaPanel from "../../components/productos/StockVentaPanel";
 
 
 export const AdminProductosPage = () => {
@@ -35,6 +36,13 @@ export const AdminProductosPage = () => {
         {/* Sidebar */}
         <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column overflow-auto">
           <h4 className="mb-4 text-center">Administrar productos</h4>
+          <button
+            className="btn btn-outline-light mb-2 flex-shrink-0"
+            onClick={() => setVistaActiva("stock")}
+          >
+            Stock a la venta
+          </button>
+
           <button
             className="btn btn-outline-light mb-2 flex-shrink-0"
             onClick={() => setVistaActiva("listado")}
@@ -85,9 +93,11 @@ export const AdminProductosPage = () => {
             </div>
           )}
 
-          {vistaActiva === "categorias" && <AdminCategorias/>}
+          {vistaActiva === "categorias" && <AdminCategorias />}
 
-          {vistaActiva === "listado" && <ListadoProductos/>}
+          {vistaActiva === "listado" && <ListadoProductos />}
+
+          {vistaActiva === "stock" && <StockVentaPanel />}
         </div>
       </div>
     </div>
