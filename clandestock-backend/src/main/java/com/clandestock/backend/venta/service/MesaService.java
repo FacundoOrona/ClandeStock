@@ -1,5 +1,6 @@
 package com.clandestock.backend.venta.service;
 
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.venta.dto.MesaRequestDTO;
 import com.clandestock.backend.venta.dto.MesaResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
@@ -7,7 +8,11 @@ import com.clandestock.backend.venta.modelos.Mesa;
 import com.clandestock.backend.venta.repository.LocalRepository;
 import com.clandestock.backend.venta.repository.MesaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,22 @@ public class MesaService {
 
         // Casteo a Response
         return toResponse(guardada);
+    }
+
+    public List<MesaResponseDTO> listarMesasPorUsuario() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<Mesa> mesas;
+
+        if (usuario.esAdminGeneral()) {
+            mesas = mesaRepository.findAll();
+        } else {
+            mesas = mesaRepository.findByLocal_NombreLocal(usuario.getLocal());
+        }
+
+        return mesas.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     private Mesa toEntity (MesaRequestDTO request, Local local) {
