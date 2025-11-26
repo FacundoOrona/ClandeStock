@@ -27,7 +27,10 @@ export default function PanelNuevaVenta() {
   const handleCrearVenta = async () => {
     const body = {
       tipoVenta,
-      detalleEntrega: detalleEntrega || null,
+      detalleEntrega:
+        tipoVenta === "CONSUMO_LOCAL"
+          ? "Consumo local"
+          : detalleEntrega || null,
       numeroMesa: tipoVenta === "CONSUMO_LOCAL" ? numeroMesa : null,
     };
 
