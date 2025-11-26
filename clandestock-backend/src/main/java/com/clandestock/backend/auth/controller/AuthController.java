@@ -25,7 +25,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
+    //@PreAuthorize("hasAuthority('ADMIN_GENERAL')")
     @PostMapping("/register-mod")
     public ResponseEntity<?> registroModerador(@RequestBody RegistroRequest mod){
         RegistroResponse modResponse = service.registrarModerador(mod);
