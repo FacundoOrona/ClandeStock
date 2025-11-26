@@ -2,13 +2,11 @@ package com.clandestock.backend.auth.controller;
 
 import com.clandestock.backend.auth.dto.LoginRequest;
 import com.clandestock.backend.auth.dto.RegistroRequest;
-import com.clandestock.backend.auth.dto.RegistroResponse;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
@@ -23,13 +21,6 @@ public class AuthController {
     public ResponseEntity<TokenResponse> registro(@RequestBody final RegistroRequest request) {
         final TokenResponse token = service.registro(request);
         return ResponseEntity.ok(token);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
-    @PostMapping("/register-mod")
-    public ResponseEntity<?> registroModerador(@RequestBody RegistroRequest mod){
-        RegistroResponse modResponse = service.registrarModerador(mod);
-        return ResponseEntity.ok(modResponse);
     }
 
     @PostMapping("/login")
