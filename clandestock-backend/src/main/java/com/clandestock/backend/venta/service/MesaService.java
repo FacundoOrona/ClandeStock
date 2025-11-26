@@ -40,7 +40,7 @@ public class MesaService {
         return toResponse(guardada);
     }
 
-    public List<MesaResponseDTO> listarMesasPorUsuario() {
+    public List<MesaResponseDTO> listarMesasPorLocal() {
         UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<Mesa> mesas;
