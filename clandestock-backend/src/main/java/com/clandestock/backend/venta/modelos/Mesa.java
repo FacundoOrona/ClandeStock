@@ -7,7 +7,7 @@ import lombok.*;
 
 @Entity
 @Table(
-        name = "mesa_tb",
+        name = "Mesa_tb",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"local_id", "numero_mesa"})
         }

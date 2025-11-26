@@ -17,6 +17,11 @@ public class MesaService {
     private final LocalRepository localRepository;
 
     public MesaResponseDTO crearMesa(MesaRequestDTO request) {
+
+//        if (mesaRepository.findByLocalIdAndNumeroMesa(request.getLocalId(), request.getNumeroMesa()).isPresent()) {
+//            throw new RuntimeException("Ya existe una mesa con ese número en el local");
+//        }
+
         // Buscar el Local
         Local local = localRepository.findById(request.getLocalId())
                 .orElseThrow(() -> new RuntimeException("Local no encontrado"));
