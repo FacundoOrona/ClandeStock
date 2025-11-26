@@ -6,13 +6,17 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(
+        name = "mesa_tb",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"local_id", "numero_mesa"})
+        }
+)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-@Table(name = "Mesa_tb")
 public class Mesa {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,12 +27,11 @@ public class Mesa {
     @Builder.Default
     private Boolean ocupada = false;
 
-    // Relación 1 a 1 con Local
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "local_id", nullable = false)
     private Local local;
 
-    // Relación 1 a muchos con Venta
     @OneToMany(mappedBy = "mesa")
     private List<Venta> ventas;
 }
+
