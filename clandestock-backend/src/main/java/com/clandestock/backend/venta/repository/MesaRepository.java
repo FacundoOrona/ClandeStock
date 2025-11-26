@@ -12,4 +12,6 @@ public interface MesaRepository extends JpaRepository<Mesa, Long> {
     Optional<Mesa> findByLocalIdAndNumeroMesa(Long localId, Integer numeroMesa);
 
     List<Mesa> findByLocal_NombreLocal(String nombreLocal);
+    Optional<Mesa> findByLocal_NombreLocalAndNumeroMesa(String nombreLocal, Integer numeroMesa);
+
 }
