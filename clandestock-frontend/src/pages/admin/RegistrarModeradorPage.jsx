@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { registrarModerador } from "../../services/moderadorService";
 import ModeradorForm from "../../components/registrarModerador/ModeradorForm";
-import "../../styles/registroModerador.css";
-
+import {registrarModerador} from "../../services/moderadorService"
 export default function RegistrarModeradorPage() {
   const navigate = useNavigate();
 

@@ -26,7 +26,11 @@ export default function StockVentaPanel() {
             (filtroEstado === "stockBajo" && item.stockBajo === "true")) &&
         (filtroLocal === "" || item.local === filtroLocal)
     );
-
+    const localesMap = {
+        "1": "Tenedor Libre",
+        "2": "Termas",
+        "3": "Heladería"
+    };
     return (
         <div className="card flex-grow-1 d-flex flex-column">
             <div className="card-header bg-warning text-dark">Stock a la venta</div>
@@ -71,8 +75,10 @@ export default function StockVentaPanel() {
                                 <div className="card mb-3 shadow-sm">
                                     <div className="card-body">
                                         <h5 className="card-title">{item.nombreProducto}</h5>
+                                        <h6 className="card-text mb-1">{localesMap[item.local] || "Desconocido"}</h6>
                                         <p className="card-text mb-1">Stock disponible: {item.stockDisponible}</p>
                                         <p className="card-text mb-1">Precio: ${parseFloat(item.precio).toLocaleString()}</p>
+
                                         {item.sinStock === "true" && (
                                             <span className="badge bg-danger me-1">Sin stock</span>
                                         )}
