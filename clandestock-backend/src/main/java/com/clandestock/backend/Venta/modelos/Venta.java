@@ -62,11 +62,12 @@ public class Venta {
     @OneToMany(mappedBy = "venta")
     private List<ProductoxVenta> productos;
 
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private TipoVenta tipoVenta;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = true, length = 200)
     private String detalleEntrega;
 
     @ManyToOne
