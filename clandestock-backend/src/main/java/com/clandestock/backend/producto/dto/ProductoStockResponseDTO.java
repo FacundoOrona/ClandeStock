@@ -14,4 +14,5 @@ public class ProductoStockResponseDTO {
     String precio;
     String stockBajo;
     String sinStock;
+    String local;
 }
