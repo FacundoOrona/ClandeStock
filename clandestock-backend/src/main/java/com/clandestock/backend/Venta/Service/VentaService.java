@@ -319,9 +319,16 @@ public class VentaService {
         if(ventaPorCerrar.getMetodoPago() == null && ventaPorCerrar.getPrecioTotalConMetodoDePago() == null) {
             throw new RuntimeException("La venta que desea cerrar aun no tiene asignado un metodo de pago");
         }
-        
+
         ventaPorCerrar.setFechaCierre(LocalDateTime.now());
         ventaPorCerrar.setEstadoPago(true);
+
+        //Si es consumo local, liberar la mesa
+        if (ventaPorCerrar.getTipoVenta() == TipoVenta.CONSUMO_LOCAL && ventaPorCerrar.getMesa() != null) {
+            Mesa mesa = ventaPorCerrar.getMesa();
+            mesa.setOcupada(false);
+            mesaRepository.save(mesa);
+        }
         
         Venta ventaCerrada = ventaRepository.save(ventaPorCerrar);
         

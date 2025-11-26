@@ -15,5 +15,4 @@ public class VentaResponseDTO {
     public String detalleEntrega;
     public List<ProductoVentaResponseDTO> productos;
     public String precioTotalConMetodoDePago;
-
 }
