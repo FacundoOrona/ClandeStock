@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/mesas")
 @RequiredArgsConstructor
@@ -28,6 +30,20 @@ public class MesaController {
             // Cualquier otro error inesperado
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error inesperado al crear la mesa");
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listarMesasPorUsuario() {
+        try {
+            List<MesaResponseDTO> mesas = mesaService.listarMesasPorUsuario();
+            return ResponseEntity.ok(mesas);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al obtener las mesas: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado al obtener las mesas");
         }
     }
 }
