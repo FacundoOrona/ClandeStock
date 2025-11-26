@@ -14,11 +14,8 @@ import com.clandestock.backend.venta.dto.NuevaVentaRequestDTO;
 import com.clandestock.backend.venta.dto.ProductoVentaResponseDTO;
 import com.clandestock.backend.venta.dto.VentaFiltroDTO;
 import com.clandestock.backend.venta.dto.VentaResponseDTO;
-import com.clandestock.backend.venta.modelos.Caja;
-import com.clandestock.backend.venta.modelos.Local;
-import com.clandestock.backend.venta.modelos.MetodoPago;
-import com.clandestock.backend.venta.modelos.ProductoxVenta;
-import com.clandestock.backend.venta.modelos.Venta;
+import com.clandestock.backend.venta.modelos.*;
+import com.clandestock.backend.venta.repository.MesaRepository;
 import com.clandestock.backend.venta.repository.MetodoPagoRepository;
 import com.clandestock.backend.venta.repository.VentaRepository;
 
@@ -49,6 +46,7 @@ public class VentaService {
     private final LocalService localService;
     private final MetodoPagoRepository metodoPagoRepository;
     private final CajaService cajaService;
+    private final MesaRepository mesaRepository;
 
     public VentaService(
             VentaRepository ventaRepository,
@@ -61,7 +59,8 @@ public class VentaService {
             ProductoxVentaService prodxVentaService,
             LocalService localService,
             MetodoPagoRepository metodoPagoRepository,
-            CajaService cajaService) {
+            CajaService cajaService,
+            MesaRepository mesaRepository) {
         this.ventaRepository = ventaRepository;
         this.usuarioService = usuarioService;
         this.metodoPagoService = metodoPagoService;
@@ -73,17 +72,38 @@ public class VentaService {
         this.localService = localService;
         this.metodoPagoRepository = metodoPagoRepository;
         this.cajaService = cajaService;
+        this.mesaRepository = mesaRepository;
     }
 
     public VentaResponseDTO nueva(NuevaVentaRequestDTO dto) {
         UsuarioContexto usuarioContexto = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
+
         if (usuarioContexto.esAdminGeneral()) {
             throw new RuntimeException("Usuario administrador no puede iniciar venta");
         }
+
         Usuario usuario = usuarioService.obtenerPorNombreUsuario(usuarioContexto.getNombreUsuario());
         Local local = localService.obtenerPorNombre(usuarioContexto.getLocal());
         Caja caja = cajaService.obtenerPorLocal(local,true);
+
+        //BUSCAR MESA Y OCUPARLA, primero null por si es take away o delivery
+        //Si es consumo local se asigna la mesa
+        Mesa mesa = null;
+
+        // 👉 Solo si la venta es CONSUMO_LOCAL se busca y ocupa la mesa
+        if (dto.getTipoVenta() == TipoVenta.CONSUMO_LOCAL) {
+            mesa = mesaRepository.findByLocal_NombreLocalAndNumeroMesa(local.getNombreLocal(), dto.getNumeroMesa())
+                    .orElseThrow(() -> new RuntimeException("Mesa no encontrada en el local"));
+
+            if (Boolean.TRUE.equals(mesa.getOcupada())) {
+                throw new RuntimeException("La mesa ya está ocupada");
+            }
+
+            mesa.setOcupada(true);
+            mesaRepository.save(mesa);
+        }
+
         Venta venta = Venta.builder()
                 .usuario(usuario)
                 .metodoPago(null)
@@ -95,6 +115,7 @@ public class VentaService {
                 .tipoVenta(dto.tipoVenta)
                 .detalleEntrega(dto.detalleEntrega)
                 .caja(caja)
+                .mesa(mesa)
                 .build();
         venta = ventaRepository.save(venta);
         return toResponseDTO(venta);
