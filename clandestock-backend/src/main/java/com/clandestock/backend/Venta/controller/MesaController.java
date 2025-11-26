@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/mesas")
+@RequestMapping("/mesas")
 @RequiredArgsConstructor
 public class MesaController {
 
@@ -36,7 +36,7 @@ public class MesaController {
     @GetMapping
     public ResponseEntity<?> listarMesasPorUsuario() {
         try {
-            List<MesaResponseDTO> mesas = mesaService.listarMesasPorUsuario();
+            List<MesaResponseDTO> mesas = mesaService.listarMesasPorLocal();
             return ResponseEntity.ok(mesas);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
