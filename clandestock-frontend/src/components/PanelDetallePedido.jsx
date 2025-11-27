@@ -10,6 +10,10 @@ export default function PanelDetallePedido({ pedido, onBack }) {
     productosAgrupados,
     handleAgregarProducto,
     handleQuitarProducto,
+    metodosPago,
+    metodoSeleccionado,
+    handleSeleccionarMetodoPago,
+    handleCerrarVenta,
     mensaje,
   } = useVentaDetalle(pedido.idVenta);
 
@@ -143,6 +147,58 @@ export default function PanelDetallePedido({ pedido, onBack }) {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Selección de método de pago */}
+      <div className="card shadow p-3 mb-4">
+        <h5 className="text-warning gothic-font mb-3">Método de Pago</h5>
+        <div className="mb-3">
+          <label className="form-label text-dark fw-bold">
+            Seleccionar método
+          </label>
+          <select
+            className="form-select border-warning shadow-sm"
+            value={metodoSeleccionado}
+            onChange={(e) => handleSeleccionarMetodoPago(e.target.value)}
+          >
+            <option value="">-- Seleccionar --</option>
+            {metodosPago.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.nombre_metodo_pago}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Mostrar total con método de pago */}
+        {venta.precioTotalConMetodoDePago && (
+          <div className="mt-3 text-end">
+            <h5 className="text-dark">
+              <strong>
+                Total con método: ${venta.precioTotalConMetodoDePago}
+              </strong>
+            </h5>
+          </div>
+        )}
+      </div>
+
+      {/* Botones de acción */}
+      <div className="d-flex justify-content-between mt-4">
+        <button
+          className="btn btn-danger fw-bold"
+          onClick={() => handleCerrarVenta(onBack)}
+        >
+          Cerrar venta - Cobrar
+        </button>
+
+        <button
+          className="btn btn-success fw-bold"
+          onClick={() =>
+            alert("Funcionalidad de imprimir comanda aún no implementada")
+          }
+        >
+          Imprimir comanda
+        </button>
       </div>
 
       {/* Mensaje */}
