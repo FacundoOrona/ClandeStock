@@ -1,5 +1,6 @@
 package com.clandestock.backend.venta.service;
 
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.venta.dto.MetodoPagoRequestDTO;
 import com.clandestock.backend.venta.dto.MetodoPagoResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
@@ -10,16 +11,20 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MetodoPagoService {
     private MetodoPagoRepository metodoPagoRepository;
     private LocalRepository localRepository;
+    private LocalService localService;
 
     public MetodoPagoService(MetodoPagoRepository metodoPagoRepository,
-            LocalRepository localRepository) {
+                             LocalRepository localRepository,
+                             LocalService localService) {
         this.metodoPagoRepository = metodoPagoRepository;
         this.localRepository = localRepository;
+        this.localService = localService;
     }
 
     private MetodoPago obtenerMetodoPagoPorID(Long id) {
@@ -71,23 +76,32 @@ public class MetodoPagoService {
         return toDTO(metodoPagoActualizado);
     }
 
-    public List<MetodoPagoResponseDTO> listarTodosMetodosPago() {
-        List<MetodoPago> lista = metodoPagoRepository.findAll();
+    public List<MetodoPagoResponseDTO> listarMetodosPagoPorUsuario(UsuarioContexto usuarioContexto) {
+        List<MetodoPago> metodos;
 
-        if (lista.isEmpty()) {
-            throw new RuntimeException("No se encontraron métodos de pago");
+        if (usuarioContexto.esAdminGeneral()) {
+            metodos = metodoPagoRepository.findAll();
+        } else {
+            Local local = localService.obtenerPorNombre(usuarioContexto.getLocal());
+            metodos = metodoPagoRepository.findByLocal(local);
         }
 
-        return lista.stream()
-                .map(metodo -> new MetodoPagoResponseDTO(
-                        String.valueOf(metodo.getId()),
-                        metodo.getNombreMetodoPago(),
-                        metodo.getIncremento() != null ? String.valueOf(metodo.getIncremento()) : null,
-                        metodo.getDescuento() != null ? String.valueOf(metodo.getDescuento()) : null,
-                        metodo.getEstado() != null ? String.valueOf(metodo.getEstado()) : null,
-                        metodo.getLocal() != null ? String.valueOf(metodo.getLocal().getId()) : null))
-                .toList();
+        return metodos.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
+
+    private MetodoPagoResponseDTO toResponseDTO(MetodoPago metodo) {
+        return MetodoPagoResponseDTO.builder()
+                .id(String.valueOf(metodo.getId()))
+                .nombre_metodo_pago(metodo.getNombreMetodoPago())
+                .incremento(String.valueOf(metodo.getIncremento()))
+                .descuento(String.valueOf(metodo.getDescuento()))
+                .estado(String.valueOf(metodo.getEstado()))
+                .local_id(String.valueOf(metodo.getLocal().getId()))
+                .build();
+    }
+
 
     public List<MetodoPagoResponseDTO> listarPorLocalId(Long localId) {
         List<MetodoPago> lista = metodoPagoRepository.findByLocalId(localId);
