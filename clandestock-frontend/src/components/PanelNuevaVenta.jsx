@@ -5,13 +5,16 @@ export default function PanelNuevaVenta() {
   const [detalleEntrega, setDetalleEntrega] = useState("");
   const [mesas, setMesas] = useState([]);
   const [numeroMesa, setNumeroMesa] = useState(null);
+  const [mozos, setMozos] = useState([]);
+  const [mozoSeleccionado, setMozoSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
 
   const token = localStorage.getItem("access_token");
 
-  // 🔐 Cargar mesas si es consumo local
+  // 🔐 Cargar mesas y mozos si es consumo local
   useEffect(() => {
     if (tipoVenta === "CONSUMO_LOCAL") {
+      // Mesas
       fetch("http://localhost:8080/mesas", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -21,6 +24,16 @@ export default function PanelNuevaVenta() {
           setMesas(ordenadas);
         })
         .catch((err) => console.error("Error cargando mesas:", err));
+
+      // Mozos
+      fetch("http://localhost:8080/mozos", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setMozos(data);
+        })
+        .catch((err) => console.error("Error cargando mozos:", err));
     }
   }, [tipoVenta, token]);
 
@@ -29,7 +42,7 @@ export default function PanelNuevaVenta() {
       tipoVenta,
       detalleEntrega:
         tipoVenta === "CONSUMO_LOCAL"
-          ? "Consumo local"
+          ? `Mozo: ${mozoSeleccionado}`
           : detalleEntrega || null,
       numeroMesa: tipoVenta === "CONSUMO_LOCAL" ? numeroMesa : null,
     };
@@ -50,7 +63,9 @@ export default function PanelNuevaVenta() {
       setTipoVenta("");
       setDetalleEntrega("");
       setNumeroMesa(null);
+      setMozoSeleccionado("");
       setMesas([]);
+      setMozos([]);
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al generar la venta");
@@ -119,28 +134,50 @@ export default function PanelNuevaVenta() {
       )}
 
       {tipoVenta === "CONSUMO_LOCAL" && (
-        <div className="mb-3">
-          <label className="form-label text-dark fw-bold">
-            Seleccione mesa
-          </label>
-          <div className="d-flex flex-wrap gap-2">
-            {mesas.map((mesa) => (
-              <button
-                key={mesa.id}
-                className={`btn ${
-                  mesa.ocupada
-                    ? "btn-danger"
-                    : numeroMesa === mesa.numeroMesa
-                    ? "btn-warning"
-                    : "btn-success"
-                }`}
-                onClick={() => handleSeleccionMesa(mesa)}
-              >
-                Mesa {mesa.numeroMesa}
-              </button>
-            ))}
+        <>
+          {/* Dropdown mozo */}
+          <div className="mb-3">
+            <label className="form-label text-dark fw-bold">
+              Seleccione Mozo
+            </label>
+            <select
+              className="form-select border-warning shadow-sm"
+              value={mozoSeleccionado}
+              onChange={(e) => setMozoSeleccionado(e.target.value)}
+            >
+              <option value="">-- Seleccionar Mozo --</option>
+              {mozos.map((mozo) => (
+                <option key={mozo.id} value={mozo.nombre}>
+                  {mozo.nombre}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
+
+          {/* Mesas */}
+          <div className="mb-3">
+            <label className="form-label text-dark fw-bold">
+              Seleccione mesa
+            </label>
+            <div className="d-flex flex-wrap gap-2">
+              {mesas.map((mesa) => (
+                <button
+                  key={mesa.id}
+                  className={`btn ${
+                    mesa.ocupada
+                      ? "btn-danger"
+                      : numeroMesa === mesa.numeroMesa
+                      ? "btn-warning"
+                      : "btn-success"
+                  }`}
+                  onClick={() => handleSeleccionMesa(mesa)}
+                >
+                  Mesa {mesa.numeroMesa}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
       )}
 
       {/* Botón crear venta */}
@@ -149,7 +186,9 @@ export default function PanelNuevaVenta() {
           className="btn btn-warning px-4"
           onClick={handleCrearVenta}
           disabled={
-            !tipoVenta || (tipoVenta === "CONSUMO_LOCAL" && !numeroMesa)
+            !tipoVenta ||
+            (tipoVenta === "CONSUMO_LOCAL" &&
+              (!numeroMesa || !mozoSeleccionado))
           }
         >
           Generar Venta
