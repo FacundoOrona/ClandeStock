@@ -24,7 +24,7 @@ public class ProductoStockService {
 
     public ProductoStockService(ProductoPrincipalService pps, ProductoSecundarioPorPrincipalService psxpps,
             ProductoSecundarioService productoSecundarioService,
-                                ProductoPrincipalRepository productoPrincipalRepository) {
+            ProductoPrincipalRepository productoPrincipalRepository) {
         this.productoPrincipalService = pps;
         this.productoSecundarioPorPrincipalService = psxpps;
         this.productoSecundarioService = productoSecundarioService;
@@ -54,7 +54,8 @@ public class ProductoStockService {
                     principal.getPrecioProducto().toString(),
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
-                    principal.getLocal().getId().toString()));
+                    principal.getLocal().getId().toString(),
+                    secundarios.isEmpty() ? "false" : "true"));
         }
 
         return resultado;
@@ -73,8 +74,8 @@ public class ProductoStockService {
         List<ProductoStockResponseDTO> resultado = new ArrayList<>();
 
         for (ProductoPrincipal principal : productos) {
-            List<ProductoSecundarioPorPrincipal> secundarios =
-                    productoSecundarioPorPrincipalService.obtenerSecundariosPorPrincipal(principal);
+            List<ProductoSecundarioPorPrincipal> secundarios = productoSecundarioPorPrincipalService
+                    .obtenerSecundariosPorPrincipal(principal);
 
             int stockDisponible = secundarios.isEmpty()
                     ? principal.getStock()
@@ -87,8 +88,8 @@ public class ProductoStockService {
                     principal.getPrecioProducto().toString(),
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
-                    principal.getLocal().getId().toString()
-            ));
+                    principal.getLocal().getId().toString(),
+                    secundarios.isEmpty() ? "false" : "true"));
         }
 
         return resultado;
@@ -146,7 +147,8 @@ public class ProductoStockService {
                         principal.getPrecioProducto().toString(),
                         principal.getStockBajo().toString(),
                         principal.getSinStock().toString(),
-                        principal.getLocal().getId().toString()));
+                        principal.getLocal().getId().toString(),
+                        secundarios.isEmpty() ? "false" : "true"));
             }
         }
 
@@ -170,7 +172,8 @@ public class ProductoStockService {
                         "0.00",
                         sec.getStockBajo().toString(),
                         sec.getSinStock().toString(),
-                        sec.getLocal().getId().toString()));
+                        sec.getLocal().getId().toString(),
+                        "false"));
             }
         }
         return resultado;
