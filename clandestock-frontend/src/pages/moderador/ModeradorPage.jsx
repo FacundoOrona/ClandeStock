@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import FuncionesModerador from "../../components/FuncionesModerador";
-import PanelPedidos from "../../components/PanelPedidos";
+import VistaPedidos from "../../components/VistaPedido";
 import PanelNuevaVenta from "../../components/PanelNuevaVenta";
 import { getEstadoCaja, getDetalleCaja } from "../../api/caja";
 import { getVentasActivas } from "../../api/pedidos";
@@ -56,7 +56,7 @@ export const ModeradorPage = () => {
         </div>
         <div className="col-8 bg-light text-muted">
           {vistaActiva === "pedidos" && (
-            <PanelPedidos pedidos={pedidos} cajaAbierta={cajaAbierta} />
+            <VistaPedidos pedidos={pedidos} cajaAbierta={cajaAbierta} />
           )}
 
           {vistaActiva === "nuevaVenta" && <PanelNuevaVenta />}
