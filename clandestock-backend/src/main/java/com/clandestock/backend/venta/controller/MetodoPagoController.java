@@ -1,11 +1,13 @@
 package com.clandestock.backend.venta.controller;
 
 
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.venta.dto.MetodoPagoRequestDTO;
 import com.clandestock.backend.venta.dto.MetodoPagoResponseDTO;
 import com.clandestock.backend.venta.service.MetodoPagoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -75,13 +77,17 @@ public class MetodoPagoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MetodoPagoResponseDTO>> obtenerMetodosPago () {
+    public ResponseEntity<?> obtenerMetodosPago() {
         try {
-            List<MetodoPagoResponseDTO> lista = metodoPagoService.listarTodosMetodosPago();
+            UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<MetodoPagoResponseDTO> lista = metodoPagoService.listarMetodosPagoPorUsuario(usuario);
             return ResponseEntity.ok(lista);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al obtener métodos de pago: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.emptyList());
+                    .body("Error inesperado al obtener métodos de pago");
         }
     }
 
