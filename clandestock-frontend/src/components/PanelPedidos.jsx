@@ -6,15 +6,32 @@ export default function PanelPedidos({ pedidos, cajaAbierta }) {
   };
 
   const coloresPanel = {
-    local: { border: "warning", bg: "warning", text: "dark" },
-    takeaway: { border: "primary", bg: "primary", text: "white" },
-    delivery: { border: "danger", bg: "danger", text: "white" },
+    local: {
+      border: "warning",
+      bg: "warning",
+      text: "dark",
+      badge: "warning",
+      icon: "🍽️",
+    },
+    takeaway: {
+      border: "primary",
+      bg: "primary",
+      text: "white",
+      badge: "primary",
+      icon: "🛍️",
+    },
+    delivery: {
+      border: "danger",
+      bg: "danger",
+      text: "white",
+      badge: "danger",
+      icon: "🚚",
+    },
   };
 
   // 🔧 Función para formatear detalle según tipo
   const formatDetalle = (tipo, pedido) => {
     if (tipo === "local") {
-      // detalleEntrega ya viene como "Mozo: Nombre"
       return `${pedido.detalleEntrega} - Mesa ${pedido.numeroMesa}`;
     }
     if (tipo === "takeaway") {
@@ -60,13 +77,21 @@ export default function PanelPedidos({ pedidos, cajaAbierta }) {
                 pedidos[tipo].map((p) => (
                   <div
                     key={p.idVenta}
-                    className="mb-2 border-bottom pb-2 pedido-item"
+                    className="mb-2 border-bottom pb-2 pedido-item d-flex justify-content-between align-items-center"
                     onClick={() => console.log("Pedido seleccionado:", p)}
                     style={{ cursor: "pointer" }}
                   >
-                    <strong>{formatDetalle(tipo, p)}</strong>
-                    <br />
-                    Total: ${p.precioTotal}
+                    <div>
+                      <strong>{formatDetalle(tipo, p)}</strong>
+                      <br />
+                      Total: ${p.precioTotal}
+                    </div>
+                    <span
+                      className={`badge bg-${coloresPanel[tipo].badge} text-light d-flex align-items-center gap-1`}
+                    >
+                      <span>{coloresPanel[tipo].icon}</span>
+                      <span>{nombresPanel[tipo]}</span>
+                    </span>
                   </div>
                 ))
               )}
