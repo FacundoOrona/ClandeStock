@@ -58,3 +58,32 @@ export const getProductosPorCategoria = async (categoriaID, token) => {
   if (!res.ok) throw new Error("Error al obtener productos");
   return await res.json();
 };
+
+export const getMetodosPago = async (token) => {
+  const res = await fetch(`${BASE_URL}/metodopago`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Error al obtener métodos de pago");
+  return await res.json();
+};
+
+export const insertarMetodoPago = async (idVenta, idMetodoPago, token) => {
+  const res = await fetch(
+    `${BASE_URL}/venta/insertarMetodoPago/${idMetodoPago}/${idVenta}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  if (!res.ok) throw new Error("Error al insertar método de pago");
+  return await res.json(); // devuelve la venta actualizada con precioTotalConMetodoDePago
+};
+
+export const cerrarVenta = async (idVenta, token) => {
+  const res = await fetch(`${BASE_URL}/venta/cerrar/${idVenta}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Error al cerrar venta");
+  return await res.json();
+};
