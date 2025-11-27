@@ -44,4 +44,17 @@ public class MozoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado al listar mozos");
         }
     }
+
+    @DeleteMapping("/{idMozo}")
+    public ResponseEntity<?> eliminarMozo(@PathVariable Long idMozo) {
+        try {
+            UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            MozoResponseDTO response = mozoService.eliminarMozo(idMozo, usuario);
+            return ResponseEntity.ok("Mozo eliminado: " + response.getNombre() + " del local " + response.getNombreLocal());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar mozo: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado al eliminar mozo");
+        }
+    }
 }
