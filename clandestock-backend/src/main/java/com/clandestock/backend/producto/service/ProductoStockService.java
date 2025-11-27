@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.clandestock.backend.producto.repository.ProductoPrincipalRepository;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.dto.ProductoStockResponseDTO;
@@ -19,16 +20,19 @@ public class ProductoStockService {
     private ProductoPrincipalService productoPrincipalService;
     private ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService;
     private ProductoSecundarioService productoSecundarioService;
+    private ProductoPrincipalRepository productoPrincipalRepository;
 
     public ProductoStockService(ProductoPrincipalService pps, ProductoSecundarioPorPrincipalService psxpps,
-            ProductoSecundarioService productoSecundarioService) {
+            ProductoSecundarioService productoSecundarioService,
+                                ProductoPrincipalRepository productoPrincipalRepository) {
         this.productoPrincipalService = pps;
         this.productoSecundarioPorPrincipalService = psxpps;
         this.productoSecundarioService = productoSecundarioService;
+        this.productoPrincipalRepository = productoPrincipalRepository;
     }
 
     // Tiene filtro de JWT aplicado(retorna segun el rol del token)
-    public List<ProductoStockResponseDTO> productosConStock() {
+    public List<ProductoStockResponseDTO> productosConStockSinFiltro() {
         List<ProductoPrincipal> productos = productoPrincipalService.obtenerTodosEntity();
         List<ProductoStockResponseDTO> resultado = new ArrayList<>();
 
@@ -51,6 +55,40 @@ public class ProductoStockService {
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString()));
+        }
+
+        return resultado;
+    }
+
+    public List<ProductoStockResponseDTO> productosConStock(Long categoriaID) {
+        // Obtener los productos del local según el usuario autenticado
+        List<ProductoPrincipal> productos;
+
+        if (categoriaID != null) {
+            productos = productoPrincipalService.obtenerPorCategoria(categoriaID);
+        } else {
+            productos = productoPrincipalService.obtenerTodosEntity();
+        }
+
+        List<ProductoStockResponseDTO> resultado = new ArrayList<>();
+
+        for (ProductoPrincipal principal : productos) {
+            List<ProductoSecundarioPorPrincipal> secundarios =
+                    productoSecundarioPorPrincipalService.obtenerSecundariosPorPrincipal(principal);
+
+            int stockDisponible = secundarios.isEmpty()
+                    ? principal.getStock()
+                    : calcularStockDisponible(secundarios);
+
+            resultado.add(new ProductoStockResponseDTO(
+                    principal.getId().toString(),
+                    principal.getNombreProducto(),
+                    String.valueOf(stockDisponible),
+                    principal.getPrecioProducto().toString(),
+                    principal.getStockBajo().toString(),
+                    principal.getSinStock().toString(),
+                    principal.getLocal().getId().toString()
+            ));
         }
 
         return resultado;
