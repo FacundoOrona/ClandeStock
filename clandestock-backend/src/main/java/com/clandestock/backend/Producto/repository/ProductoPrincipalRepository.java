@@ -15,5 +15,6 @@ public interface ProductoPrincipalRepository extends JpaRepository<ProductoPrinc
     List<ProductoPrincipal> findByLocalId(long id);
 
     List<ProductoPrincipal> findByLocal_NombreLocal(String nombreLocal);
-    
+
+    List<ProductoPrincipal> findByCategoriaId(Long categoriaID);
 }
