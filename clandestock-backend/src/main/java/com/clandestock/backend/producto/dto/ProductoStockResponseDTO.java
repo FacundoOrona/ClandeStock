@@ -15,4 +15,5 @@ public class ProductoStockResponseDTO {
     String stockBajo;
     String sinStock;
     String local;
+    String tieneSecundarios;
 }
