@@ -5,6 +5,9 @@ import {
   quitarProductoDeVenta,
   getCategorias,
   getProductosPorCategoria,
+  getMetodosPago,
+  insertarMetodoPago,
+  cerrarVenta,
 } from "../services/ventaService";
 import { agruparProductos } from "../utils/agrupadorProductos";
 
@@ -13,6 +16,8 @@ export const useVentaDetalle = (idVenta) => {
   const [categorias, setCategorias] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("todos");
   const [productos, setProductos] = useState([]);
+  const [metodosPago, setMetodosPago] = useState([]);
+  const [metodoSeleccionado, setMetodoSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
 
   const token = localStorage.getItem("access_token");
@@ -55,11 +60,23 @@ export const useVentaDetalle = (idVenta) => {
     }
   };
 
+  // 🔄 Cargar métodos de pago
+  const cargarMetodosPago = async () => {
+    try {
+      const data = await getMetodosPago(token);
+      setMetodosPago(data);
+    } catch (err) {
+      console.error(err);
+      setMensaje("❌ Error al cargar métodos de pago");
+    }
+  };
+
   // ➕ Agregar producto
   const handleAgregarProducto = async (prod) => {
     try {
       await agregarProductoAVenta(idVenta, prod.productoPrincipalId, token);
       await cargarVenta();
+      await cargarProductos();
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al agregar producto");
@@ -71,15 +88,46 @@ export const useVentaDetalle = (idVenta) => {
     try {
       await quitarProductoDeVenta(idVenta, prod.idProductoPorVenta, token);
       await cargarVenta();
+      await cargarProductos();
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al quitar producto");
     }
   };
 
+  // 💳 Seleccionar método de pago
+  const handleSeleccionarMetodoPago = async (idMetodoPago) => {
+    try {
+      setMetodoSeleccionado(idMetodoPago);
+      const ventaActualizada = await insertarMetodoPago(
+        idVenta,
+        idMetodoPago,
+        token
+      );
+      setVenta(ventaActualizada);
+    } catch (err) {
+      console.error(err);
+      setMensaje("❌ Error al insertar método de pago");
+    }
+  };
+
+  // 🔴 Cerrar venta
+  const handleCerrarVenta = async (onBack) => {
+    try {
+      const confirmar = window.confirm("¿Seguro que quiere cerrar esta venta?");
+      if (!confirmar) return;
+      await cerrarVenta(idVenta, token);
+      onBack(); // volver al listado de pedidos
+    } catch (err) {
+      console.error(err);
+      setMensaje("❌ Error al cerrar venta");
+    }
+  };
+
   useEffect(() => {
     cargarVenta();
     cargarCategorias();
+    cargarMetodosPago();
   }, [idVenta]);
 
   useEffect(() => {
@@ -99,6 +147,10 @@ export const useVentaDetalle = (idVenta) => {
     productosAgrupados,
     handleAgregarProducto,
     handleQuitarProducto,
+    metodosPago,
+    metodoSeleccionado,
+    handleSeleccionarMetodoPago,
+    handleCerrarVenta,
     mensaje,
   };
 };
