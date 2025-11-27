@@ -73,6 +73,11 @@ public class ProductoPrincipalService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductoPrincipal> obtenerPorCategoria(Long categoriaID) {
+        return productoPrincipalRepository.findByCategoriaId(categoriaID);
+    }
+
+
     public List<ProductoPrincipal> obtenerTodosEntity() {
         UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
