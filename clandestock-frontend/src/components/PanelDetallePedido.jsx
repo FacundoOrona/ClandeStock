@@ -1,153 +1,21 @@
-import { useEffect, useState } from "react";
+import { useVentaDetalle } from "../hooks/useVentaDetalle";
 
 export default function PanelDetallePedido({ pedido, onBack }) {
-  const [venta, setVenta] = useState(null);
-  const [categorias, setCategorias] = useState([]);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("todos"); // 👈 por defecto "Todos"
-  const [productos, setProductos] = useState([]);
-  const [mensaje, setMensaje] = useState("");
-
-  const token = localStorage.getItem("access_token");
-
-  // 🔐 Cargar venta completa
-  const cargarVenta = async () => {
-    try {
-      const res = await fetch(`http://localhost:8080/venta/${pedido.idVenta}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setVenta(data);
-    } catch (err) {
-      console.error("Error cargando venta:", err);
-    }
-  };
-
-  useEffect(() => {
-    cargarVenta();
-  }, [pedido.idVenta, token]);
-
-  // 🔐 Cargar categorías
-  useEffect(() => {
-    fetch("http://localhost:8080/categoria/todas", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const normalizadas = data.map((c) => ({
-          id: c.id,
-          nombreCategoria: c.nombre_categoria,
-          localID: c.local_id,
-        }));
-        setCategorias(normalizadas);
-      })
-      .catch((err) => console.error("Error cargando categorías:", err));
-  }, [token]);
-
-  // 🔐 Cargar productos (todos o por categoría)
-  useEffect(() => {
-    const url =
-      categoriaSeleccionada === "todos"
-        ? "http://localhost:8080/productos/stock"
-        : `http://localhost:8080/productos/stock?categoriaID=${categoriaSeleccionada}`;
-
-    fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => setProductos(data))
-      .catch((err) => console.error("Error cargando productos:", err));
-  }, [categoriaSeleccionada, token]);
-
-  // ➕ Agregar producto (usa productoPrincipalId)
-  const handleAgregarProducto = async (prod) => {
-    try {
-      const body = {
-        idVenta: pedido.idVenta,
-        idProducto: prod.productoPrincipalId, // id del catálogo
-      };
-
-      const response = await fetch("http://localhost:8080/venta/agregar", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) throw new Error("Error al agregar producto");
-
-      await cargarVenta(); // refrescar venta
-    } catch (err) {
-      console.error(err);
-      setMensaje("❌ Error al agregar producto");
-    }
-  };
-
-  // ➖ Quitar producto (usa idProductoPorVenta)
-  const handleQuitarProducto = async (prod) => {
-    try {
-      const body = {
-        idVenta: pedido.idVenta,
-        idProducto: prod.idProductoPorVenta, // id de la relación producto-venta
-      };
-
-      const response = await fetch("http://localhost:8080/venta/quitar", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) throw new Error("Error al quitar producto");
-
-      await cargarVenta(); // refrescar venta
-    } catch (err) {
-      console.error(err);
-      setMensaje("❌ Error al quitar producto");
-    }
-  };
-
-  // 🔢 Agrupar productos repetidos por nombre
-  const agruparProductos = (productosVenta, productosStock) => {
-    return Object.values(
-      productosVenta.reduce((acc, prod) => {
-        const key = prod.nombreProducto;
-
-        // buscar el producto en stock para obtener productoPrincipalId
-        const prodStock = productosStock.find(
-          (p) => p.nombreProducto === prod.nombreProducto
-        );
-
-        if (!acc[key]) {
-          acc[key] = {
-            nombreProducto: prod.nombreProducto,
-            precioProducto: prod.precioProducto,
-            productoPrincipalId: prodStock
-              ? prodStock.productoPrincipalId
-              : null, // para agregar
-            idProductoPorVenta: prod.idProductoPorVenta, // para quitar
-            cantidad: 1,
-            total: parseFloat(prod.precioProducto),
-          };
-        } else {
-          acc[key].cantidad += 1;
-          acc[key].total += parseFloat(prod.precioProducto);
-          // mantener último idProductoPorVenta para quitar
-          acc[key].idProductoPorVenta = prod.idProductoPorVenta;
-        }
-        return acc;
-      }, {})
-    );
-  };
+  const {
+    venta,
+    categorias,
+    categoriaSeleccionada,
+    setCategoriaSeleccionada,
+    productos,
+    productosAgrupados,
+    handleAgregarProducto,
+    handleQuitarProducto,
+    mensaje,
+  } = useVentaDetalle(pedido.idVenta);
 
   if (!venta) {
     return <p className="text-muted">Cargando venta...</p>;
   }
-
-  const productosAgrupados = agruparProductos(venta.productos, productos);
 
   return (
     <div className="p-4 h-100 d-flex flex-column">
