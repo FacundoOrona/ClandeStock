@@ -58,5 +58,30 @@ public class MozoService {
                 .nombreLocal(mozo.getLocal().getNombreLocal())
                 .build();
     }
+
+    public MozoResponseDTO eliminarMozo(Long idMozo, UsuarioContexto usuarioContexto) {
+        Mozo mozo = mozoRepository.findById(idMozo)
+                .orElseThrow(() -> new RuntimeException("Mozo con ID " + idMozo + " no encontrado"));
+
+        // Validación de permisos
+        if (usuarioContexto.esAdminGeneral()) {
+            // Admin general puede eliminar cualquier mozo
+        } else {
+            // Moderador solo puede eliminar mozos de su propio local
+            if (!mozo.getLocal().getNombreLocal().equals(usuarioContexto.getLocal())) {
+                throw new RuntimeException("No tiene permisos para eliminar mozos de otro local");
+            }
+        }
+
+        mozoRepository.delete(mozo);
+
+        return MozoResponseDTO.builder()
+                .id(mozo.getId())
+                .nombre(mozo.getNombre())
+                .localId(mozo.getLocal().getId())
+                .nombreLocal(mozo.getLocal().getNombreLocal())
+                .build();
+    }
+
 }
 
