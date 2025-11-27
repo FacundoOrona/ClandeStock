@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.clandestock.backend.producto.dto.ProductoStockResponseDTO;
@@ -21,9 +22,10 @@ public class ProductoStockController {
     }
 
     @GetMapping("/stock")
-    public ResponseEntity<?> obtenerConStock() {
+    public ResponseEntity<?> obtenerConStock(
+            @RequestParam(required = false) Long categoriaID) {
         try {
-            List<ProductoStockResponseDTO> response = productoStockService.productosConStock();
+            List<ProductoStockResponseDTO> response = productoStockService.productosConStock(categoriaID);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -31,6 +33,7 @@ public class ProductoStockController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
 
     @GetMapping("/principal/alertas")
     public ResponseEntity<?> obtenerAlertasPrimarios() {
