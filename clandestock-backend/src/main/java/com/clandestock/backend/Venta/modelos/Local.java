@@ -1,16 +1,11 @@
 package com.clandestock.backend.venta.modelos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.clandestock.backend.producto.modelos.Categoria;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,4 +37,7 @@ public class Local {
 
     @OneToMany(mappedBy = "local")
     private List<Mesa> mesas;
+
+    @OneToMany(mappedBy = "local", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mozo> mozos = new ArrayList<>();
 }
