@@ -1,4 +1,8 @@
-export default function PanelPedidos({ pedidos, cajaAbierta }) {
+export default function PanelPedidos({
+  pedidos,
+  cajaAbierta,
+  setPedidoSeleccionado,
+}) {
   const nombresPanel = {
     local: "Consumo en local",
     takeaway: "Takeaway",
@@ -29,7 +33,6 @@ export default function PanelPedidos({ pedidos, cajaAbierta }) {
     },
   };
 
-  // 🔧 Función para formatear detalle según tipo
   const formatDetalle = (tipo, pedido) => {
     if (tipo === "local") {
       return `${pedido.detalleEntrega} - Mesa ${pedido.numeroMesa}`;
@@ -78,7 +81,7 @@ export default function PanelPedidos({ pedidos, cajaAbierta }) {
                   <div
                     key={p.idVenta}
                     className="mb-2 border-bottom pb-2 pedido-item d-flex justify-content-between align-items-center"
-                    onClick={() => console.log("Pedido seleccionado:", p)}
+                    onClick={() => setPedidoSeleccionado(p)}
                     style={{ cursor: "pointer" }}
                   >
                     <div>
