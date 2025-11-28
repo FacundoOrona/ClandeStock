@@ -16,6 +16,19 @@ export const ModeradorPage = () => {
   const [detalleCaja, setDetalleCaja] = useState(null);
   const [vistaActiva, setVistaActiva] = useState("pedidos");
 
+  const refrescarPedidos = async () => {
+    try {
+      const pedidosData = await getVentasActivas();
+      setPedidos({
+        local: pedidosData.filter((p) => p.tipoVenta === "CONSUMO_LOCAL"),
+        takeaway: pedidosData.filter((p) => p.tipoVenta === "TAKE_AWAY"),
+        delivery: pedidosData.filter((p) => p.tipoVenta === "ENVIO_DOMICILIO"),
+      });
+    } catch (error) {
+      console.error("Error refrescando pedidos:", error);
+    }
+  };
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -56,7 +69,11 @@ export const ModeradorPage = () => {
         </div>
         <div className="col-8 bg-light text-muted">
           {vistaActiva === "pedidos" && (
-            <VistaPedidos pedidos={pedidos} cajaAbierta={cajaAbierta} />
+            <VistaPedidos
+              pedidos={pedidos}
+              cajaAbierta={cajaAbierta}
+              refrescarPedidos={refrescarPedidos}
+            />
           )}
 
           {vistaActiva === "nuevaVenta" && <PanelNuevaVenta />}
