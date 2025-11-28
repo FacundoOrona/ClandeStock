@@ -65,11 +65,13 @@ public class ReporteService {
 
     private ReporteResponse toResponse(Reporte reporte) {
         return new ReporteResponse(
+                reporte.getId(),
                 reporte.getDescripcion(),
                 reporte.getUsuarioEmisor().getNombreUsuario(),
                 reporte.getEstado() ? "Leído" : "No leído"
         );
     }
+
 
     public ReporteResponse checkReporte (Long idReporte) {
         Reporte reporte = reporteRepository.findById(idReporte)

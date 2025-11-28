@@ -6,7 +6,7 @@ import PrivateModeradorRoute from "./PrivateModeradorRoute";
 import PrivateAdminRoute from "./PrivateAdminRoute";
 import RegistrarModeradorPage from "../pages/admin/RegistrarModeradorPage";
 import { AdminProductosPage } from "./../pages/admin/AdminProductosPage";
-import { AdminReportesPage } from "../pages/admin/AdminReportesPage";
+import AdminReportesPage from "../pages/admin/AdminReportesPage";
 import { AdminVentasPage } from "../pages/admin/AdminVentasPage";
 import { AdminUsuariosPage } from "./../pages/admin/AdminUsuariosPage";
 import AdminEstadisticasPage from "../pages/admin/AdminEstadisticasPage";
