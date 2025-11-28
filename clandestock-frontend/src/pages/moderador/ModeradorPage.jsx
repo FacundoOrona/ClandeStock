@@ -51,6 +51,12 @@ export const ModeradorPage = () => {
   };
 
   useEffect(() => {
+    if (vistaActiva === "ventasCerradas") {
+      refrescarPedidosCerrados();
+    }
+  }, [vistaActiva]);
+
+  useEffect(() => {
     const cargarDatos = async () => {
       try {
         const cajas = await getEstadoCaja();
@@ -112,7 +118,7 @@ export const ModeradorPage = () => {
             <VistaVentasCerradas
               pedidos={pedidosCerrados}
               cajaAbierta={cajaAbierta}
-              refrescarPedidosCerrados={refrescarPedidosCerrados}
+              setPedidoSeleccionado={() => {}}
             />
           )}
 
