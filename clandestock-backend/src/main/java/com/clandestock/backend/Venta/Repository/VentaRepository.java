@@ -41,4 +41,9 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
 
         List<Venta> findByLocal_NombreLocalAndEstadoPagoIsFalse(String local);
 
+        List<Venta> findByEstadoPagoIsTrue();
+
+        List<Venta> findByCajaAndEstadoPagoIsTrue(Caja caja);
+
+
 }
