@@ -5,6 +5,7 @@ import VistaVentasCerradas from "../../components/VistaVentasCerradas";
 import PanelNuevaVenta from "../../components/PanelNuevaVenta";
 import { getEstadoCaja, getDetalleCaja } from "../../api/caja";
 import { getVentasActivas, getVentasCerradas } from "../../api/pedidos";
+import PanelReporte from "../../components/PanelReporte";
 
 export const ModeradorPage = () => {
   const [cajaAbierta, setCajaAbierta] = useState(false);
@@ -126,7 +127,7 @@ export const ModeradorPage = () => {
 
           {vistaActiva === "productos" && <div className="p-3">Productos</div>}
 
-          {vistaActiva === "reportes" && <div className="p-3">Reportes</div>}
+          {vistaActiva === "reportes" && <PanelReporte />}
 
           {vistaActiva === "abrirCaja" && <div className="p-3">Abrir caja</div>}
 
