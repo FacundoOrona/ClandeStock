@@ -18,3 +18,15 @@ export const enviarReporte = async (descripcion, usuarioEmisor) => {
   );
   return response.data;
 };
+
+export const obtenerHistorialReportes = async () => {
+  const token = localStorage.getItem("access_token");
+  if (!token) throw new Error("Token no encontrado");
+
+  const response = await axios.get("http://localhost:8080/reporte/historial", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

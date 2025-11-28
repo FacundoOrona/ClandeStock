@@ -1,21 +1,41 @@
-import { useState, useContext } from "react";
-import { enviarReporte } from "../api/reporte";
+import { useState, useContext, useEffect } from "react";
+import { enviarReporte, obtenerHistorialReportes } from "../api/reporte";
 import { AuthContext } from "../context/AuthContext";
 
 export default function PanelReporte() {
   const [descripcion, setDescripcion] = useState("");
   const [estado, setEstado] = useState(null);
+  const [reportes, setReportes] = useState([]);
   const { user } = useContext(AuthContext);
+
+  const cargarHistorial = async () => {
+    try {
+      const data = await obtenerHistorialReportes();
+      // Tomamos solo los últimos 10
+      const ultimos = data.slice(-10).reverse();
+      setReportes(ultimos);
+    } catch (error) {
+      console.error(
+        "Error cargando historial:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    cargarHistorial();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await enviarReporte(descripcion, user?.username); // usamos el nombre de usuario
+      await enviarReporte(descripcion, user?.username);
       setEstado({
         tipo: "success",
         mensaje: "Reporte enviado correctamente ✅",
       });
       setDescripcion("");
+      cargarHistorial(); // refrescar lista
     } catch (error) {
       console.error(
         "Error enviando reporte:",
@@ -53,6 +73,35 @@ export default function PanelReporte() {
         >
           {estado.mensaje}
         </div>
+      )}
+
+      <hr className="my-4" />
+
+      <h5>📑 Últimos reportes</h5>
+      {reportes.length === 0 ? (
+        <p className="text-muted">No hay reportes disponibles</p>
+      ) : (
+        <ul className="list-group">
+          {reportes.map((r, index) => (
+            <li
+              key={index}
+              className="list-group-item d-flex justify-content-between align-items-center"
+            >
+              <div>
+                <strong>{r.descripcion}</strong>
+                <br />
+                <small className="text-muted">Usuario: {r.usuarioEmisor}</small>
+              </div>
+              <span
+                className={`badge ${
+                  r.estado === "Leído" ? "bg-success" : "bg-secondary"
+                }`}
+              >
+                {r.estado}
+              </span>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
