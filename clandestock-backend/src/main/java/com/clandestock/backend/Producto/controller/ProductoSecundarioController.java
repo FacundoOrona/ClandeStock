@@ -130,4 +130,20 @@ public class ProductoSecundarioController {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PostMapping("/desactivarAlerta/{id}")
+    public void desactivarAlerta(@PathVariable String id) {
+        try {
+            System.out.println("LLega con controlador");
+            productoSecundarioService.desactivarAlerta(id);
+            System.out.println("pasa por aca OK");
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            System.out.println("==============Exxception"+e.getMessage());
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("==============Exxception 2"+e.getMessage());
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
