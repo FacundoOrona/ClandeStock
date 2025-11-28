@@ -1,5 +1,6 @@
 package com.clandestock.backend.producto.service;
 
+import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
@@ -162,6 +163,14 @@ public class ProductoSecundarioService {
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public void actualizarStock(ActualizarStockRequestDTO dto) {
+        ProductoSecundario producto = productoSecundarioRepository.findById(Long.parseLong(dto.idProducto))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        producto.setStock(Integer.parseInt(dto.stock));
+        productoSecundarioRepository.save(producto);
     }
 
 }
