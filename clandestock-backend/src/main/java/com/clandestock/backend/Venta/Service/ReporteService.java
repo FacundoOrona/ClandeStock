@@ -1,6 +1,7 @@
 package com.clandestock.backend.venta.service;
 
 import com.clandestock.backend.auth.dto.RegistroRequest;
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.venta.dto.ReporteRequest;
@@ -9,6 +10,8 @@ import com.clandestock.backend.venta.modelos.Reporte;
 import com.clandestock.backend.venta.repository.ReporteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ReporteService {
@@ -27,6 +30,25 @@ public class ReporteService {
         return toResponse(reporteGuardado);
     }
 
+    public List<ReporteResponse> obtenerReportesPorContexto(UsuarioContexto usuario) {
+        if (usuario.esAdminGeneral()) {
+            // Admin general ve todos los reportes
+            return reporteRepository.findAll()
+                    .stream()
+                    .map(this::toResponse)
+                    .toList();
+        } else {
+            // Moderador: traer solo los reportes de SU usuario
+            Usuario usuarioEmisor = usuarioRepository.findByNombreUsuario(usuario.getNombreUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+            return reporteRepository.findByUsuarioEmisor_Id(usuarioEmisor.getId())
+                    .stream()
+                    .map(this::toResponse)
+                    .toList();
+        }
+    }
+
     public Reporte toEntity(ReporteRequest request) {
         Usuario usuarioEmisor = usuarioRepository.findByNombreUsuario(request.usuarioEmisor())
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -41,11 +63,11 @@ public class ReporteService {
     }
 
 
-    public ReporteResponse toResponse (Reporte reporte){
+    private ReporteResponse toResponse(Reporte reporte) {
         return new ReporteResponse(
                 reporte.getDescripcion(),
                 reporte.getUsuarioEmisor().getNombreUsuario(),
-                reporte.getEstado().toString()
+                reporte.getEstado() ? "Leído" : "No leído"
         );
     }
 
