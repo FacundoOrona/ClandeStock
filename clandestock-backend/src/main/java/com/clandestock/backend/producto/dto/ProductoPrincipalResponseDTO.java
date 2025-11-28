@@ -20,4 +20,6 @@ public class ProductoPrincipalResponseDTO {
     public String stockBajo;
 
     public String sinStock;
+
+    public String tieneSecundarios;
 }

@@ -42,11 +42,17 @@ export default function ProductoCard({ producto, onEditarClick }) {
                 </h5>
 
                 {/* Datos */}
-                <p className="card-text mb-1">
-                    <strong>Stock:</strong> {producto.stock}
-                </p>
                 <p className="card-text mb-0">
                     <strong>Local:</strong> {nombreLocal}
+                </p>
+                <p className="card-text mb-1">
+                    {producto.tieneSecundarios === "true" ? (
+                        <p className="text-muted">Stock controlado por secundarios</p>
+                    ) : (
+                        <>
+                            <strong>Stock:</strong> {producto.stock}
+                        </>
+                    )}
                 </p>
             </div>
 

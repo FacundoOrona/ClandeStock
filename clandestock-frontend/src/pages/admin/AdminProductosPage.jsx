@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormProductoSecundario from "../../components/productos/FormNuevoProductoSecundario";
 
 import { guardarProductoSecundario } from "../../api/productoSecundario";
@@ -7,12 +7,46 @@ import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProd
 import { guardarProductoPrincipal } from "../../api/productoPrimario";
 import AdminCategorias from "../../components/productos/AdminCategorias";
 import StockVentaPanel from "../../components/productos/StockVentaPanel";
+import AdminAlertasStock from "../../components/productos/AdminAlertasStock";
+import { getAlertasStockPrimario, getAlertasStockSecundario } from "../../api/alertasStock";
 
 
 export const AdminProductosPage = () => {
   const [productos, setProductos] = useState([]);
   const [vistaActiva, setVistaActiva] = useState("listado");
+  const [cantidadAlertas, setCantidadAlertas] = useState(0);
+  useEffect(() => {
+          cargarAlertas();
+      }, []);
+  
+      const cargarAlertas = async () => {
+          try {
+              const primarios = await getAlertasStockPrimario();
+              const secundarios = await getAlertasStockSecundario();
+  
+              const primariosMapped = primarios.map(p => ({
+                  ...p,
+                  tipo: "principal",
+                  alerta:
+                      p.sinStock === "true" || p.stockDisponible === "0"
+                          ? "sin stock"
+                          : "poco stock"}));
+  
+              const secundariosMapped = secundarios.map(p => ({
+                  ...p,
+                  tipo: "secundario",
+                  alerta:
+                      p.sinStock === "true" || p.stockDisponible === "0"
+                          ? "sin stock"
+                          : "poco stock"
+              }));
+              setCantidadAlertas(primariosMapped.length + secundariosMapped.length);
+          } catch (err) {
+              console.error("Error cargando alertas:", err);
+          }
+      };
 
+  
   const handleNuevoProductoSecundario = async (producto) => {
     try {
       const saved = await guardarProductoSecundario(producto);
@@ -36,6 +70,20 @@ export const AdminProductosPage = () => {
         {/* Sidebar */}
         <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column overflow-auto">
           <h4 className="mb-4 text-center">Administrar productos</h4>
+          <button
+            className="btn btn-outline-light mb-2 flex-shrink-0 position-relative"
+            onClick={() => setVistaActiva("alertas")}
+          >
+            Alertas de stock
+            {cantidadAlertas > 0 && (
+              <span
+                className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style={{ fontSize: "0.75rem" }}
+              >
+                {cantidadAlertas}
+              </span>
+            )}
+          </button>
           <button
             className="btn btn-outline-light mb-2 flex-shrink-0"
             onClick={() => setVistaActiva("stock")}
@@ -67,6 +115,7 @@ export const AdminProductosPage = () => {
           >
             Categorias
           </button>
+
         </div>
 
         {/* Panel dinámico */}
@@ -98,6 +147,10 @@ export const AdminProductosPage = () => {
           {vistaActiva === "listado" && <ListadoProductos />}
 
           {vistaActiva === "stock" && <StockVentaPanel />}
+
+          {vistaActiva === "alertas" && (
+            <AdminAlertasStock setCantidadAlertas={setCantidadAlertas} />
+          )}
         </div>
       </div>
     </div>

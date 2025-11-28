@@ -35,6 +35,7 @@ export default function ListadoProductos() {
                     stock: parseInt(p.stock, 10),
                     estado: p.estado === "true" ? "activo" : "inactivo",
                     local: p.idLocal,
+                    tieneSecundarios: p.tieneSecundarios,
                 })),
                 ...secundarios.map(p => ({
                     tipo: "secundario",
@@ -43,6 +44,7 @@ export default function ListadoProductos() {
                     stock: parseInt(p.stock, 10),
                     estado: p.estado === "true" ? "activo" : "inactivo",
                     local: p.local,
+                    tieneSecundarios: p.tieneSecundarios,
                 })),
             ];
 

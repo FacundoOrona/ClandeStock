@@ -1,5 +1,6 @@
 package com.clandestock.backend.producto.controller;
 
+import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.service.ProductoSecundarioService;
@@ -8,8 +9,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/productos/secundario")
@@ -113,6 +114,35 @@ public class ProductoSecundarioController {
         } catch (RuntimeException e) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
+    @PostMapping("/stock")
+    public void actualizarStock(@RequestBody ActualizarStockRequestDTO dto) {
+        try {
+            productoSecundarioService.actualizarStock(dto);
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/desactivarAlerta/{id}")
+    public void desactivarAlerta(@PathVariable String id) {
+        try {
+            System.out.println("LLega con controlador");
+            productoSecundarioService.desactivarAlerta(id);
+            System.out.println("pasa por aca OK");
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            System.out.println("==============Exxception"+e.getMessage());
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("==============Exxception 2"+e.getMessage());
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
