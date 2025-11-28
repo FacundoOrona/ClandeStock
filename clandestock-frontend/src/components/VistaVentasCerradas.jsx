@@ -49,11 +49,7 @@ export default function VistaVentasCerradas({
   return (
     <div className="d-flex flex-column h-100">
       {["local", "takeaway", "delivery"].map((tipo) => (
-        <div
-          key={tipo}
-          className="flex-grow-1 p-3"
-          style={{ height: "33.33%" }}
-        >
+        <div key={tipo} className="p-3" style={{ height: "350px" }}>
           <div
             className={`card h-100 border-${coloresPanel[tipo].border}`}
             style={{ position: "relative" }}
