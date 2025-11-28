@@ -27,6 +27,11 @@ export const useVentaDetalle = (idVenta) => {
     try {
       const data = await getVentaById(idVenta, token);
       setVenta(data);
+
+      // 👇 si la venta ya tiene método de pago asignado, lo guardamos en el estado
+      if (data.idMetodoPago) {
+        setMetodoSeleccionado(data.idMetodoPago.toString());
+      }
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al cargar venta");
