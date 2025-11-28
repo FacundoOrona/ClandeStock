@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PanelPedidos from "./PanelPedidos";
 import PanelDetallePedido from "./PanelDetallePedido";
 
-export default function VistaPedidos({ pedidos, cajaAbierta }) {
+export default function VistaPedidos({
+  pedidos,
+  cajaAbierta,
+  refrescarPedidos,
+}) {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
+
+  useEffect(() => {
+    if (!pedidoSeleccionado) {
+      refrescarPedidos(); // 👈 refresca listado al volver
+    }
+  }, [pedidoSeleccionado]);
 
   return (
     <div className="h-100">
