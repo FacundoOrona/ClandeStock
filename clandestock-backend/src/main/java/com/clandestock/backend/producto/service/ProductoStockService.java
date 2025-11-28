@@ -137,7 +137,7 @@ public class ProductoStockService {
 
             boolean alertaPorBooleanos = Boolean.TRUE.equals(principal.getSinStock())
                     || Boolean.TRUE.equals(principal.getStockBajo());
-            boolean alertaPorCantidad = principal.getAletarStock() > 0 && stockDisponible <= principal.getAletarStock();
+            boolean alertaPorCantidad = principal.getAletarStock() >= stockDisponible || stockDisponible <= principal.getAletarStock();
 
             if (alertaPorBooleanos || alertaPorCantidad) {
                 resultado.add(new ProductoStockResponseDTO(
