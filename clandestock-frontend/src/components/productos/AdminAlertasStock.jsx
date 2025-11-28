@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAlertasStockSecundario, getAlertasStockPrimario, actualizarAlertaSecundario, actualizarAlertaPrimario } from "../../api/alertasStock";
+import { getAlertasStockSecundario, getAlertasStockPrimario, actualizarStockPrimario, actualizarStockSecundario, desactivarAlertaPrimario, desactivarAlertaSecundario } from "../../api/alertasStock";
 
 const localesMap = {
     "1": "Tenedor Libre",
@@ -9,23 +9,25 @@ const localesMap = {
 
 export default function AdminAlertasStock({ setCantidadAlertas }) {
     const [alertas, setAlertas] = useState([]);
-    
+
     useEffect(() => {
         cargarAlertas();
     }, []);
 
     const cargarAlertas = async () => {
         try {
+            setAlertas([]);
             const primarios = await getAlertasStockPrimario();
             const secundarios = await getAlertasStockSecundario();
-
+            
             const primariosMapped = primarios.map(p => ({
                 ...p,
                 tipo: "principal",
                 alerta:
                     p.sinStock === "true" || p.stockDisponible === "0"
                         ? "sin stock"
-                        : "poco stock"}));
+                        : "poco stock"
+            }));
 
             const secundariosMapped = secundarios.map(p => ({
                 ...p,
@@ -45,10 +47,11 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
 
     const handleDesactivarAlerta = async (producto) => {
         try {
-            await actualizarAlerta(producto.productoPrincipalId, {
-                stockBajo: false,
-                sinStock: false
-            });
+            if (producto.tipo === "principal") {
+                await desactivarAlertaPrimario(producto.id);
+            } else {
+                await desactivarAlertaSecundario(producto.id);
+            }
             cargarAlertas();
         } catch (err) {
             console.error("Error desactivando alerta:", err);
@@ -57,10 +60,18 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
 
     const handleActualizarStock = async (producto, nuevoStock) => {
         try {
-            await actualizarAlerta(producto.productoPrincipalId, {
-                stockDisponible: nuevoStock
-            });
-            cargarAlertas();
+            const dto = {
+                id_producto: producto.id,
+                stock: nuevoStock.toString()
+            };
+
+            if (producto.tipo === "principal") {
+                await actualizarStockPrimario(dto);
+            } else {
+                await actualizarStockSecundario(dto);
+            }
+
+            cargarAlertas(); // refresca la vista
         } catch (err) {
             console.error("Error actualizando stock:", err);
         }
@@ -75,7 +86,7 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
                 ) : (
                     <div className="row">
                         {alertas.map((p) => (
-                            <div key={p.productoPrincipalId} className="col-12 col-md-6 col-lg-4">
+                            <div key={p.id} className="col-12 col-md-6 col-lg-4">
                                 <div className="card mb-3 shadow-sm">
                                     <div className="card-body">
                                         <div className="d-flex justify-content-between mb-2">
@@ -102,7 +113,6 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
                                         <p className="card-text mb-1">Stock disponible: {p.stockDisponible}</p>
                                         <p className="card-text mb-1">Precio: ${parseFloat(p.precio).toLocaleString()}</p>
 
-                                        {/* 🔥 Lógica de acciones */}
                                         {(p.stockBajo === "true" || p.sinStock === "true") ? (
                                             <button
                                                 className="btn btn-sm btn-warning"
