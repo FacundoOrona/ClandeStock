@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.modelos.Categoria;
@@ -76,7 +77,6 @@ public class ProductoPrincipalService {
     public List<ProductoPrincipal> obtenerPorCategoria(Long categoriaID) {
         return productoPrincipalRepository.findByCategoriaId(categoriaID);
     }
-
 
     public List<ProductoPrincipal> obtenerTodosEntity() {
         UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
@@ -172,5 +172,12 @@ public class ProductoPrincipalService {
         }
         producto.setCategoria(categoria);
         return producto;
+    }
+
+    public void actualizarStock(ActualizarStockRequestDTO dto) {
+        ProductoPrincipal producto = productoPrincipalRepository.findById(Long.parseLong(dto.idProducto))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setStock(Integer.parseInt(dto.stock));
+        productoPrincipalRepository.save(producto);
     }
 }
