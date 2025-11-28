@@ -27,15 +27,19 @@ public class ReporteService {
         return toResponse(reporteGuardado);
     }
 
-    public Reporte toEntity (ReporteRequest request){
+    public Reporte toEntity(ReporteRequest request) {
         Usuario usuarioEmisor = usuarioRepository.findByNombreUsuario(request.usuarioEmisor())
-                .orElseThrow(()->new EntityNotFoundException("Usuario emisor "+ request.usuarioEmisor() +" inexistente"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Usuario emisor " + request.usuarioEmisor() + " inexistente"
+                ));
 
         return Reporte.builder()
                 .descripcion(request.descripcion())
                 .usuarioEmisor(usuarioEmisor)
+                .estado(false)
                 .build();
     }
+
 
     public ReporteResponse toResponse (Reporte reporte){
         return new ReporteResponse(

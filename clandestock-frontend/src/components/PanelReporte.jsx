@@ -10,7 +10,7 @@ export default function PanelReporte() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await enviarReporte(descripcion, user?.username || "Moderador");
+      await enviarReporte(descripcion, user?.username); // usamos el nombre de usuario
       setEstado({
         tipo: "success",
         mensaje: "Reporte enviado correctamente ✅",
@@ -27,10 +27,10 @@ export default function PanelReporte() {
 
   return (
     <div className="p-4">
-      <h4 className="mb-3">Enviar reporte</h4>
-      <form onSubmit={handleSubmit}>
+      <h4 className="mb-3">📝 Enviar reporte</h4>
+      <form onSubmit={handleSubmit} className="card shadow-sm p-3">
         <div className="mb-3">
-          <label className="form-label">Descripción del reporte</label>
+          <label className="form-label fw-bold">Descripción del reporte</label>
           <textarea
             className="form-control"
             rows="4"
@@ -40,7 +40,7 @@ export default function PanelReporte() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary w-100">
           📤 Enviar reporte
         </button>
       </form>

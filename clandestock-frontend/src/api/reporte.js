@@ -8,7 +8,7 @@ export const enviarReporte = async (descripcion, usuarioEmisor) => {
     "http://localhost:8080/reporte",
     {
       descripcion,
-      usuarioEmisor,
+      usuarioEmisor, // nombre de usuario, no id
     },
     {
       headers: {
@@ -16,6 +16,5 @@ export const enviarReporte = async (descripcion, usuarioEmisor) => {
       },
     }
   );
-
   return response.data;
 };
