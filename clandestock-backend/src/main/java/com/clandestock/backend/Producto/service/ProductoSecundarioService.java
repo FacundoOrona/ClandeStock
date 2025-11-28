@@ -173,4 +173,15 @@ public class ProductoSecundarioService {
         productoSecundarioRepository.save(producto);
     }
 
+    public void desactivarAlerta(String id) {
+        ProductoSecundario producto = productoSecundarioRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        
+        System.out.println("======Llega al servicio con producto id: "+producto.getId());
+                producto.setStockBajo(false);
+        producto.setSinStock(false);
+        productoSecundarioRepository.save(producto);
+    }
+
 }
