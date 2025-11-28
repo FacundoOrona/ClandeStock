@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 @Service
 public class ProductoSecundarioPorPrincipalService {
     private ProductoSecundarioPorPrincipalRepository relacionRepository;
-    private ProductoPrincipalRepository productoPrincipalRepository;
-    private ProductoSecundarioRepository productoSecundarioRepository;
     private ProductoPrincipalService productoPrincipalService;
     private ProductoSecundarioService productoSecundarioService;
 
@@ -29,8 +27,6 @@ public class ProductoSecundarioPorPrincipalService {
             ProductoPrincipalService productoPrincipalService,
             ProductoSecundarioService productoSecundarioService) {
         this.relacionRepository = relacionRepository;
-        this.productoPrincipalRepository = productoPrincipalRepository;
-        this.productoSecundarioRepository = productoSecundarioRepository;
         this.productoPrincipalService = productoPrincipalService;
         this.productoSecundarioService = productoSecundarioService;
     }
