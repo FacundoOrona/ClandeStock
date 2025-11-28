@@ -1,20 +1,28 @@
 import { useEffect, useState } from "react";
 import FuncionesModerador from "../../components/FuncionesModerador";
 import VistaPedidos from "../../components/VistaPedido";
+import VistaVentasCerradas from "../../components/VistaVentasCerradas";
 import PanelNuevaVenta from "../../components/PanelNuevaVenta";
 import { getEstadoCaja, getDetalleCaja } from "../../api/caja";
-import { getVentasActivas } from "../../api/pedidos";
+import { getVentasActivas, getVentasCerradas } from "../../api/pedidos";
 
 export const ModeradorPage = () => {
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [caja, setCaja] = useState(null);
+  const [detalleCaja, setDetalleCaja] = useState(null);
+  const [vistaActiva, setVistaActiva] = useState("pedidos");
+
   const [pedidos, setPedidos] = useState({
     local: [],
     takeaway: [],
     delivery: [],
   });
-  const [detalleCaja, setDetalleCaja] = useState(null);
-  const [vistaActiva, setVistaActiva] = useState("pedidos");
+
+  const [pedidosCerrados, setPedidosCerrados] = useState({
+    local: [],
+    takeaway: [],
+    delivery: [],
+  });
 
   const refrescarPedidos = async () => {
     try {
@@ -29,6 +37,19 @@ export const ModeradorPage = () => {
     }
   };
 
+  const refrescarPedidosCerrados = async () => {
+    try {
+      const cerrados = await getVentasCerradas();
+      setPedidosCerrados({
+        local: cerrados.filter((p) => p.tipoVenta === "CONSUMO_LOCAL"),
+        takeaway: cerrados.filter((p) => p.tipoVenta === "TAKE_AWAY"),
+        delivery: cerrados.filter((p) => p.tipoVenta === "ENVIO_DOMICILIO"),
+      });
+    } catch (error) {
+      console.error("Error cargando ventas cerradas:", error);
+    }
+  };
+
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -36,7 +57,8 @@ export const ModeradorPage = () => {
         const abierta =
           Array.isArray(cajas) && cajas.length > 0 ? cajas[0] : null;
         setCaja(abierta);
-        setCajaAbierta(abierta?.estado === "true");
+        setCajaAbierta(String(abierta?.estado).toLowerCase() === "true");
+        console.log("Estado de caja:", abierta?.estado, typeof abierta?.estado);
 
         const pedidosData = await getVentasActivas();
         setPedidos({
@@ -46,6 +68,16 @@ export const ModeradorPage = () => {
             (p) => p.tipoVenta === "ENVIO_DOMICILIO"
           ),
         });
+
+        const cerradosData = await getVentasCerradas();
+        setPedidosCerrados({
+          local: cerradosData.filter((p) => p.tipoVenta === "CONSUMO_LOCAL"),
+          takeaway: cerradosData.filter((p) => p.tipoVenta === "TAKE_AWAY"),
+          delivery: cerradosData.filter(
+            (p) => p.tipoVenta === "ENVIO_DOMICILIO"
+          ),
+        });
+
         const detalle = await getDetalleCaja();
         setDetalleCaja(detalle[0]);
       } catch (error) {
@@ -76,13 +108,17 @@ export const ModeradorPage = () => {
             />
           )}
 
+          {vistaActiva === "ventasCerradas" && (
+            <VistaVentasCerradas
+              pedidos={pedidosCerrados}
+              cajaAbierta={cajaAbierta}
+              refrescarPedidosCerrados={refrescarPedidosCerrados}
+            />
+          )}
+
           {vistaActiva === "nuevaVenta" && <PanelNuevaVenta />}
 
           {vistaActiva === "productos" && <div className="p-3">Productos</div>}
-
-          {vistaActiva === "ventasCerradas" && (
-            <div className="p-3">Ventas cerradas</div>
-          )}
 
           {vistaActiva === "reportes" && <div className="p-3">Reportes</div>}
 
