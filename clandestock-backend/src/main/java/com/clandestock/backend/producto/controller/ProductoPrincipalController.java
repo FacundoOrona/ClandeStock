@@ -113,4 +113,16 @@ public class ProductoPrincipalController {
         }
     }
 
+    @PostMapping("/desactivarAlerta/{id}")
+    public void desactivarAlerta(@PathVariable String id) {
+        try {
+            productoPrincipalService.desactivarAlerta(id);
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }
