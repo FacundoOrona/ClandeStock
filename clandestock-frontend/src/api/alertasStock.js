@@ -11,11 +11,19 @@ export const getAlertasStockPrimario = async () => {
     return response.data;
 };
 
-export const actualizarAlertaSecundario = async (id, payload) => {
-    const response = await axios.put(`/productos/secundario/${id}/alerta`, payload);
+export const desactivarAlertaSecundario = async (id) => {
+    const response = await axios.post(`/productos/secundario/desactivarAlerta/${id}`);
     return response.data;
 };
-export const actualizarAlertaPrimario = async (id, payload) => {
-    const response = await axios.put(`/productos/secundario/${id}/alerta`, payload);
+export const desactivarAlertaPrimario = async (id) => {
+    const response = await axios.post(`/producto/principal/desactivarAlerta/${id}`);
+    return response.data;
+};
+export const actualizarStockPrimario = async (dto) => {
+    const response = await axios.post("/producto/principal/stock", dto);
+    return response.data;
+};
+export const actualizarStockSecundario = async (dto) => {
+    const response = await axios.post("/productos/secundario/stock", dto);
     return response.data;
 };
