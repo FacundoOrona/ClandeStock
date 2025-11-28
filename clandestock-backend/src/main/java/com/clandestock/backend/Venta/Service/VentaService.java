@@ -388,4 +388,29 @@ public class VentaService {
         }
         
     }
+
+    public List<VentaResponseDTO> obtenerCerradas() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (usuario.esAdminGeneral()) {
+            return ventaRepository.findByEstadoPagoIsTrue()
+                    .stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+        } else {
+            Local local = localService.obtenerPorNombre(usuario.getLocal());
+            Caja cajaAbierta = cajaService.obtenerPorLocal(local, true);
+
+            if (cajaAbierta == null) {
+                throw new RuntimeException("No hay caja abierta actualmente en el local");
+            }
+
+            return ventaRepository.findByCajaAndEstadoPagoIsTrue(cajaAbierta)
+                    .stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+        }
+    }
+
+
 }
