@@ -154,12 +154,18 @@ export default function PanelDetallePedido({ pedido, onBack }) {
         <h5 className="text-warning gothic-font mb-3">Método de Pago</h5>
         <div className="mb-3">
           <label className="form-label text-dark fw-bold">
-            Seleccionar método
+            Seleccionar método -
           </label>
+          {productosAgrupados.length === 0 && (
+            <small className="text-muted">
+              Agregue productos a la venta para habilitar métodos de pago
+            </small>
+          )}
           <select
             className="form-select border-warning shadow-sm"
             value={metodoSeleccionado}
             onChange={(e) => handleSeleccionarMetodoPago(e.target.value)}
+            disabled={productosAgrupados.length === 0}
           >
             <option value="">-- Seleccionar --</option>
             {metodosPago.map((m) => (
@@ -184,9 +190,15 @@ export default function PanelDetallePedido({ pedido, onBack }) {
 
       {/* Botones de acción */}
       <div className="d-flex justify-content-between mt-4">
+        {!metodoSeleccionado && (
+          <small className="text-muted">
+            Seleccione un método de pago para cerrar la venta
+          </small>
+        )}
         <button
           className="btn btn-danger fw-bold"
           onClick={() => handleCerrarVenta(onBack)}
+          disabled={!metodoSeleccionado} // 👈 clave
         >
           Cerrar venta - Cobrar
         </button>
