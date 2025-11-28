@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormProductoSecundario from "../../components/productos/FormNuevoProductoSecundario";
 
 import { guardarProductoSecundario } from "../../api/productoSecundario";
@@ -8,12 +8,43 @@ import { guardarProductoPrincipal } from "../../api/productoPrimario";
 import AdminCategorias from "../../components/productos/AdminCategorias";
 import StockVentaPanel from "../../components/productos/StockVentaPanel";
 import AdminAlertasStock from "../../components/productos/AdminAlertasStock";
+import { getAlertasStockPrimario, getAlertasStockSecundario } from "../../api/alertasStock";
 
 
 export const AdminProductosPage = () => {
   const [productos, setProductos] = useState([]);
   const [vistaActiva, setVistaActiva] = useState("listado");
   const [cantidadAlertas, setCantidadAlertas] = useState(0);
+  useEffect(() => {
+          cargarAlertas();
+      }, []);
+  
+      const cargarAlertas = async () => {
+          try {
+              const primarios = await getAlertasStockPrimario();
+              const secundarios = await getAlertasStockSecundario();
+  
+              const primariosMapped = primarios.map(p => ({
+                  ...p,
+                  tipo: "principal",
+                  alerta:
+                      p.sinStock === "true" || p.stockDisponible === "0"
+                          ? "sin stock"
+                          : "poco stock"}));
+  
+              const secundariosMapped = secundarios.map(p => ({
+                  ...p,
+                  tipo: "secundario",
+                  alerta:
+                      p.sinStock === "true" || p.stockDisponible === "0"
+                          ? "sin stock"
+                          : "poco stock"
+              }));
+              setCantidadAlertas(primariosMapped.length + secundariosMapped.length);
+          } catch (err) {
+              console.error("Error cargando alertas:", err);
+          }
+      };
 
   
   const handleNuevoProductoSecundario = async (producto) => {
