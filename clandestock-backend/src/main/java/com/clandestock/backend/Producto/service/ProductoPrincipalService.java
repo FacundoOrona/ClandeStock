@@ -12,7 +12,9 @@ import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.modelos.Categoria;
 import com.clandestock.backend.producto.modelos.ProductoPrincipal;
+import com.clandestock.backend.producto.modelos.ProductoSecundarioPorPrincipal;
 import com.clandestock.backend.producto.repository.ProductoPrincipalRepository;
+import com.clandestock.backend.producto.repository.ProductoSecundarioPorPrincipalRepository;
 import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.venta.modelos.Local;
 import com.clandestock.backend.venta.service.LocalService;
@@ -22,11 +24,13 @@ public class ProductoPrincipalService {
     private ProductoPrincipalRepository productoPrincipalRepository;
     private LocalService localService;
     private CategoriaService categoriaService;
+    private ProductoSecundarioPorPrincipalRepository relacionRepository;
 
-    public ProductoPrincipalService(ProductoPrincipalRepository ppr, LocalService ls, CategoriaService cs) {
+    public ProductoPrincipalService(ProductoPrincipalRepository ppr, LocalService ls, CategoriaService cs, ProductoSecundarioPorPrincipalRepository relacionRepository) {
         this.productoPrincipalRepository = ppr;
         this.localService = ls;
         this.categoriaService = cs;
+        this.relacionRepository = relacionRepository;
     }
 
     public ProductoPrincipal obtenerPorId(Long id) {
@@ -152,6 +156,9 @@ public class ProductoPrincipalService {
         dto.alertaStockBajo = String.valueOf(producto.getAletarStock());
         dto.sinStock = producto.getSinStock().toString();
         dto.stockBajo = producto.getStockBajo().toString();
+        List<ProductoSecundarioPorPrincipal> secundarios = relacionRepository
+                .findByProductoPrimario_Id(producto.getId());
+        dto.tieneSecundarios = secundarios.isEmpty()? "false":"true";
         return dto;
     }
 
@@ -178,6 +185,14 @@ public class ProductoPrincipalService {
         ProductoPrincipal producto = productoPrincipalRepository.findById(Long.parseLong(dto.idProducto))
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         producto.setStock(Integer.parseInt(dto.stock));
+        productoPrincipalRepository.save(producto);
+    }
+
+    public void desactivarAlerta(String id) {
+        ProductoPrincipal producto = productoPrincipalRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setSinStock(false);
+        producto.setStockBajo(false);
         productoPrincipalRepository.save(producto);
     }
 }
