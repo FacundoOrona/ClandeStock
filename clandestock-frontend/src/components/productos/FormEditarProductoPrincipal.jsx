@@ -30,8 +30,8 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                 const secundariosData = await getAllProductosSecundarios();
                 const relacionesData = await getRelacionesPorProductoPrincipal(producto.id);
                 const secundariosFiltrados = secundariosData.filter(
-                s => String(s.local) === String(producto.idLocal || producto.local)
-            );
+                    s => String(s.local) === String(producto.idLocal || producto.local)
+                );
 
                 setCategorias(categoriasData);
                 setSecundariosDisponibles(secundariosFiltrados);
@@ -62,25 +62,25 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        const dto = {
-            id: formData.id,
-            idLocal: formData.local, // backend espera idLocal
-            nombre: formData.nombre_producto, // backend espera nombre
-            precio: String(formData.precio), // asegurate que sea string
-            estado: formData.estado ? "true" : "false",
-            stock: String(formData.stock || "0"),
-            idCategoria: formData.idCategoria,
-            aletarStockBajo: formData.alertaStockBajo || "0" // opcional
-        };
+        e.preventDefault();
+        try {
+            const dto = {
+                id: formData.id,
+                idLocal: formData.local, // backend espera idLocal
+                nombre: formData.nombre_producto, // backend espera nombre
+                precio: String(formData.precio), // asegurate que sea string
+                estado: formData.estado ? "true" : "false",
+                stock: String(formData.tieneSecundarios === "true" ? "0" : (formData.stock || "0")),
+                idCategoria: formData.idCategoria,
+                aletarStockBajo: formData.alertaStockBajo || "0" // opcional
+            };
 
-        await putProductosPrimario(dto);
-        onClose();
-    } catch (err) {
-        console.error("Error actualizando producto principal:", err);
-    }
-};
+            await putProductosPrimario(dto);
+            onClose();
+        } catch (err) {
+            console.error("Error actualizando producto principal:", err);
+        }
+    };
 
     const handleEliminarRelacion = async (idRelacion) => {
         try {
@@ -127,16 +127,19 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
             </div>
 
             {/* Stock */}
-            <div className="mb-3">
-                <label className="form-label">Stock</label>
-                <input
-                    type="number"
-                    name="stock"
-                    className="form-control"
-                    value={formData.stock}
-                    onChange={handleChange}
-                />
-            </div>
+
+            {formData.tieneSecundarios === "false" && (
+                <div className="mb-3">
+                    <label className="form-label">Stock</label>
+                    <input
+                        type="number"
+                        name="stock"
+                        className="form-control"
+                        value={formData.stock}
+                        onChange={handleChange}
+                    />
+                </div>
+            )}
 
             {/* Precio */}
             <div className="mb-3">
