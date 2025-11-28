@@ -154,22 +154,38 @@ export default function PanelDetallePedido({ pedido, onBack }) {
         <h5 className="text-warning gothic-font mb-3">Método de Pago</h5>
         <div className="mb-3">
           <label className="form-label text-dark fw-bold">
-            Seleccionar método -
+            Seleccionar método
           </label>
           {productosAgrupados.length === 0 && (
             <small className="text-muted">
               Agregue productos a la venta para habilitar métodos de pago
             </small>
           )}
+
+          {/* Mensaje de confirmación si ya hay método seleccionado */}
+          {metodoSeleccionado && (
+            <div className="alert alert-success py-1 mt-2 mb-2">
+              Método de pago cargado:{" "}
+              <strong>
+                {
+                  metodosPago.find(
+                    (m) => m.id.toString() === metodoSeleccionado
+                  )?.nombre_metodo_pago
+                }
+              </strong>
+            </div>
+          )}
+
           <select
             className="form-select border-warning shadow-sm"
             value={metodoSeleccionado}
             onChange={(e) => handleSeleccionarMetodoPago(e.target.value)}
             disabled={productosAgrupados.length === 0}
           >
-            <option value="">-- Seleccionar --</option>
+            {/* Solo mostrar "-- Seleccionar --" si no hay método elegido */}
+            {!metodoSeleccionado && <option value="">-- Seleccionar --</option>}
             {metodosPago.map((m) => (
-              <option key={m.id} value={m.id}>
+              <option key={m.id} value={m.id.toString()}>
                 {m.nombre_metodo_pago}
               </option>
             ))}
