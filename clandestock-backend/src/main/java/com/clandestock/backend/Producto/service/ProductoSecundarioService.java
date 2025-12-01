@@ -1,6 +1,7 @@
 package com.clandestock.backend.producto.service;
 
 import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
+import com.clandestock.backend.producto.dto.AlertaRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.modelos.ProductoSecundario;
@@ -176,11 +177,23 @@ public class ProductoSecundarioService {
     public void desactivarAlerta(String id) {
         ProductoSecundario producto = productoSecundarioRepository.findById(Long.parseLong(id))
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-        
-        System.out.println("======Llega al servicio con producto id: "+producto.getId());
-                producto.setStockBajo(false);
+        producto.setStockBajo(false);
         producto.setSinStock(false);
+        productoSecundarioRepository.save(producto);
+    }
+
+    public void incrementarStock(String id) {
+        ProductoSecundario producto = productoSecundarioRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setStock(producto.getStock()+1);
+        productoSecundarioRepository.save(producto);
+    }
+
+    public void cargarAlerta(String id, AlertaRequestDTO dto) {
+        ProductoSecundario producto = productoSecundarioRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setStockBajo(Boolean.parseBoolean(dto.stockBajo()));
+        producto.setSinStock(Boolean.parseBoolean(dto.sinStock()));
         productoSecundarioRepository.save(producto);
     }
 
