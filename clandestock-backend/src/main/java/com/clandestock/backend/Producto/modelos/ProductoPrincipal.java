@@ -54,6 +54,9 @@ public class ProductoPrincipal {
     @Column(nullable = true)
     private int aletarStock;
 
+    @Builder.Default
+    private Boolean comanda = false;
+
     @ManyToOne
     @JoinColumn(name = "categoriaID", nullable = false)
     private Categoria categoria;
