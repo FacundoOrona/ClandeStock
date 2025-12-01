@@ -55,7 +55,8 @@ public class ProductoStockService {
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString(),
-                    secundarios.isEmpty() ? "false" : "true"));
+                    secundarios.isEmpty() ? "false" : "true",
+                    principal.getComanda().toString()));
         }
 
         return resultado;
@@ -89,7 +90,8 @@ public class ProductoStockService {
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString(),
-                    secundarios.isEmpty() ? "false" : "true"));
+                    secundarios.isEmpty() ? "false" : "true",
+                    principal.getComanda().toString()));
         }
 
         return resultado;
@@ -137,7 +139,8 @@ public class ProductoStockService {
 
             boolean alertaPorBooleanos = Boolean.TRUE.equals(principal.getSinStock())
                     || Boolean.TRUE.equals(principal.getStockBajo());
-            boolean alertaPorCantidad = principal.getAletarStock() >= stockDisponible || stockDisponible <= principal.getAletarStock();
+            boolean alertaPorCantidad = principal.getAletarStock() >= stockDisponible
+                    || stockDisponible <= principal.getAletarStock();
 
             if (alertaPorBooleanos || alertaPorCantidad) {
                 resultado.add(new ProductoStockResponseDTO(
@@ -148,7 +151,8 @@ public class ProductoStockService {
                         principal.getStockBajo().toString(),
                         principal.getSinStock().toString(),
                         principal.getLocal().getId().toString(),
-                        secundarios.isEmpty() ? "false" : "true"));
+                        secundarios.isEmpty() ? "false" : "true",
+                        principal.getComanda().toString()));
             }
         }
 
@@ -173,6 +177,7 @@ public class ProductoStockService {
                         sec.getStockBajo().toString(),
                         sec.getSinStock().toString(),
                         sec.getLocal().getId().toString(),
+                        "false",
                         "false"));
             }
         }
