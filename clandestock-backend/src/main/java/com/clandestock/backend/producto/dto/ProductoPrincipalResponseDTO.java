@@ -21,5 +21,7 @@ public class ProductoPrincipalResponseDTO {
 
     public String sinStock;
 
+    public String comanda;
+
     public String tieneSecundarios;
 }
