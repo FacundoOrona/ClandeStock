@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
+import com.clandestock.backend.producto.dto.AlertaRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.service.ProductoPrincipalService;
@@ -125,4 +126,27 @@ public class ProductoPrincipalController {
         }
     }
 
+    @PostMapping("/incrementar/stock/{id}")
+    public void incrementarStock(@PathVariable String id) {
+        try {
+            productoPrincipalService.incrementarStock(id);
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/alertar/{id}")
+    public void insertarAlerta(@PathVariable String id,@RequestBody AlertaRequestDTO dto) {
+        try {
+            productoPrincipalService.insertarAlerta(id, dto);
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
