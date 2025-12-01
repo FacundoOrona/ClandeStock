@@ -1,6 +1,7 @@
 package com.clandestock.backend.producto.controller;
 
 import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
+import com.clandestock.backend.producto.dto.AlertaRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoSecundarioResponseDTO;
 import com.clandestock.backend.producto.service.ProductoSecundarioService;
@@ -134,15 +135,34 @@ public class ProductoSecundarioController {
     @PostMapping("/desactivarAlerta/{id}")
     public void desactivarAlerta(@PathVariable String id) {
         try {
-            System.out.println("LLega con controlador");
             productoSecundarioService.desactivarAlerta(id);
-            System.out.println("pasa por aca OK");
             ResponseEntity.ok();
         } catch (RuntimeException e) {
-            System.out.println("==============Exxception"+e.getMessage());
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            System.out.println("==============Exxception 2"+e.getMessage());
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    
+    @PostMapping("/incrementar/stock/{id}")
+    public void incrementarStock(@PathVariable String id) {
+        try {
+            productoSecundarioService.incrementarStock(id);
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    @PostMapping("/alertar/{id}")
+    public void insertarAlerta(@PathVariable String id,@RequestBody AlertaRequestDTO dto) {
+        try {
+            productoSecundarioService.cargarAlerta(id, dto);
+            ResponseEntity.ok();
+        } catch (RuntimeException e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
