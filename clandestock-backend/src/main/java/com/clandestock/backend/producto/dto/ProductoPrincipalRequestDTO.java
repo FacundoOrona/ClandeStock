@@ -23,6 +23,8 @@ public class ProductoPrincipalRequestDTO {
 
     String stock;
 
+    String comanda;
+
     @NotBlank
     String idCategoria;
 }
