@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.dto.ActualizarStockRequestDTO;
+import com.clandestock.backend.producto.dto.AlertaRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalRequestDTO;
 import com.clandestock.backend.producto.dto.ProductoPrincipalResponseDTO;
 import com.clandestock.backend.producto.modelos.Categoria;
@@ -26,7 +27,8 @@ public class ProductoPrincipalService {
     private CategoriaService categoriaService;
     private ProductoSecundarioPorPrincipalRepository relacionRepository;
 
-    public ProductoPrincipalService(ProductoPrincipalRepository ppr, LocalService ls, CategoriaService cs, ProductoSecundarioPorPrincipalRepository relacionRepository) {
+    public ProductoPrincipalService(ProductoPrincipalRepository ppr, LocalService ls, CategoriaService cs,
+            ProductoSecundarioPorPrincipalRepository relacionRepository) {
         this.productoPrincipalRepository = ppr;
         this.localService = ls;
         this.categoriaService = cs;
@@ -136,6 +138,7 @@ public class ProductoPrincipalService {
         String alertaStockStr = dto.getAletarStockBajo();
         int alertaStock = (alertaStockStr == null || alertaStockStr.isBlank()) ? 1 : Integer.parseInt(alertaStockStr);
         producto.setAletarStock(alertaStock);
+        producto.setComanda(Boolean.parseBoolean(dto.getComanda()));
         Categoria categoria = categoriaService.obtenerCategoriaEntity(Long.parseLong(dto.getIdCategoria()));
         if (categoria.getLocal() != local) {
             new RuntimeException("La categoria seleccionada corresponde a otro local");
@@ -156,9 +159,10 @@ public class ProductoPrincipalService {
         dto.alertaStockBajo = String.valueOf(producto.getAletarStock());
         dto.sinStock = producto.getSinStock().toString();
         dto.stockBajo = producto.getStockBajo().toString();
+        dto.comanda = producto.getComanda().toString();
         List<ProductoSecundarioPorPrincipal> secundarios = relacionRepository
                 .findByProductoPrimario_Id(producto.getId());
-        dto.tieneSecundarios = secundarios.isEmpty()? "false":"true";
+        dto.tieneSecundarios = secundarios.isEmpty() ? "false" : "true";
         return dto;
     }
 
@@ -168,11 +172,12 @@ public class ProductoPrincipalService {
         producto.setLocal(local);
         producto.setNombreProducto(dto.getNombre());
         producto.setPrecioProducto(new BigDecimal(dto.getPrecio()));
-        producto.setEstado("1".equals(dto.getEstado()) || "true".equals(dto.getEstado()));
+        producto.setEstado(Boolean.TRUE);
         producto.setStock(Integer.parseInt(dto.getStock()));
         String alertaStockStr = dto.getAletarStockBajo();
         int alertaStock = (alertaStockStr == null || alertaStockStr.isBlank()) ? 1 : Integer.parseInt(alertaStockStr);
         producto.setAletarStock(alertaStock);
+        producto.setComanda(Boolean.parseBoolean(dto.getComanda()));
         Categoria categoria = categoriaService.obtenerCategoriaEntity(Long.parseLong(dto.getIdCategoria()));
         if (categoria.getLocal() != local) {
             new RuntimeException("La categoria seleccionada corresponde a otro local");
@@ -193,6 +198,24 @@ public class ProductoPrincipalService {
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         producto.setSinStock(false);
         producto.setStockBajo(false);
+        productoPrincipalRepository.save(producto);
+    }
+
+    public void incrementarStock(String id) {
+        ProductoPrincipal producto = productoPrincipalRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        producto.setStock(producto.getStock() + 1);
+        productoPrincipalRepository.save(producto);
+    }
+
+    public void insertarAlerta(String id, AlertaRequestDTO dto) {
+        ProductoPrincipal producto = productoPrincipalRepository.findById(Long.parseLong(id))
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        producto.setStockBajo(Boolean.parseBoolean(dto.stockBajo()));
+        producto.setSinStock(Boolean.parseBoolean(dto.sinStock()));
+        
         productoPrincipalRepository.save(producto);
     }
 }
