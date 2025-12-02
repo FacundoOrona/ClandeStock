@@ -23,25 +23,26 @@ public class MesaService {
 
     public MesaResponseDTO crearMesa(MesaRequestDTO request) {
 
-//        if (mesaRepository.findByLocalIdAndNumeroMesa(request.getLocalId(), request.getNumeroMesa()).isPresent()) {
-//            throw new RuntimeException("Ya existe una mesa con ese número en el local");
-//        }
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
-        // Buscar el Local
-        Local local = localRepository.findById(request.getLocalId())
-                .orElseThrow(() -> new RuntimeException("Local no encontrado"));
+        // Se verifica si es admin general y obtiene todas
+        if (usuario.esAdminGeneral()) {
+            throw new RuntimeException("Administrador general no puede manejar mesas");
 
-        // Casteo a Entity
-        Mesa mesa = toEntity(request, local);
-
-        Mesa guardada = mesaRepository.save(mesa);
-
-        // Casteo a Response
-        return toResponse(guardada);
+            // Caso contario obtiene la corresponiende al local asignado
+        } else {
+            Local local = localRepository.findById(Long.parseLong(usuario.getLocal()))
+                    .orElseThrow(() -> new RuntimeException("Error obteniendo local"));
+            Mesa mesa = toEntity(request, local);
+            Mesa guardada = mesaRepository.save(mesa);
+            return toResponse(guardada);
+        }
     }
 
     public List<MesaResponseDTO> listarMesasPorLocal() {
-        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
         List<Mesa> mesas;
 
@@ -56,7 +57,7 @@ public class MesaService {
                 .collect(Collectors.toList());
     }
 
-    private Mesa toEntity (MesaRequestDTO request, Local local) {
+    private Mesa toEntity(MesaRequestDTO request, Local local) {
         Mesa mesa = Mesa.builder()
                 .numeroMesa(request.getNumeroMesa())
                 .ocupada(request.getOcupada() != null ? request.getOcupada() : false)
