@@ -9,3 +9,13 @@ export const getDetalleCaja = async () => {
     const response = await axios.get('/caja/detalle');
     return response.data;
 };
+
+export const abrirCaja = async (dto) => {
+    const response = await axios.post('/caja/abrir',dto);
+    return response.data;
+};
+export const cerrarCaja = async () => {
+    const response = await axios.post('/caja/cerrar');
+    return response.data;
+};
+
