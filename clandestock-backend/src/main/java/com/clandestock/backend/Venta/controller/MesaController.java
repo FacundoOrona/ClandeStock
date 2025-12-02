@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/mesas")
 @RequiredArgsConstructor
@@ -22,6 +23,22 @@ public class MesaController {
         try {
             MesaResponseDTO response = mesaService.crearMesa(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (RuntimeException e) {
+            // Ejemplo: Local no encontrado u otro error de negocio
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error al crear la mesa: " + e.getMessage());
+        } catch (Exception e) {
+            // Cualquier otro error inesperado
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error inesperado al crear la mesa");
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(@RequestBody MesaRequestDTO request, @PathVariable("id") Long id) {
+        try {
+            MesaResponseDTO response = mesaService.actualizar(request, id);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             // Ejemplo: Local no encontrado u otro error de negocio
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
