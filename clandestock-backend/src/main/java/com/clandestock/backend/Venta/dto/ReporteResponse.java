@@ -4,5 +4,6 @@ public record ReporteResponse(
         Long id,
         String descripcion,
         String usuarioEmisor,
-        String estado
+        String estado,
+        String fecha
 ) {}
