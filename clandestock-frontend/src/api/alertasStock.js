@@ -27,3 +27,12 @@ export const actualizarStockSecundario = async (dto) => {
     const response = await axios.post("/productos/secundario/stock", dto);
     return response.data;
 };
+
+export const insertarAlertaPrimario = async (id, dto) => {
+    const response = await axios.post(`/producto/principal/alertar/${id}`,dto);
+    return response.data;
+};
+export const insertarAlertaSecundario = async (id, dto) => {
+    const response = await axios.post(`/productos/secundario/alertar/${id}`,dto);
+    return response.data;
+};
