@@ -161,6 +161,7 @@ public class VentaService {
         .idProducto(producto.getId())
         .nombreProducto(producto.getNombreProducto())
         .precioProducto(producto.getPrecioProducto())
+        .comanda(producto.getComanda())
         .build();
         productoxVentaService.guardar(pxv);
         // Actualizar venta
@@ -257,6 +258,7 @@ public class VentaService {
             prod.idProductoPorVenta = p.getId().toString();
             prod.nombreProducto = p.getNombreProducto();
             prod.precioProducto = p.getPrecioProducto().toString();
+            prod.comanda = p.getComanda().toString();
             return prod;
         }).toList() : List.of();
         return dto;
