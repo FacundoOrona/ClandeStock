@@ -1,5 +1,7 @@
 package com.clandestock.backend.venta.modelos;
 
+import java.time.LocalDateTime;
+
 import com.clandestock.backend.usuario.modelos.Usuario;
 
 import jakarta.persistence.Column;
@@ -36,4 +38,7 @@ public class Reporte {
 
     @Column(nullable = false)
     private Boolean estado = false;
+
+    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = true)
+    private LocalDateTime fecha;
 }
