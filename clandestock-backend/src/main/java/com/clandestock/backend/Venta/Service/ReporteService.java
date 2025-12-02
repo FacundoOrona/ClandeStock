@@ -11,6 +11,7 @@ import com.clandestock.backend.venta.repository.ReporteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,6 +60,7 @@ public class ReporteService {
                 .descripcion(request.descripcion())
                 .usuarioEmisor(usuarioEmisor)
                 .estado(false)
+                .fecha(LocalDateTime.now())
                 .build();
     }
 
@@ -68,7 +70,8 @@ public class ReporteService {
                 reporte.getId(),
                 reporte.getDescripcion(),
                 reporte.getUsuarioEmisor().getNombreUsuario(),
-                reporte.getEstado() ? "Leído" : "No leído"
+                reporte.getEstado() ? "Leído" : "No leído",
+                reporte.getFecha().toString()
         );
     }
 
