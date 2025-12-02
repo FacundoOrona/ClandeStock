@@ -18,3 +18,8 @@ export const putProductosSecundario = async (producto) => {
     const response = await axios.put('/productos/secundario/actualizar', producto);
     return response.data;
 };
+
+export const incrementarStockSecundario = async (id) => {
+    const response = await axios.post('/productos/secundario/incrementar/stock/'+id);
+    return response.data;
+};
