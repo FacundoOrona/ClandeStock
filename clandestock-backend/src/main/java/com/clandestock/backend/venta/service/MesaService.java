@@ -32,7 +32,7 @@ public class MesaService {
 
             // Caso contario obtiene la corresponiende al local asignado
         } else {
-            Local local = localRepository.findById(Long.parseLong(usuario.getLocal()))
+            Local local = localRepository.findByNombreLocal(usuario.getLocal())
                     .orElseThrow(() -> new RuntimeException("Error obteniendo local"));
             Mesa mesa = toEntity(request, local);
             Mesa guardada = mesaRepository.save(mesa);
@@ -74,5 +74,25 @@ public class MesaService {
                 .ocupada(mesa.getOcupada())
                 .localId(mesa.getLocal().getId())
                 .build();
+    }
+
+    public MesaResponseDTO actualizar(MesaRequestDTO request, Long id) {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        // Se verifica si es admin general y obtiene todas
+        if (usuario.esAdminGeneral()) {
+            throw new RuntimeException("Administrador general no puede manejar mesas");
+
+            // Caso contario obtiene la corresponiende al local asignado
+        } else {
+            Local local = localRepository.findByNombreLocal(usuario.getLocal())
+                    .orElseThrow(() -> new RuntimeException("Error obteniendo local"));
+            Mesa mesa = mesaRepository .findByIdAndLocal(id, local).orElseThrow(()->new RuntimeException("Error obteniendo mesa por id y local"));
+            mesa.setNumeroMesa(request.getNumeroMesa());;
+            mesa.setOcupada(request.getOcupada());
+            Mesa guardada = mesaRepository.save(mesa);
+            return toResponse(guardada);
+        }
     }
 }
