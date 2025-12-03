@@ -1,12 +1,16 @@
 package com.clandestock.backend.venta.service;
 
 import com.clandestock.backend.seguridad.UsuarioContexto;
+import com.clandestock.backend.venta.dto.MesaRequestDTO;
 import com.clandestock.backend.venta.dto.MozoRequestDTO;
 import com.clandestock.backend.venta.dto.MozoResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
+import com.clandestock.backend.venta.modelos.Mesa;
 import com.clandestock.backend.venta.modelos.Mozo;
 import com.clandestock.backend.venta.repository.MozoRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -81,6 +85,24 @@ public class MozoService {
                 .localId(mozo.getLocal().getId())
                 .nombreLocal(mozo.getLocal().getNombreLocal())
                 .build();
+    }
+
+    public MozoResponseDTO actualizar(Long id, MozoRequestDTO request) {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        // Se verifica si es admin general y obtiene todas
+        if (usuario.esAdminGeneral()) {
+            throw new RuntimeException("Administrador general no actualizar mozos");
+
+            // Caso contario obtiene la corresponiende al local asignado
+        } else {
+            Local local = localService.obtenerPorNombre(usuario.getLocal());
+            Mozo mozo = mozoRepository.findByIdAndLocal(id, local).orElseThrow(()->new RuntimeException("Error obteniendo mesa por id y local"));
+            mozo.setNombre(request.getNombre());
+            Mozo mozoGuardado = mozoRepository.save(mozo);
+            return toResponseDTO(mozoGuardado);
+        }
     }
 
 }
