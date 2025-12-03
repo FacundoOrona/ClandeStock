@@ -20,7 +20,6 @@ public class ProductoStockService {
     private ProductoPrincipalService productoPrincipalService;
     private ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService;
     private ProductoSecundarioService productoSecundarioService;
-    private ProductoPrincipalRepository productoPrincipalRepository;
 
     public ProductoStockService(ProductoPrincipalService pps, ProductoSecundarioPorPrincipalService psxpps,
             ProductoSecundarioService productoSecundarioService,
@@ -28,7 +27,6 @@ public class ProductoStockService {
         this.productoPrincipalService = pps;
         this.productoSecundarioPorPrincipalService = psxpps;
         this.productoSecundarioService = productoSecundarioService;
-        this.productoPrincipalRepository = productoPrincipalRepository;
     }
 
     // Tiene filtro de JWT aplicado(retorna segun el rol del token)
@@ -52,6 +50,7 @@ public class ProductoStockService {
                     principal.getNombreProducto(),
                     String.valueOf(stockDisponible),
                     principal.getPrecioProducto().toString(),
+                    principal.getAletarStock()>=stockDisponible ?"true":"false",
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString(),
@@ -87,6 +86,7 @@ public class ProductoStockService {
                     principal.getNombreProducto(),
                     String.valueOf(stockDisponible),
                     principal.getPrecioProducto().toString(),
+                    principal.getAletarStock()>=stockDisponible ?"true":"false",
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString(),
@@ -142,14 +142,28 @@ public class ProductoStockService {
             boolean alertaPorCantidad = principal.getAletarStock() >= stockDisponible
                     || stockDisponible <= principal.getAletarStock();
 
-            if (alertaPorBooleanos || alertaPorCantidad) {
+            if (alertaPorBooleanos) {
                 resultado.add(new ProductoStockResponseDTO(
                         principal.getId().toString(),
                         principal.getNombreProducto(),
                         String.valueOf(stockDisponible),
                         principal.getPrecioProducto().toString(),
+                        "false",
                         principal.getStockBajo().toString(),
                         principal.getSinStock().toString(),
+                        principal.getLocal().getId().toString(),
+                        secundarios.isEmpty() ? "false" : "true",
+                        principal.getComanda().toString()));
+            }
+            else if (alertaPorCantidad) {
+                resultado.add(new ProductoStockResponseDTO(
+                        principal.getId().toString(),
+                        principal.getNombreProducto(),
+                        String.valueOf(stockDisponible),
+                        principal.getPrecioProducto().toString(),
+                        "true",
+                        "false",
+                        "false",
                         principal.getLocal().getId().toString(),
                         secundarios.isEmpty() ? "false" : "true",
                         principal.getComanda().toString()));
@@ -168,14 +182,28 @@ public class ProductoStockService {
                     || Boolean.TRUE.equals(sec.getStockBajo());
             boolean alertaPorCantidad = sec.getAletarStock() > 0 && sec.getStock() <= sec.getAletarStock();
 
-            if (alertaPorBooleanos || alertaPorCantidad) {
+            if (alertaPorBooleanos) {
                 resultado.add(new ProductoStockResponseDTO(
                         sec.getId().toString(),
                         sec.getNombreProducto(),
                         String.valueOf(sec.getStock()),
                         "0.00",
+                        "false",
                         sec.getStockBajo().toString(),
                         sec.getSinStock().toString(),
+                        sec.getLocal().getId().toString(),
+                        "false",
+                        "false"));
+            }
+            else if (alertaPorCantidad) {
+                resultado.add(new ProductoStockResponseDTO(
+                        sec.getId().toString(),
+                        sec.getNombreProducto(),
+                        String.valueOf(sec.getStock()),
+                        "0.00",
+                        "true",
+                        "false",
+                        "false",
                         sec.getLocal().getId().toString(),
                         "false",
                         "false"));
