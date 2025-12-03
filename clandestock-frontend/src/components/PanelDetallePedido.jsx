@@ -39,14 +39,14 @@ export default function PanelDetallePedido({ pedido, onBack }) {
         <p>
           <strong>ID Venta:</strong> {venta.idVenta}
         </p>
+        {venta.numMesa && (
+          <p>
+            <strong>Mesa:</strong> {venta.numMesa}
+          </p>
+        )}
         <p>
           <strong>Detalle de entrega:</strong> {venta.detalleEntrega}
         </p>
-        {venta.numeroMesa && (
-          <p>
-            <strong>Mesa:</strong> {venta.numeroMesa}
-          </p>
-        )}
 
         {/* Productos en la venta */}
         <h5 className="text-warning gothic-font mt-4 mb-3">
@@ -55,47 +55,53 @@ export default function PanelDetallePedido({ pedido, onBack }) {
         {productosAgrupados.length === 0 ? (
           <p className="text-muted">No hay productos agregados</p>
         ) : (
-          <div className="list-group">
-            {productosAgrupados.map((prod) => (
-              <div
-                key={prod.nombreProducto}
-                className="list-group-item d-flex justify-content-between align-items-center"
-              >
-                <div>
-                  <strong>{prod.nombreProducto}</strong>
-                  <br />
-                  <small className="text-muted">
-                    Precio unitario: ${prod.precioProducto} | Cantidad:{" "}
-                    {prod.cantidad} | Total: ${prod.total}
-                  </small>
+          <>
+            <div className="list-group">
+              {productosAgrupados.map((prod) => (
+                <div
+                  key={prod.nombreProducto}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <strong>{prod.nombreProducto}</strong>
+                    <br />
+                    <small className="text-muted">
+                      Precio unitario: ${prod.precioProducto ?? 0} | Cantidad:{" "}
+                      {prod.cantidad ?? 0} | Total:{" "}
+                      {typeof prod.total === "number"
+                        ? `$${prod.total.toLocaleString()}`
+                        : "sin total"}
+                    </small>
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={() => handleAgregarProducto(prod)}
+                      disabled={!prod.id}
+                    >
+                      +
+                    </button>
+                    <span className="badge bg-secondary">{prod.cantidad}</span>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleQuitarProducto(prod)}
+                    >
+                      -
+                    </button>
+                  </div>
                 </div>
-                <div className="d-flex gap-2">
-                  <button
-                    className="btn btn-success btn-sm"
-                    onClick={() => handleAgregarProducto(prod)}
-                    disabled={!prod.productoPrincipalId}
-                  >
-                    +
-                  </button>
-                  <span className="badge bg-secondary">{prod.cantidad}</span>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleQuitarProducto(prod)}
-                  >
-                    -
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {/* Total dinámico desde backend */}
+            <div className="mt-4 text-end">
+              <h5 className="text-dark">
+                <strong>Total: ${venta.precioTotal ?? 0}</strong>
+              </h5>
+            </div>
+          </>
         )}
 
-        {/* Total dinámico desde backend */}
-        <div className="mt-4 text-end">
-          <h5 className="text-dark">
-            <strong>Total: ${venta.precioTotal}</strong>
-          </h5>
-        </div>
       </div>
 
       {/* Selección de categoría y productos disponibles */}
@@ -127,7 +133,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
           <div className="list-group">
             {productos.map((prod) => (
               <div
-                key={prod.productoPrincipalId}
+                key={prod.id}
                 className="list-group-item d-flex justify-content-between align-items-center"
               >
                 <div>
