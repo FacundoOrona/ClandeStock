@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 export default function PanelPedidos({
   pedidos,
   cajaAbierta,
@@ -35,7 +37,7 @@ export default function PanelPedidos({
 
   const formatDetalle = (tipo, pedido) => {
     if (tipo === "local") {
-      return `${pedido.detalleEntrega} - Mesa ${pedido.numeroMesa}`;
+      return `Mesa ${pedido.numMesa}`;
     }
     if (tipo === "takeaway") {
       return `Nombre del cliente: ${pedido.detalleEntrega}`;
@@ -87,7 +89,7 @@ export default function PanelPedidos({
                     <div>
                       <strong>{formatDetalle(tipo, p)}</strong>
                       <br />
-                      Total: ${p.precioTotal}
+                      {p.precioTotal && p.precioTotal > 0 ? `Total: $${p.precioTotal}` : "Sin pedidos"}
                     </div>
                     <span
                       className={`badge bg-${coloresPanel[tipo].badge} text-light d-flex align-items-center gap-1`}
