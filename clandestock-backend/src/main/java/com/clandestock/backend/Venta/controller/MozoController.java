@@ -1,6 +1,7 @@
 package com.clandestock.backend.venta.controller;
 
 import com.clandestock.backend.seguridad.UsuarioContexto;
+import com.clandestock.backend.venta.dto.MesaRequestDTO;
 import com.clandestock.backend.venta.dto.MozoRequestDTO;
 import com.clandestock.backend.venta.dto.MozoResponseDTO;
 import com.clandestock.backend.venta.service.MozoService;
@@ -55,6 +56,18 @@ public class MozoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar mozo: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado al eliminar mozo");
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(@RequestBody MozoRequestDTO request, @PathVariable("id") Long id) {
+        try {
+            MozoResponseDTO response = mozoService.actualizar(id, request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al crear mozo: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado al crear mozo");
         }
     }
 }
