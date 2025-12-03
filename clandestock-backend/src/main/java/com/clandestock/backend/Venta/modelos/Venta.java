@@ -81,4 +81,7 @@ public class Venta {
     @ManyToOne
     @JoinColumn(name = "mesa_id", nullable = true) // puede ser null si la venta no está asociada a una mesa
     private Mesa mesa;
+
+    @Column(nullable = true) // puede ser null si la venta no está asociada a una mesa
+    private Integer numeroMesa;
 }

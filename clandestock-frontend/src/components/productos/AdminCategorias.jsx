@@ -8,6 +8,7 @@ export default function AdminCategorias() {
     const [formData, setFormData] = useState({ id: "", nombreCategoria: "" });
 
     const cargarCategorias = async () => {
+        setCategorias([])
         const data = await getCategoriaPorLocal(localId);
         setCategorias(data);
     };

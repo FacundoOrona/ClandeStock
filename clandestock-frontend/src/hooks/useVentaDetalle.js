@@ -79,7 +79,7 @@ export const useVentaDetalle = (idVenta) => {
   // ➕ Agregar producto
   const handleAgregarProducto = async (prod) => {
     try {
-      await agregarProductoAVenta(idVenta, prod.productoPrincipalId, token);
+      await agregarProductoAVenta(idVenta, prod.id, token);
       await cargarVenta();
       await cargarProductos();
     } catch (err) {

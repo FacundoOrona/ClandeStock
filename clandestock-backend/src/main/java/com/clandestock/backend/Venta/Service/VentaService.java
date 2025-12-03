@@ -115,7 +115,8 @@ public class VentaService {
                 .tipoVenta(dto.tipoVenta)
                 .detalleEntrega(dto.detalleEntrega)
                 .caja(caja)
-                .mesa(mesa)
+                .mesa(mesa!=null?mesa:null)
+                .numeroMesa(mesa != null ? mesa.getNumeroMesa() :null)
                 .build();
         venta = ventaRepository.save(venta);
         return toResponseDTO(venta);
@@ -253,6 +254,7 @@ public class VentaService {
         dto.tipoVenta = venta.getTipoVenta().toString();
         dto.detalleEntrega = venta.getDetalleEntrega();
         dto.localId = venta.getLocal().getId().toString();
+        dto.numMesa = venta.getNumeroMesa() != null ? venta.getNumeroMesa().toString() : null;
         dto.productos = venta.getProductos() != null ? venta.getProductos().stream().map(p -> {
             ProductoVentaResponseDTO prod = new ProductoVentaResponseDTO();
             prod.idProductoPorVenta = p.getId().toString();

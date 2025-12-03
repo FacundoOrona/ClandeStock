@@ -13,6 +13,7 @@ public class VentaResponseDTO {
     public String localId;
     public String tipoVenta;
     public String detalleEntrega;
+    public String numMesa;
     public List<ProductoVentaResponseDTO> productos;
     public String precioTotalConMetodoDePago;
 }
