@@ -7,7 +7,7 @@ const nombresLocales = {
     MODERADOR_HELADERIA: "Heladeria",
 };
 
-export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, setVistaActiva }) {
+export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, setVistaActiva, cantidadAlertas }) {
     const { user } = useContext(AuthContext);
     const nombreLocal = user?.tipoUsuario ? nombresLocales[user.tipoUsuario] : "";
 
@@ -33,10 +33,18 @@ export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, set
             </button>
 
             <button
-                className="btn btn-outline-light mb-3"
+                className="btn btn-outline-light mb-3 position-relative"
                 onClick={() => setVistaActiva("productos")}
             >
                 Productos
+                {cantidadAlertas > 0 && (
+                    <span
+                        className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style={{ fontSize: "0.75rem" }}
+                    >
+                        {cantidadAlertas}
+                    </span>
+                )}
             </button>
 
             <button
@@ -54,9 +62,17 @@ export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, set
                 Enviar reportes
             </button>
 
+
+            <button
+                className="btn btn-outline-light mb-3"
+                onClick={() => setVistaActiva("mesasMozos")}
+            >
+                Mesas / Mozos
+            </button>
+
             <button
                 className={`btn mb-3 ${cajaAbierta ? 'btn-danger' : 'btn-success'}`}
-                onClick={() => cajaAbierta? setVistaActiva("cerrarCaja") : setVistaActiva("abrirCaja")}
+                onClick={() => cajaAbierta ? setVistaActiva("cerrarCaja") : setVistaActiva("abrirCaja")}
             >
                 {cajaAbierta ? 'Cerrar caja' : 'Abrir caja'}
             </button>
