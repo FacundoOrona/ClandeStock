@@ -19,23 +19,21 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
             setAlertas([]);
             const primarios = await getAlertasStockPrimario();
             const secundarios = await getAlertasStockSecundario();
-            
+
             const primariosMapped = primarios.map(p => ({
                 ...p,
                 tipo: "principal",
-                alerta:
-                    p.sinStock === "true" || p.stockDisponible === "0"
-                        ? "sin stock"
-                        : "poco stock"
+                alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
+                    ? "sin stock"
+                    : "poco stock"
             }));
 
             const secundariosMapped = secundarios.map(p => ({
                 ...p,
                 tipo: "secundario",
-                alerta:
-                    p.sinStock === "true" || p.stockDisponible === "0"
-                        ? "sin stock"
-                        : "poco stock"
+                alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
+                    ? "sin stock"
+                    : "poco stock"
             }));
 
             setAlertas([...primariosMapped, ...secundariosMapped]);
@@ -101,8 +99,7 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
                                             {/* Badge alerta */}
                                             {p.alerta && (
                                                 <span
-                                                    className={`badge px-2 ${p.alerta === "sin stock" ? "bg-danger" : "bg-warning text-dark"
-                                                        }`}
+                                                    className={`badge px-2 ${p.alerta === "sin stock" ? "bg-danger" : "bg-warning text-dark"}`}
                                                 >
                                                     {p.alerta}
                                                 </span>
@@ -111,9 +108,8 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
                                         <h5 className="card-title">{p.nombreProducto}</h5>
                                         <p className="card-text mb-1">Local: {localesMap[p.local]}</p>
                                         <p className="card-text mb-1">Stock disponible: {p.stockDisponible}</p>
-                                        <p className="card-text mb-1">Precio: ${parseFloat(p.precio).toLocaleString()}</p>
 
-                                        {(p.stockBajo === "true" || p.sinStock === "true") ? (
+                                        {(p.alertaStockBajo === "true" || p.alertaSinStock === "true") ? (
                                             <button
                                                 className="btn btn-sm btn-warning"
                                                 onClick={() => handleDesactivarAlerta(p)}
