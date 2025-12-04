@@ -88,9 +88,11 @@ export default function PanelReporte() {
               className="list-group-item d-flex justify-content-between align-items-center"
             >
               <div>
-                <strong>{r.descripcion}</strong>
+                <strong className="text-muted">Usuario: {r.usuarioEmisor}</strong>
                 <br />
-                <small className="text-muted">Usuario: {r.usuarioEmisor}</small>
+                <small className="text-muted">{r.fecha}</small>
+                <br />
+                <small>{r.descripcion}</small>
               </div>
               <span
                 className={`badge ${
