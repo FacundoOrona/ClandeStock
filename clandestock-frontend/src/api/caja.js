@@ -18,4 +18,12 @@ export const cerrarCaja = async () => {
     const response = await axios.post('/caja/cerrar');
     return response.data;
 };
+export const getAllCajasCerradas = async () => {
+    const response = await axios.get('/caja/cerradas');
+    return response.data;
+};
+export const getAllCajasAbiertas = async () => {
+    const response = await axios.get('/caja/abierta');
+    return response.data;
+};
 
