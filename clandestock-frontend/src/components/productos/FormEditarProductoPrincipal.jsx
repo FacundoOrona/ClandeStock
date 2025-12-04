@@ -11,10 +11,13 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
         id: "",
         nombre_producto: "",
         stock: "",
+        tieneSecundarios: "",
         estado: false,
         local: "",
         precio: "",
-        idCategoria: ""
+        idCategoria: "",
+        comanda: "",
+        aletarStockBajo: "",
     });
 
     const [categorias, setCategorias] = useState([]);
@@ -41,10 +44,13 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                     id: producto.id,
                     nombre_producto: producto.nombre_producto || "",
                     stock: producto.stock || "",
+                    tieneSecundarios: producto.tieneSecundarios === "true" ? "true" : "false",
                     estado: producto.estado === "true",
                     local: producto.idLocal || producto.local || "",
                     precio: producto.precio_producto || producto.precio || "",
-                    idCategoria: producto.idCategoria || ""
+                    idCategoria: producto.idCategoria || "",
+                    comanda: producto.comanda === "true" ? "true" : "false",
+                    aletarStockBajo: producto.alertaStockBajo || ""
                 });
             } catch (err) {
                 console.error("Error cargando datos del producto principal:", err);
@@ -72,7 +78,8 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                 estado: formData.estado ? "true" : "false",
                 stock: String(formData.tieneSecundarios === "true" ? "0" : (formData.stock || "0")),
                 idCategoria: formData.idCategoria,
-                aletarStockBajo: formData.alertaStockBajo || "0" // opcional
+                comanda: formData.comanda,
+                aletarStockBajo: formData.aletarStockBajo || "0"
             };
 
             await putProductosPrimario(dto);
@@ -128,7 +135,7 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
 
             {/* Stock */}
 
-            {formData.tieneSecundarios === "false" && (
+            {formData.tieneSecundarios === "false" ? (
                 <div className="mb-3">
                     <label className="form-label">Stock</label>
                     <input
@@ -139,7 +146,7 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                         onChange={handleChange}
                     />
                 </div>
-            )}
+            ) : (<p className="text-muted">Stock controlado por secundarios</p>)}
 
             {/* Precio */}
             <div className="mb-3">
@@ -181,6 +188,47 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                         {formData.estado ? "Activo" : "Inactivo"}
                     </button>
                 </div>
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Comanda</label>
+                <div>
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="comanda"
+                            value="true"
+                            checked={formData.comanda === "true"}
+                            onChange={handleChange}
+                            required
+                        />
+                        <label>Imprimir</label>
+                    </div>
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="comanda"
+                            value="false"
+                            checked={formData.comanda === "false"}
+                            onChange={handleChange}
+                            required
+                        />
+                        <label>No imprimir</label>
+                    </div>
+                </div>
+            </div>
+
+            <div className="mb-3">
+                <label className="form-label">Alerta stock bajo</label>
+                <input
+                    type="text"
+                    name="aletarStockBajo"
+                    className="form-control"
+                    value={formData.aletarStockBajo}
+                    onChange={handleChange}
+                />
             </div>
 
             {/* Relaciones existentes */}
