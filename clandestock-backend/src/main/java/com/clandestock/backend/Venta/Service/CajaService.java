@@ -104,17 +104,30 @@ public class CajaService {
             Long cajaId = (Long) fila[0];
             String metodoPago = (String) fila[1];
             BigDecimal total = (BigDecimal) fila[2];
-            ReporteCajaResponseDTO reporte = reporteMap.getOrDefault(cajaId,
-                    new ReporteCajaResponseDTO(cajaId, BigDecimal.ZERO, new ArrayList<>()));
-            reporte.detallePorMetodo.add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
-            reporte.totalGeneral = reporte.totalGeneral.add(total);
+            LocalDateTime fechaApertura = (LocalDateTime) fila[3];
+            LocalDateTime fechaCierre = (LocalDateTime) fila[4];
+            Long idLocal = (Long) fila[5];
+
+            ReporteCajaResponseDTO reporte = reporteMap.getOrDefault(
+                    cajaId,
+                    new ReporteCajaResponseDTO(cajaId, idLocal.toString(), BigDecimal.ZERO, new ArrayList<>(), fechaApertura,
+                            fechaCierre));
+
+            reporte.getDetallePorMetodo().add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
+            reporte.setTotalGeneral(reporte.getTotalGeneral().add(total));
+            reporte.setFechaApertura(fechaApertura);
+            reporte.setFechaCierre(fechaCierre);
+            reporte.setIdLocal(idLocal.toString());
+
             reporteMap.put(cajaId, reporte);
         }
+
         return new ArrayList<>(reporteMap.values());
     }
 
     public List<ReporteCajaResponseDTO> listarCajasAbiertas() {
-        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
         List<Object[]> resultados;
 
@@ -135,9 +148,8 @@ public class CajaService {
             BigDecimal total = (BigDecimal) fila[2];
 
             ReporteCajaResponseDTO reporte = reporteMap.computeIfAbsent(
-                cajaId,
-                id -> new ReporteCajaResponseDTO(id, BigDecimal.ZERO, new ArrayList<>())
-            );
+                    cajaId,
+                    id -> new ReporteCajaResponseDTO(id, BigDecimal.ZERO, new ArrayList<>()));
 
             reporte.detallePorMetodo.add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
             reporte.totalGeneral = reporte.totalGeneral.add(total);
@@ -150,16 +162,18 @@ public class CajaService {
         UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        
         if (usuario.esAdminGeneral()) {
-            throw new RuntimeException("Usted es administrador general");
+            return cajaRepository.findByEstado( true)
+                    .stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
         } else {
             return cajaRepository.findByLocal_NombreLocalAndEstado(usuario.getLocal(), true)
-            .stream()
-            .map(this::toDTO)
-            .collect(Collectors.toList());
+                    .stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
+        }
     }
-}
 
     private CajaResponseDTO toDTO(Caja entity) {
         CajaResponseDTO dto = new CajaResponseDTO();
