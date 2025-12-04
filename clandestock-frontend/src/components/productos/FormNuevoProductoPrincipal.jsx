@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import PrimaryButtonSubmit from "../PrimaryButtonSubmit";
 import { getCategoriaPorLocal } from "../../api/categorias";
 
-export default function FormNuevoProductoPrincipal({ onSubmit }) {
+export default function FormNuevoProductoPrincipal({ onSubmit, estado, setEstado }) {
     const initialState = {
         idLocal: "",
         nombre: "",
@@ -11,6 +11,7 @@ export default function FormNuevoProductoPrincipal({ onSubmit }) {
         estado: "",
         stock: "",
         idCategoria: "",
+        comanda: "true"
     };
 
     const [formData, setFormData] = useState(initialState);
@@ -19,6 +20,10 @@ export default function FormNuevoProductoPrincipal({ onSubmit }) {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    useEffect(() => {
+        setEstado(null)
+    }, [])
 
     useEffect(() => {
         const cargarCategorias = async () => {
@@ -50,6 +55,14 @@ export default function FormNuevoProductoPrincipal({ onSubmit }) {
 
     return (
         <form onSubmit={handleSubmit} className="p-3 text-dark">
+            {estado && (
+                <div
+                    className={`alert mt-3 ${estado.tipo === "success" ? "alert-success" : "alert-danger"
+                        }`}
+                >
+                    {estado.mensaje}
+                </div>
+            )}
             <div className="mb-3">
                 <label className="form-label">Nombre producto</label>
                 <input
@@ -123,6 +136,35 @@ export default function FormNuevoProductoPrincipal({ onSubmit }) {
                             required
                         />
                         <label>Heladería</label>
+                    </div>
+                </div>
+            </div>
+            <div className="mb-3">
+                <label className="form-label">Comanda</label>
+                <div>
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="comanda"
+                            value="true"
+                            checked={formData.comanda === "true"}
+                            onChange={handleChange}
+                            required
+                        />
+                        <label>Imprimir</label>
+                    </div>
+                    <div className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="comanda"
+                            value="false"
+                            checked={formData.comanda === "false"}
+                            onChange={handleChange}
+                            required
+                        />
+                        <label>No imprimir</label>
                     </div>
                 </div>
             </div>
