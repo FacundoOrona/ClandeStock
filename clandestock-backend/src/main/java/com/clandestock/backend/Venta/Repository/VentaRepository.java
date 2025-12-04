@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import com.clandestock.backend.venta.modelos.Caja;
+import com.clandestock.backend.venta.modelos.Mesa;
 import com.clandestock.backend.venta.modelos.Venta;
 
 @Repository
@@ -17,10 +18,15 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
 
         boolean existsByCajaAndFechaCierreIsNull(Caja caja);
 
-        @Query("SELECT v.caja.id, v.metodoPago.nombreMetodoPago, SUM(v.precioTotalConMetodoDePago) " +
+        @Query("SELECT v.caja.id, " +
+                        "       v.metodoPago.nombreMetodoPago, " +
+                        "       SUM(v.precioTotalConMetodoDePago), " +
+                        "       v.caja.fechaApertura, " +
+                        "       v.caja.fechaCierre, " +
+                        "       v.caja.local.id " +
                         "FROM Venta v " +
                         "WHERE v.caja.estado = false " +
-                        "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago")
+                        "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago, v.caja.fechaApertura, v.caja.fechaCierre, v.caja.local.nombreLocal")
         List<Object[]> obtenerTotalesPorCajaYMetodo();
 
         @Query("SELECT v.caja.id, v.metodoPago.nombreMetodoPago, SUM(v.precioTotalConMetodoDePago) " +
@@ -45,5 +51,6 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
 
         List<Venta> findByCajaAndEstadoPagoIsTrue(Caja caja);
 
+        List<Venta> findByCaja_Id(Long idCaja);
 
 }
