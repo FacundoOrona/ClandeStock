@@ -29,10 +29,15 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
                         "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago, v.caja.fechaApertura, v.caja.fechaCierre, v.caja.local.nombreLocal")
         List<Object[]> obtenerTotalesPorCajaYMetodo();
 
-        @Query("SELECT v.caja.id, v.metodoPago.nombreMetodoPago, SUM(v.precioTotalConMetodoDePago) " +
+        @Query("SELECT v.caja.id, " +
+                        "       v.metodoPago.nombreMetodoPago, " +
+                        "       SUM(v.precioTotalConMetodoDePago), " +
+                        "       v.caja.fechaApertura, " +
+                        "       v.caja.fechaCierre, " +
+                        "       v.caja.local.id " +
                         "FROM Venta v " +
                         "WHERE v.caja.estado = true " +
-                        "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago")
+                        "GROUP BY v.caja.id, v.metodoPago.nombreMetodoPago, v.caja.fechaApertura, v.caja.fechaCierre, v.caja.local.id, v.caja.local.nombreLocal")
         List<Object[]> obtenerTotalesPorCajaAbiertaYMetodo();
 
         @Query("SELECT v.caja.id, v.metodoPago.nombreMetodoPago, SUM(v.precioTotalConMetodoDePago) " +
