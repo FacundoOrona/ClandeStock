@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getAllCajasCerradas } from "../../api/caja";
 import { VentasCerradasPorCaja } from "../../api/ventas";
 import { VentaCerradaCard } from "../ventas/VentaCerradaCard";
+import { getMetodos } from "../../api/metodoPago";
+import Title from "../Title";
 
 export const ListadoCajasCerradas = () => {
     const [cajas, setCajas] = useState([]);
@@ -9,16 +11,26 @@ export const ListadoCajasCerradas = () => {
     const [cajaSeleccionada, setCajaSeleccionada] = useState(null);
     const [ventasCaja, setVentasCaja] = useState([]);
     const cajasPorPagina = 6;
+    const [metodos, setMetodos] = useState([]);
+
+    const localesMap = {
+    "1": "Tenedor Libre",
+    "2": "Termas",
+    "3": "Heladería",
+};
+
 
     useEffect(() => {
         const cargarCajas = async () => {
             try {
                 const response = await getAllCajasCerradas();
+                const m = await getMetodos();
                 const data = Array.isArray(response) ? response : [response];
                 const ordenadas = data.sort(
                     (a, b) => new Date(b.fechaCierre) - new Date(a.fechaCierre)
                 );
                 setCajas(ordenadas);
+                setMetodos(m);
             } catch (err) {
                 console.error("Error cargando cajas cerradas:", err);
                 setCajas([]);
@@ -60,9 +72,10 @@ export const ListadoCajasCerradas = () => {
 
                 <h4>Ventas de la Caja #{cajaSeleccionada}</h4>
                 <div className="row flex-grow-1 overflow-auto gy-2">
-                    {ventasCaja.map((venta) => (
-                        <VentaCerradaCard key={venta.idVenta} venta={venta} metodo={null} />
-                    ))}
+                    {ventasCaja.map((venta) => {
+                        const metodo = metodos.find((m) => m.id === venta.idMetodoPago);
+                        return <VentaCerradaCard venta={venta} metodo={metodo} />;
+                    })}
                 </div>
             </div>
         );
@@ -76,6 +89,7 @@ export const ListadoCajasCerradas = () => {
     return (
         <div className="d-flex flex-column">
             <div className="row flex-grow-1 overflow-auto gy-2">
+                <Title text={"Cajas cerradas"}/>
                 {cajasPagina.map((caja) => (
                     <div
                         key={caja.cajaId}
@@ -87,15 +101,15 @@ export const ListadoCajasCerradas = () => {
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">Caja #{caja.cajaId}</h5>
                                 <p className="card-text mb-1">
-                                    <strong>Local:</strong> {caja.nombreLocal}
+                                    <strong>Local:</strong> {localesMap[caja.idLocal]}
                                 </p>
                                 <p className="card-text mb-1">
                                     <strong>Fecha apertura:</strong>{" "}
-                                    {new Date(caja.fechaApertura).toLocaleString()}
+                                    {caja.fechaApertura.replace("T", " ").split(".")[0]}
                                 </p>
                                 <p className="card-text mb-1">
                                     <strong>Fecha cierre:</strong>{" "}
-                                    {new Date(caja.fechaCierre).toLocaleString()}
+                                    {caja.fechaCierre.replace("T", " ").split(".")[0]}
                                 </p>
                                 <p className="card-text mb-1">
                                     <strong>Total general:</strong>{" "}
