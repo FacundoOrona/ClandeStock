@@ -110,7 +110,8 @@ public class CajaService {
 
             ReporteCajaResponseDTO reporte = reporteMap.getOrDefault(
                     cajaId,
-                    new ReporteCajaResponseDTO(cajaId, idLocal.toString(), BigDecimal.ZERO, new ArrayList<>(), fechaApertura,
+                    new ReporteCajaResponseDTO(cajaId, idLocal.toString(), BigDecimal.ZERO, new ArrayList<>(),
+                            fechaApertura,
                             fechaCierre));
 
             reporte.getDetallePorMetodo().add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
@@ -133,7 +134,7 @@ public class CajaService {
 
         if (usuario.esAdminGeneral()) {
             // Admin general ve todas las cajas abiertas
-            resultados = ventaRepository.obtenerTotalesPorCajaAbiertaYMetodo();
+            return listarCajasAbiertasAdmin();
         } else {
             // Moderador: obtiene solo la caja abierta de su local
             String nombreLocal = usuario.getLocal(); // viene del contexto
@@ -158,12 +159,58 @@ public class CajaService {
         return new ArrayList<>(reporteMap.values());
     }
 
+    private List<ReporteCajaResponseDTO> listarCajasAbiertasAdmin() {
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (!usuario.esAdminGeneral()) {
+            throw new RuntimeException("Se necesita permiso de administrador");
+        }
+
+        List<Caja> cajasAbiertas = cajaRepository.findByEstadoTrue();
+        List<Object[]> resultados = ventaRepository.obtenerTotalesPorCajaAbiertaYMetodo();
+
+        Map<Long, ReporteCajaResponseDTO> reporteMap = new HashMap<>();
+
+        // Inicializo todas las cajas abiertas
+        for (Caja c : cajasAbiertas) {
+            reporteMap.put(c.getId(),
+                    new ReporteCajaResponseDTO(
+                            c.getId(),
+                            c.getLocal().getId().toString(),
+                            BigDecimal.ZERO,
+                            new ArrayList<>(),
+                            c.getFechaApertura(),
+                            null // 👈 abiertas → fechaCierre null
+                    ));
+        }
+
+        // Completo con las ventas si existen
+        for (Object[] fila : resultados) {
+            Long cajaId = (Long) fila[0];
+            String metodoPago = (String) fila[1];
+            BigDecimal total = (BigDecimal) fila[2];
+            LocalDateTime fechaApertura = (LocalDateTime) fila[3];
+            Long idLocal = (Long) fila[5];
+
+            ReporteCajaResponseDTO reporte = reporteMap.get(cajaId);
+            if (reporte != null) {
+                reporte.getDetallePorMetodo().add(new DetalleCajaResponseDTO(cajaId, metodoPago, total));
+                reporte.setTotalGeneral(reporte.getTotalGeneral().add(total));
+                reporte.setFechaApertura(fechaApertura);
+                reporte.setFechaCierre(null); // 👈 siempre null en abiertas
+                reporte.setIdLocal(idLocal.toString());
+            }
+        }
+
+        return new ArrayList<>(reporteMap.values());
+    }
+
     public List<CajaResponseDTO> abierta() {
         UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
         if (usuario.esAdminGeneral()) {
-            return cajaRepository.findByEstado( true)
+            return cajaRepository.findByEstado(true)
                     .stream()
                     .map(this::toDTO)
                     .collect(Collectors.toList());
