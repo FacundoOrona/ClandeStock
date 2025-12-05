@@ -23,7 +23,7 @@ export const getAllCajasCerradas = async () => {
     return response.data;
 };
 export const getAllCajasAbiertas = async () => {
-    const response = await axios.get('/caja/abierta');
+    const response = await axios.get('/caja/detalle');
     return response.data;
 };
 

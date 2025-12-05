@@ -11,7 +11,7 @@ import { AdminVentasPage } from "../pages/admin/AdminVentasPage";
 import { AdminUsuariosPage } from "./../pages/admin/AdminUsuariosPage";
 import AdminEstadisticasPage from "../pages/admin/AdminEstadisticasPage";
 
-export default function AppRouter() {
+export default function AppRouter({ setCantidadAlertas , cantidadAlertas, setCantidadReportesNoLeidos}) {
   return (
     <Routes>
       {/* ACCESO GENERAL */}
@@ -38,7 +38,7 @@ export default function AppRouter() {
         path="/admin/productos"
         element={
           <PrivateAdminRoute>
-            <AdminProductosPage />
+            <AdminProductosPage setCantidadAlertas={setCantidadAlertas} cantidadAlertas={cantidadAlertas}  />
           </PrivateAdminRoute>
         }
       />
@@ -62,7 +62,7 @@ export default function AppRouter() {
         path="/admin/reportes"
         element={
           <PrivateAdminRoute>
-            <AdminReportesPage />
+            <AdminReportesPage setCantidadReportesNoLeidos={setCantidadReportesNoLeidos}/>
           </PrivateAdminRoute>
         }
       />
