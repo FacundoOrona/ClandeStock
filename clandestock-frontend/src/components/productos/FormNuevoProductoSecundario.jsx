@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PrimaryButtonSubmit from "../PrimaryButtonSubmit";
 
-export default function FormNuevoProductoSecundario({ onSubmit }) {
+export default function FormNuevoProductoSecundario({ onSubmit, estado, setEstado }) {
     const initialState = {
         nombre_producto: "",
         stock: "",
@@ -16,6 +16,10 @@ export default function FormNuevoProductoSecundario({ onSubmit }) {
         local: "",
         aletarStockBajo: "",
     });
+
+    useEffect(() => {
+        setEstado(null)
+    }, [])
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,6 +37,14 @@ export default function FormNuevoProductoSecundario({ onSubmit }) {
 
     return (
         <form onSubmit={handleSubmit} className="p-3 text-dark">
+            {estado && (
+                <div
+                    className={`alert mt-3 ${estado.tipo === "success" ? "alert-success" : "alert-danger"
+                        }`}
+                >
+                    {estado.mensaje}
+                </div>
+            )}
             <div className="mb-3">
                 <label className="form-label ">Nombre producto</label>
                 <input
@@ -102,7 +114,7 @@ export default function FormNuevoProductoSecundario({ onSubmit }) {
             <div className="mb-3">
                 <label className="form-label">Alerta stock bajo</label>
                 <input
-                    type="text"
+                    type="number"
                     name="aletarStockBajo"
                     className="form-control"
                     value={formData.aletarStockBajo}
