@@ -1,4 +1,5 @@
 import { useVentaDetalle } from "../hooks/useVentaDetalle";
+import TicketComanda from "./tickets/TicketComanda";
 
 export default function PanelDetallePedido({ pedido, onBack }) {
   const {
@@ -225,14 +226,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
           Cerrar venta - Cobrar
         </button>
 
-        <button
-          className="btn btn-success fw-bold"
-          onClick={() =>
-            alert("Funcionalidad de imprimir comanda aún no implementada")
-          }
-        >
-          Imprimir comanda
-        </button>
+        <TicketComanda idVenta={venta.idVenta} />
       </div>
 
       {/* Mensaje */}
