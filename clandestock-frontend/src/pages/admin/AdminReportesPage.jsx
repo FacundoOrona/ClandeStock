@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { obtenerTodosReportes, checkReporte } from "../../api/reporte";
 
-export default function AdminReportesPage() {
+export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
   const [reportes, setReportes] = useState([]);
   const [estado, setEstado] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -10,6 +10,8 @@ export default function AdminReportesPage() {
     try {
       const data = await obtenerTodosReportes();
       setReportes(data);
+      const noLeidos = data.filter(r => r.estado === "No leído").length;
+      setCantidadReportesNoLeidos(noLeidos)
     } catch (error) {
       console.error(
         "Error cargando reportes:",
@@ -63,9 +65,13 @@ export default function AdminReportesPage() {
               className="list-group-item d-flex justify-content-between align-items-center"
             >
               <div>
-                <strong>{r.descripcion}</strong>
+                Usuario:<strong> {r.usuarioEmisor}</strong>
                 <br />
-                <small className="text-muted">Usuario: {r.usuarioEmisor}</small>
+                <small className="text-muted">Fecha: {r.fecha}</small>
+                <br />
+                <small className="text-muted">Asunto:</small>
+                <br />
+                <small className="text-muted">{r.descripcion}</small>
               </div>
               <div className="d-flex align-items-center gap-2">
                 <span
@@ -81,7 +87,7 @@ export default function AdminReportesPage() {
                     onClick={() => handleCheck(r.id)}
                     disabled={loading}
                   >
-                    ✅ Check
+                    ✅ marcar como leído
                   </button>
                 )}
               </div>
