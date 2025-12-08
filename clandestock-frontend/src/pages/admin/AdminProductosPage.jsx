@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import FormProductoSecundario from "../../components/productos/FormNuevoProductoSecundario";
 
 import { guardarProductoSecundario } from "../../api/productoSecundario";
-import ListadoProductos from "../../components/productos/ListadoProductos";
+import ListadoProductosAdministrador from "../../components/productos/ListadoProductosAdministrador";
 import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProductoPrincipal";
 import { guardarProductoPrincipal } from "../../api/productoPrimario";
 import AdminCategorias from "../../components/productos/AdminCategorias";
@@ -11,56 +11,57 @@ import AdminAlertasStock from "../../components/productos/AdminAlertasStock";
 import { getAlertasStockPrimario, getAlertasStockSecundario } from "../../api/alertasStock";
 
 
-export const AdminProductosPage = () => {
+export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas}) => {
   const [productos, setProductos] = useState([]);
   const [vistaActiva, setVistaActiva] = useState("listado");
-  const [cantidadAlertas, setCantidadAlertas] = useState(0);
+  const [estado, setEstado] = useState(null);
   useEffect(() => {
-          cargarAlertas();
-      }, []);
-  
-      const cargarAlertas = async () => {
-          try {
-              const primarios = await getAlertasStockPrimario();
-              const secundarios = await getAlertasStockSecundario();
-  
-              const primariosMapped = primarios.map(p => ({
-                  ...p,
-                  tipo: "principal",
-                  alerta:
-                      p.sinStock === "true" || p.stockDisponible === "0"
-                          ? "sin stock"
-                          : "poco stock"}));
-  
-              const secundariosMapped = secundarios.map(p => ({
-                  ...p,
-                  tipo: "secundario",
-                  alerta:
-                      p.sinStock === "true" || p.stockDisponible === "0"
-                          ? "sin stock"
-                          : "poco stock"
-              }));
-              setCantidadAlertas(primariosMapped.length + secundariosMapped.length);
-          } catch (err) {
-              console.error("Error cargando alertas:", err);
-          }
-      };
+    cargarAlertas();
+    setEstado(null)
+  }, []);
 
-  
+  const cargarAlertas = async () => {
+  try {
+    const primarios = await getAlertasStockPrimario();
+    const secundarios = await getAlertasStockSecundario();
+
+    const primariosMapped = primarios.map(p => ({
+      ...p,
+      tipo: "principal",
+      alerta: p.sinStock === "true" || p.stockDisponible === "0" ? "sin stock" : "poco stock"
+    }));
+
+    const secundariosMapped = secundarios.map(p => ({
+      ...p,
+      tipo: "secundario",
+      alerta: p.sinStock === "true" || p.stockDisponible === "0" ? "sin stock" : "poco stock"
+    }));
+
+    setCantidadAlertas(primariosMapped.length + secundariosMapped.length);
+  } catch (err) {
+    console.error("Error cargando alertas:", err);
+  }
+};
+
+
   const handleNuevoProductoSecundario = async (producto) => {
     try {
       const saved = await guardarProductoSecundario(producto);
       setProductos([...productos, saved]);
+      setEstado({ tipo: "success", mensaje: "Producto creado con exito ✅" });
     } catch (error) {
       console.error("Error guardando producto secundario:", error);
+      setEstado({ tipo: "error", mensaje: "Error al crear producto ❌" });
     }
   };
 
   const handleNuevoProductoPrincipal = async (producto) => {
     try {
       const saved = await guardarProductoPrincipal(producto);
+      setEstado({ tipo: "success", mensaje: "Producto creado con exito ✅" });
     } catch (error) {
       console.error("Error guardando producto primario:", error);
+      setEstado({ tipo: "error", mensaje: "Error al crear producto ❌" });
     }
   };
 
@@ -126,7 +127,7 @@ export const AdminProductosPage = () => {
                 Agregar producto principal
               </div>
               <div className="card-body overflow-auto">
-                <FormNuevoProductoPrincipal onSubmit={handleNuevoProductoPrincipal} />
+                <FormNuevoProductoPrincipal onSubmit={handleNuevoProductoPrincipal} estado={estado} setEstado={setEstado}/>
               </div>
             </div>
           )}
@@ -137,14 +138,14 @@ export const AdminProductosPage = () => {
                 Agregar producto secundario
               </div>
               <div className="card-body overflow-auto">
-                <FormProductoSecundario onSubmit={handleNuevoProductoSecundario} />
+                <FormProductoSecundario onSubmit={handleNuevoProductoSecundario} estado={estado} setEstado={setEstado}/>
               </div>
             </div>
           )}
 
           {vistaActiva === "categorias" && <AdminCategorias />}
 
-          {vistaActiva === "listado" && <ListadoProductos />}
+          {vistaActiva === "listado" && <ListadoProductosAdministrador />}
 
           {vistaActiva === "stock" && <StockVentaPanel />}
 
