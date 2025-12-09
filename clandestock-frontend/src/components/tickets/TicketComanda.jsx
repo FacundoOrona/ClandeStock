@@ -1,5 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getVentaById } from "../../api/ventas";
+import jsPDF from "jspdf";
 
 export default function TicketComanda({ idVenta }) {
     const [venta, setVenta] = useState(null);
@@ -37,26 +38,45 @@ export default function TicketComanda({ idVenta }) {
         const horaActual = new Date().toLocaleDateString();
         const fechaActual = new Date().toLocaleTimeString();
 
-        // Construir el contenido del ticket como texto plano
-        let contenido = `
-            LA CLANDESTINA
-            ====COMANDA====
-            Pedido #${idVenta}
-            ${fechaActual} - ${horaActual}
-            ------------------------------
-            Tipo venta: ${venta.tipoVenta}
-            ${venta.detalleEntrega}
-            ${venta.numMesa ? "Mesa: " + venta.numMesa : ""}
-            ------------------------------
-            ${venta.productos.map(p => `${p.nombreProducto} x${p.cantidad}`).join("\n")}
-            ------------------------------
-                    `;
+        // Construir HTML para el ticket
+        const html = `
+            <h1 style="text-align:center;margin:0;">LA CLANDESTINA</h1>
+            <h2 style="text-align:center;margin:5px 0;">=== COMANDA ===</h2>
+            <p>Pedido #${idVenta}</p>
+            <p>${fechaActual} - ${horaActual}</p>
+            <hr/>
+            <p><strong>Tipo venta:</strong> ${venta.tipoVenta}</p>
+            <p>${venta.detalleEntrega}</p>
+            ${venta.numMesa ? `<p><strong>Mesa:</strong> ${venta.numMesa}</p>` : ""}
+            <hr/>
+            ${venta.productos.map(p => `<p>${p.nombreProducto} x${p.cantidad}</p>`).join("")}
+            <hr/>
+        `;
 
-        // Enviar al backend
-        await fetch("http://localhost:5005/print", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contenido })
+        // Generar PDF con jsPDF
+        const doc = new jsPDF({
+            unit: "mm",
+            format: [80, 150] // ancho típico de ticket térmico
+        });
+        doc.setFont("courier", "bold");
+        doc.setFontSize(14);
+
+        doc.html(html, {
+            callback: async (doc) => {
+                const pdfBase64 = btoa(
+                    new Uint8Array(doc.output("arraybuffer"))
+                        .reduce((data, byte) => data + String.fromCharCode(byte), "")
+                );
+
+                // Enviar al backend
+                await fetch("http://localhost:3000/print", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ base64pdf: pdfBase64 })
+                });
+            },
+            x: 10,
+            y: 10,
         });
     };
 
