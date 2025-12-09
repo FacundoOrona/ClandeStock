@@ -2,8 +2,10 @@ const express = require("express");
 const printer = require("pdf-to-printer");
 const fs = require("fs");
 const path = require("path");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(express.json({ limit: "10mb" })); // Ajustar si el PDF puede ser más grande
 
 // Carpeta de trabajo para PDFs temporales
