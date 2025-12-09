@@ -46,20 +46,20 @@ export default function TicketComanda({ idVenta }) {
 
         let y = 10;
         const center = 40;
-
+        const tipoVenta =venta.tipoVenta==="CONSUMO_LOCAL"? "LOCAL" : venta.tipoVenta
         doc.text("LA CLANDESTINA", center, y, { align: "center" }); y += 6;
         doc.text("=== COMANDA ===", center, y, { align: "center" }); y += 6;
         doc.text(`Pedido #${idVenta}`, center, y, { align: "center" }); y += 6;
         doc.text(`${horaActual} - ${fechaActual}`, center, y, { align: "center" }); y += 6;
         doc.text("------------------------------", center, y, { align: "center" }); y += 6;
-        doc.text(`Tipo venta: ${venta.tipoVenta}`, 10, y); y += 6;
+        doc.text(`Tipo venta: ${tipoVenta}`, 10, y); y += 6;
         doc.text(`Mozo: ${venta.detalleEntrega}`, 10, y); y += 6;
         if (venta.numMesa) {
             doc.text(`Mesa: ${venta.numMesa}`, 10, y); y += 6;
         }
         doc.text("------------------------------", center, y, { align: "center" }); y += 6;
         venta.productos.forEach(p => {
-            doc.text(`${p.nombreProducto} x${p.cantidad}`, 10, y); y += 6;
+            doc.text(`${p.cantidad}|${p.nombreProducto}`, 10, y); y += 6;
         });
         doc.text("------------------------------", center, y, { align: "center" });
 
