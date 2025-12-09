@@ -8,11 +8,8 @@ export default function TicketComanda({ idVenta }) {
     useEffect(() => {
         const fetchData = async () => {
             const data = await getVentaById(idVenta);
-
-            // Filtrar productos con comanda true
             const productosComanda = data.productos.filter(p => p.comanda === "true");
 
-            // Agrupar por nombreProducto
             const agrupados = productosComanda.reduce((acc, prod) => {
                 if (!acc[prod.nombreProducto]) {
                     acc[prod.nombreProducto] = { ...prod, cantidad: 0 };
@@ -35,48 +32,46 @@ export default function TicketComanda({ idVenta }) {
     const handlePrint = async () => {
         if (!venta || venta.productos.length === 0) return;
 
-        const horaActual = new Date().toLocaleDateString();
-        const fechaActual = new Date().toLocaleTimeString();
+        const fecha = new Date();
+        const fechaActual = fecha.toLocaleDateString();
+        const horaActual = fecha.toLocaleTimeString();
 
-        // Construir HTML para el ticket
-        const html = `
-            <h1 style="text-align:center;margin:0;">LA CLANDESTINA</h1>
-            <h2 style="text-align:center;margin:5px 0;">=== COMANDA ===</h2>
-            <p>Pedido #${idVenta}</p>
-            <p>${fechaActual} - ${horaActual}</p>
-            <hr/>
-            <p><strong>Tipo venta:</strong> ${venta.tipoVenta}</p>
-            <p>${venta.detalleEntrega}</p>
-            ${venta.numMesa ? `<p><strong>Mesa:</strong> ${venta.numMesa}</p>` : ""}
-            <hr/>
-            ${venta.productos.map(p => `<p>${p.nombreProducto} x${p.cantidad}</p>`).join("")}
-            <hr/>
-        `;
-
-        // Generar PDF con jsPDF
         const doc = new jsPDF({
             unit: "mm",
-            format: [80, 150] // ancho típico de ticket térmico
+            format: [80, 150]
         });
+
         doc.setFont("courier", "bold");
         doc.setFontSize(14);
 
-        doc.html(html, {
-            callback: async (doc) => {
-                const pdfBase64 = btoa(
-                    new Uint8Array(doc.output("arraybuffer"))
-                        .reduce((data, byte) => data + String.fromCharCode(byte), "")
-                );
+        let y = 10;
+        const center = 40;
 
-                // Enviar al backend
-                await fetch("http://localhost:3000/print", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ base64pdf: pdfBase64 })
-                });
-            },
-            x: 10,
-            y: 10,
+        doc.text("LA CLANDESTINA", center, y, { align: "center" }); y += 6;
+        doc.text("=== COMANDA ===", center, y, { align: "center" }); y += 6;
+        doc.text(`Pedido #${idVenta}`, center, y, { align: "center" }); y += 6;
+        doc.text(`${horaActual} - ${fechaActual}`, center, y, { align: "center" }); y += 6;
+        doc.text("------------------------------", center, y, { align: "center" }); y += 6;
+        doc.text(`Tipo venta: ${venta.tipoVenta}`, 10, y); y += 6;
+        doc.text(`Mozo: ${venta.detalleEntrega}`, 10, y); y += 6;
+        if (venta.numMesa) {
+            doc.text(`Mesa: ${venta.numMesa}`, 10, y); y += 6;
+        }
+        doc.text("------------------------------", center, y, { align: "center" }); y += 6;
+        venta.productos.forEach(p => {
+            doc.text(`${p.nombreProducto} x${p.cantidad}`, 10, y); y += 6;
+        });
+        doc.text("------------------------------", center, y, { align: "center" });
+
+        const pdfBase64 = btoa(
+            new Uint8Array(doc.output("arraybuffer"))
+                .reduce((data, byte) => data + String.fromCharCode(byte), "")
+        );
+
+        await fetch("http://localhost:3000/print", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ base64pdf: pdfBase64 })
         });
     };
 
