@@ -9,6 +9,7 @@
   "author": "Santiago",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "pdf-to-printer": "^5.3.0"
   }
