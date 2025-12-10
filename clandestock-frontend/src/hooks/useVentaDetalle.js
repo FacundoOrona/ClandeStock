@@ -37,6 +37,10 @@ export const useVentaDetalle = (idVenta) => {
       setMensaje("❌ Error al cargar venta");
     }
   };
+  const refreshVenta = async (idVenta) => {
+    const data = await getVentaById(idVenta, token);
+    setVenta(data);
+  };
 
   // 🔄 Cargar categorías
   const cargarCategorias = async () => {
@@ -79,7 +83,8 @@ export const useVentaDetalle = (idVenta) => {
   // ➕ Agregar producto
   const handleAgregarProducto = async (prod) => {
     try {
-      await agregarProductoAVenta(idVenta, prod.id, token);
+      const idProd = prod.idProducto ?? prod.id;
+      await agregarProductoAVenta(idVenta, idProd, token);
       await cargarVenta();
       await cargarProductos();
     } catch (err) {
@@ -91,7 +96,7 @@ export const useVentaDetalle = (idVenta) => {
   // ➖ Quitar producto
   const handleQuitarProducto = async (prod) => {
     try {
-      await quitarProductoDeVenta(idVenta, prod.idProductoPorVenta, token);
+      await quitarProductoDeVenta(idVenta, prod.idProductosPorVenta[prod.idProductosPorVenta.length-1], token);
       await cargarVenta();
       await cargarProductos();
     } catch (err) {
@@ -145,6 +150,7 @@ export const useVentaDetalle = (idVenta) => {
 
   return {
     venta,
+    refreshVenta,
     categorias,
     categoriaSeleccionada,
     setCategoriaSeleccionada,
