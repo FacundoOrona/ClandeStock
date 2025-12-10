@@ -1,40 +1,28 @@
-import { useState, useEffect } from "react";
-import { getVentaById } from "../../api/ventas";
 import jsPDF from "jspdf";
+import { getVentaById, imprimioComanda } from "../../api/ventas";
 
-export default function TicketComanda({ idVenta }) {
-    const [venta, setVenta] = useState(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await getVentaById(idVenta);
-            const productosComanda = data.productos.filter(p => p.comanda === "true");
-
-            const agrupados = productosComanda.reduce((acc, prod) => {
-                if (!acc[prod.nombreProducto]) {
-                    acc[prod.nombreProducto] = { ...prod, cantidad: 0 };
-                }
-                acc[prod.nombreProducto].cantidad += 1;
-                return acc;
-            }, {});
-
-            setVenta({
-                tipoVenta: data.tipoVenta,
-                detalleEntrega: data.detalleEntrega,
-                numMesa: data.numMesa || null,
-                productos: Object.values(agrupados),
-            });
-        };
-
-        fetchData();
-    }, [idVenta]);
+export default function TicketComanda({ venta, onVentaActualizada }) {
 
     const handlePrint = async () => {
         if (!venta || venta.productos.length === 0) return;
 
         const fecha = new Date();
         const fechaActual = fecha.toLocaleDateString();
-        const horaActual = fecha.toLocaleTimeString();
+        const horaActual = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+
+        const productosComanda = venta.productos.filter(p => p.comanda === true || p.comanda === "true");
+
+        const agrupados = productosComanda.reduce((acc, prod) => {
+            if (!acc[prod.nombreProducto]) {
+                acc[prod.nombreProducto] = { ...prod, cantidad: 0 };
+            }
+            acc[prod.nombreProducto].cantidad += 1;
+            return acc;
+        }, {});
+
+        const productosAgrupados = Object.values(agrupados);
+
+        if (productosAgrupados.length === 0) return;
 
         const doc = new jsPDF({
             unit: "mm",
@@ -46,21 +34,35 @@ export default function TicketComanda({ idVenta }) {
 
         let y = 10;
         const center = 40;
-        const tipoVenta =venta.tipoVenta==="CONSUMO_LOCAL"? "LOCAL" : venta.tipoVenta
+        const tipoVenta = venta.tipoVenta === "CONSUMO_LOCAL" ? "Local" : venta.tipoVenta === "ENVIO_DOMICILIO" ? "Delivery" : "Takeaway";
+
         doc.text("LA CLANDESTINA", center, y, { align: "center" }); y += 6;
         doc.text("=== COMANDA ===", center, y, { align: "center" }); y += 6;
-        doc.text(`Pedido #${idVenta}`, center, y, { align: "center" }); y += 6;
-        doc.text(`${horaActual} - ${fechaActual}`, center, y, { align: "center" }); y += 6;
+        doc.text(`Pedido #${venta.idVenta}`, center, y, { align: "center" }); y += 6;
+        doc.text(`${fechaActual} - ${horaActual}`, center, y, { align: "center" }); y += 6;
         doc.text("------------------------------", center, y, { align: "center" }); y += 6;
         doc.text(`Tipo venta: ${tipoVenta}`, 10, y); y += 6;
-        doc.text(`Mozo: ${venta.detalleEntrega}`, 10, y); y += 6;
+
+        if (tipoVenta === "Local") {
+            doc.text(`${venta.detalleEntrega}`, 10, y); y += 6;
+        }
+        else if (tipoVenta === "Delivery") {
+            doc.text(`Direccion:`, 10, y); y += 6
+            doc.text(`  ${venta.detalleEntrega}`, 10, y); y += 6
+        }
+        else {
+            doc.text(`Retira: ${venta.detalleEntrega}`, 10, y); y += 6
+        }
+
         if (venta.numMesa) {
             doc.text(`Mesa: ${venta.numMesa}`, 10, y); y += 6;
         }
         doc.text("------------------------------", center, y, { align: "center" }); y += 6;
-        venta.productos.forEach(p => {
-            doc.text(`${p.cantidad}|${p.nombreProducto}`, 10, y); y += 6;
+
+        productosAgrupados.forEach(p => {
+            doc.text(`${p.cantidad} x ${p.nombreProducto}`, 10, y); y += 6;
         });
+
         doc.text("------------------------------", center, y, { align: "center" });
 
         const pdfBase64 = btoa(
@@ -73,17 +75,21 @@ export default function TicketComanda({ idVenta }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ base64pdf: pdfBase64 })
         });
+
+        await imprimioComanda(venta.idVenta);
+        onVentaActualizada(venta.idVenta);
     };
 
     return (
-        <div>
-            <button
-                className="btn btn-success fw-bold"
-                onClick={handlePrint}
-                disabled={!venta || venta.productos.length === 0}
-            >
-                Imprimir comanda
-            </button>
-        </div>
+        venta && venta.productos.some(p => p.comanda === true || p.comanda === "true") ? (
+            <div>
+                <button
+                    className="btn btn-success fw-bold"
+                    onClick={handlePrint}
+                >
+                    Imprimir comanda
+                </button>
+            </div>
+        ) : null
     );
 }
