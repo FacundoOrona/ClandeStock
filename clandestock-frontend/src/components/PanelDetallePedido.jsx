@@ -1,9 +1,11 @@
 import { useVentaDetalle } from "../hooks/useVentaDetalle";
+import TicketCobro from "./tickets/TicketCobro";
 import TicketComanda from "./tickets/TicketComanda";
 
 export default function PanelDetallePedido({ pedido, onBack }) {
   const {
     venta,
+    refreshVenta,
     categorias,
     categoriaSeleccionada,
     setCategoriaSeleccionada,
@@ -75,20 +77,23 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                     </small>
                   </div>
                   <div className="d-flex gap-2">
+                    
                     <button
-                      className="btn btn-success btn-sm"
-                      onClick={() => handleAgregarProducto(prod)}
-                      disabled={!prod.id}
-                    >
-                      +
-                    </button>
-                    <span className="badge bg-secondary">{prod.cantidad}</span>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleQuitarProducto(prod)}
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleQuitarProducto(prod)}
                     >
                       -
                     </button>
+                    <span className="badge bg-secondary">{prod.cantidad}</span>
+
+                    {prod.idProducto&&prod.stockDisponible>0 ? (<button
+                      className="btn btn-success btn-sm"
+                      onClick={() => handleAgregarProducto(prod)}
+                      disabled={!prod.idProducto||prod.stockDisponible<1}
+                    >
+                      +
+                    </button>):(null)}
+                    
                   </div>
                 </div>
               ))}
@@ -144,12 +149,17 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                     Precio: ${prod.precio} | Stock: {prod.stockDisponible}
                   </small>
                 </div>
-                <button
-                  className="btn btn-success btn-sm"
-                  onClick={() => handleAgregarProducto(prod)}
-                >
-                  +
-                </button>
+
+                {prod.stockDisponible > 0 ? (
+                  <button
+                    className="btn btn-success btn-sm"
+                    onClick={() => handleAgregarProducto(prod)}
+                  >
+                    +
+                  </button>
+                ) : (
+                  <span className="badge bg-secondary">Sin stock</span>
+                )}
               </div>
             ))}
           </div>
@@ -215,7 +225,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
       <div className="d-flex justify-content-between mt-4">
         {!metodoSeleccionado && (
           <small className="text-muted">
-            Seleccione un método de pago para cerrar la venta
+            Seleccione un método de pago para cerrar la venta o imprimir ticket
           </small>
         )}
         <button
@@ -226,7 +236,10 @@ export default function PanelDetallePedido({ pedido, onBack }) {
           Cerrar venta - Cobrar
         </button>
 
-        <TicketComanda idVenta={venta.idVenta} />
+        <TicketCobro venta={venta} metodoSeleccionado={metodoSeleccionado} />
+        <TicketComanda
+          venta={venta}
+          onVentaActualizada={() => refreshVenta(venta.idVenta)} />
       </div>
 
       {/* Mensaje */}
