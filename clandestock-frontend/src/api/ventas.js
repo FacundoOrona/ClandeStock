@@ -14,3 +14,7 @@ export const getVentaById = async (idVenta) => {
     const res = await axios.get("/venta/" +idVenta)
     return res.data;
 };
+export const imprimioComanda = async (idVenta) => {
+    const res = await axios.post("/venta/comanda/" +idVenta)
+    return res.data;
+};
