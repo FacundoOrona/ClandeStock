@@ -1,95 +1,104 @@
-import jsPDF from "jspdf";
-import { getVentaById, imprimioComanda } from "../../api/ventas";
+import { imprimioComanda } from "../../api/ventas";
 
 export default function TicketComanda({ venta, onVentaActualizada }) {
+
+    // Simula salto de línea sin crear párrafos
+    const simulateLineBreaks = (text, width = 25) => {
+        const lines = text.split("\n");
+        return lines.map(line => line.padEnd(width) + "\r").join("");
+    };
 
     const handlePrint = async () => {
         if (!venta || venta.productos.length === 0) return;
 
+        const WIDTH = 25;
+
         const fecha = new Date();
         const fechaActual = fecha.toLocaleDateString();
-        const horaActual = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        const horaActual = fecha.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
 
-        const productosComanda = venta.productos.filter(p => p.comanda === true || p.comanda === "true");
+        const tipoVenta = (venta.tipoVenta || "").toUpperCase();
 
+        // Filtrar productos que van a comanda
+        const productosComanda = venta.productos.filter(
+            p => p.comanda === true || p.comanda === "true"
+        );
+
+        if (productosComanda.length === 0) return;
+
+        // Agrupar productos
         const agrupados = productosComanda.reduce((acc, prod) => {
-            if (!acc[prod.nombreProducto]) {
-                acc[prod.nombreProducto] = { ...prod, cantidad: 0 };
+            const key = prod.nombreProducto;
+            if (!acc[key]) {
+                acc[key] = { ...prod, cantidad: 0 };
             }
-            acc[prod.nombreProducto].cantidad += 1;
+            acc[key].cantidad++;
             return acc;
         }, {});
 
         const productosAgrupados = Object.values(agrupados);
 
-        if (productosAgrupados.length === 0) return;
+        let content = "";
 
-        const doc = new jsPDF({
-            unit: "mm",
-            format: [80, 150]
-        });
+        // ENCABEZADO
+        content += "  LA CLANDESTINA\n";
+        content += "  === COMANDA ===\n";
+        content += "\n";
+        content += `Pedido: ${venta.idVenta}\n`;
+        content += `${fechaActual} - ${horaActual}\n`;
+        content += "-------------------------\n";
 
-        doc.setFont("courier", "bold");
-        doc.setFontSize(14);
+        // TIPO DE VENTA
+        content += `Tipo venta:\n`;
+        content += `${tipoVenta}\n`;
 
-        let y = 10;
-        const center = 40;
-        const tipoVenta = venta.tipoVenta === "CONSUMO_LOCAL" ? "Local" : venta.tipoVenta === "ENVIO_DOMICILIO" ? "Delivery" : "Takeaway";
-
-        doc.text("LA CLANDESTINA", center, y, { align: "center" }); y += 6;
-        doc.text("=== COMANDA ===", center, y, { align: "center" }); y += 6;
-        doc.text(`Pedido #${venta.idVenta}`, center, y, { align: "center" }); y += 6;
-        doc.text(`${fechaActual} - ${horaActual}`, center, y, { align: "center" }); y += 6;
-        doc.text("------------------------------", center, y, { align: "center" }); y += 6;
-        doc.text(`Tipo venta: ${tipoVenta}`, 10, y); y += 6;
-
-        if (tipoVenta === "Local") {
-            doc.text(`${venta.detalleEntrega}`, 10, y); y += 6;
-        }
-        else if (tipoVenta === "Delivery") {
-            doc.text(`Direccion:`, 10, y); y += 6
-            doc.text(`  ${venta.detalleEntrega}`, 10, y); y += 6
-        }
-        else {
-            doc.text(`Retira: ${venta.detalleEntrega}`, 10, y); y += 6
+        // DETALLE SEGÚN TIPO
+        if (tipoVenta === "CONSUMO_LOCAL") {
+            content += `${venta.detalleEntrega}\n`;
+        } else if (tipoVenta === "ENVIO_DOMICILIO") {
+            content += `Dirección:\n`;
+            content += `${venta.detalleEntrega}\n`;
+        } else {
+            content += `Retira:\n`;
+            content += `${venta.detalleEntrega}\n`;
         }
 
         if (venta.numMesa) {
-            doc.text(`Mesa: ${venta.numMesa}`, 10, y); y += 6;
+            content += `Mesa: ${venta.numMesa}\n`;
         }
-        doc.text("------------------------------", center, y, { align: "center" }); y += 6;
 
+        content += "-------------------------\n";
+
+        // PRODUCTOS
         productosAgrupados.forEach(p => {
-            doc.text(`${p.cantidad} x ${p.nombreProducto}`, 10, y); y += 6;
+            content += `${p.cantidad} x ${p.nombreProducto}\n`;
         });
 
-        doc.text("------------------------------", center, y, { align: "center" });
+        content += "-------------------------\n";
+        // Convertir a formato térmico sin \n
+        const finalContent = simulateLineBreaks(content);
 
-        const pdfBase64 = btoa(
-            new Uint8Array(doc.output("arraybuffer"))
-                .reduce((data, byte) => data + String.fromCharCode(byte), "")
-        );
-
-        await fetch("http://localhost:3000/print", {
+        // Enviar al backend
+        await fetch("http://localhost:3001/print", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ base64pdf: pdfBase64 })
+            body: JSON.stringify({ content: finalContent })
         });
 
+        // Marcar comanda como impresa
         await imprimioComanda(venta.idVenta);
         onVentaActualizada(venta.idVenta);
     };
 
     return (
         venta && venta.productos.some(p => p.comanda === true || p.comanda === "true") ? (
-            <div>
-                <button
-                    className="btn btn-success fw-bold"
-                    onClick={handlePrint}
-                >
-                    Imprimir comanda
-                </button>
-            </div>
+            <button className="btn btn-success fw-bold" onClick={handlePrint}>
+                Imprimir comanda
+            </button>
         ) : null
     );
 }
