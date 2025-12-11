@@ -1,4 +1,23 @@
-export default function TicketCierreCaja({ apertura, detalle }) {
+import { useEffect } from "react";
+import { getDetalleCaja, getEstadoCaja } from "../../api/caja";
+import { useState } from "react";
+
+export default function TicketCierreCaja() {
+    const [apertura, setApertura] = useState(null);
+    const [detalle, setDetalle] = useState(null);
+
+
+    const cargarDatos = async ()=>{
+        const detalle = await getDetalleCaja();
+        setDetalle(detalle[0]);
+        const cajas = await getEstadoCaja();
+        const abierta =
+        Array.isArray(cajas) && cajas.length > 0 ? cajas[0] : null;
+        setApertura(abierta);
+    }
+    useEffect( () => {
+        cargarDatos();
+    }, [])
 
     // Simula salto de línea sin crear párrafos
     const simulateLineBreaks = (text, width = 25) => {
