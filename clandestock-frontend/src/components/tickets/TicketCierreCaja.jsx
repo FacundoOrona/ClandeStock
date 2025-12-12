@@ -1,19 +1,24 @@
 import { useEffect } from "react";
-import { getDetalleCaja, getEstadoCaja } from "../../api/caja";
+import { getDetalleCaja, getEstadoCaja, obtenerProductosVendidos } from "../../api/caja";
 import { useState } from "react";
 
 export default function TicketCierreCaja() {
     const [apertura, setApertura] = useState(null);
     const [detalle, setDetalle] = useState(null);
+    const [productos, setProductos] = useState([]);
 
 
     const cargarDatos = async ()=>{
         const detalle = await getDetalleCaja();
         setDetalle(detalle[0]);
+
         const cajas = await getEstadoCaja();
         const abierta =
         Array.isArray(cajas) && cajas.length > 0 ? cajas[0] : null;
         setApertura(abierta);
+
+        const prodxVenta = await obtenerProductosVendidos()
+        setProductos(prodxVenta);
     }
     useEffect( () => {
         cargarDatos();
@@ -90,6 +95,13 @@ export default function TicketCierreCaja() {
             const total = parseFloat(m.totalCobrado).toFixed(2);
             content += `${m.metodoPago}:\n`;
             content += `$${total}\n`;
+        });
+
+        content += "-------------------------\n";
+        content += "PRODUCTOS VENDIDOS\n";
+
+        productos.forEach(p => {
+            content += `${p.cantidad} x ${p.nombreProducto}\n`;
         });
 
         content += "-------------------------\n";
