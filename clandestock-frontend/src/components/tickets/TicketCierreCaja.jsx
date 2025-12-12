@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getDetalleCaja, getEstadoCaja, obtenerProductosVendidos } from "../../api/caja";
-import { useState } from "react";
 
 export default function TicketCierreCaja() {
     const [apertura, setApertura] = useState(null);
@@ -62,8 +61,9 @@ export default function TicketCierreCaja() {
 
         const nombreLocal = getLocalName(apertura.idLocal);
         const montoApertura = parseFloat(apertura.montoApertura).toFixed(2);
-        const totalGeneral = parseFloat(detalle.totalGeneral).toFixed(2);
+        const total = parseFloat(detalle.totalGeneral).toFixed(2);
 
+        const totalGeneral = (parseFloat(montoApertura) + parseFloat(total)).toFixed(2);
         let content = "";
 
         // ENCABEZADO
