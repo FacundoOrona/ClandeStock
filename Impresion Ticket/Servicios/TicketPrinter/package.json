@@ -1,7 +1,7 @@
 {
   "name": "ticket-printer-service",
   "version": "1.0.0",
-  "description": "Microservicio local para imprimir tickets PDF en la impresora predeterminada",
+  "description": "Microservicio local para imprimir tickets en la impresora predeterminada usando texto plano",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -9,8 +9,8 @@
   "author": "Santiago",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^2.2.1",
     "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "pdf-to-printer": "^5.3.0"
+    "express": "^4.22.1"
   }
 }
