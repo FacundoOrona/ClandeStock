@@ -78,7 +78,7 @@ export default function TicketCobro({ venta, metodoSeleccionado }) {
         const total = parseFloat(venta.precioTotalConMetodoDePago);
         const diferencia = total - subtotal;
         
-        content += `Subtotal: $${subtotal}\n`;
+        if (diferencia != 0) content += `Subtotal: $${subtotal}\n`;
         if (diferencia > 0) content += `Recargo: +$${diferencia}\n`;
         else if (diferencia < 0) content += `Descuento: -$${Math.abs(diferencia)}\n`;
         content += `Total: $${total}\n`;
