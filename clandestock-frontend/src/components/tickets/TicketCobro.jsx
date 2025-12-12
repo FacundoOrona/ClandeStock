@@ -83,7 +83,7 @@ export default function TicketCobro({ venta, metodoSeleccionado }) {
         else if (diferencia < 0) content += `Descuento: -$${Math.abs(diferencia)}\n`;
         content += `Total: $${total}\n`;
         content += "\n";
-        content += "*** Este ticket no es válido como factura ***\n";
+        content += "*** Este ticket no es    válido como factura ***\n";
         content += "¡Gracias por su compra!\n";
 
         // Y antes de enviar, lo convertís:
