@@ -116,6 +116,23 @@ public class CategoriaService {
         categoriaDTO.nombreCategoria = cat.getNombreCategoria();
         categoriaDTO.localID = cat.getLocal().getId().toString();
         return categoriaDTO;
+    private CategoriaResponseDTO toResponseDTO(Categoria categoria) {
+        CategoriaResponseDTO dto = new CategoriaResponseDTO();
+        dto.setId(categoria.getId());
+        dto.setNombreCategoria(categoria.getNombreCategoria());
+        dto.setLocalId(categoria.getLocal().getId());
+        dto.setActivo(categoria.isActivo());
+        return dto;
+    }
+
+    public CategoriaResponseDTO darDeBaja(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
+
+        categoria.setActivo(false);
+        categoriaRepository.save(categoria);
+
+        return toResponseDTO(categoria);
     }
 
 }
