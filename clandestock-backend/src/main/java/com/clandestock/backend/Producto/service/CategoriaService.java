@@ -110,12 +110,6 @@ public class CategoriaService {
         return categoria;
     }
 
-    private CategoriaResponseDTO toResponseDTO(Categoria cat) {
-        CategoriaResponseDTO categoriaDTO = new CategoriaResponseDTO();
-        categoriaDTO.id = cat.getId().toString();
-        categoriaDTO.nombreCategoria = cat.getNombreCategoria();
-        categoriaDTO.localID = cat.getLocal().getId().toString();
-        return categoriaDTO;
     private CategoriaResponseDTO toResponseDTO(Categoria categoria) {
         CategoriaResponseDTO dto = new CategoriaResponseDTO();
         dto.setId(categoria.getId());
