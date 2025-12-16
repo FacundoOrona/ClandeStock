@@ -3,6 +3,7 @@ package com.clandestock.backend.producto.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -88,12 +89,12 @@ public class CategoriaService {
                     .map(this::toResponseDTO)
                     .collect(Collectors.toList());
 
-        //Caso contario obtiene la corresponiende al local asignado
+            //Caso contario obtiene la corresponiende al local asignado
         } else {
             return categoriaRepository.findByLocal_NombreLocal(usuario.getLocal())
-            .stream()
-            .map(this::toResponseDTO)
-            .collect(Collectors.toList());
+                    .stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -129,4 +130,13 @@ public class CategoriaService {
         return toResponseDTO(categoria);
     }
 
+    public CategoriaResponseDTO reactivarCategoria(Long id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
+
+        categoria.setActivo(true);
+        categoriaRepository.save(categoria);
+
+        return toResponseDTO(categoria);
+    }
 }
