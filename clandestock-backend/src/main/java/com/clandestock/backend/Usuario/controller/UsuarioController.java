@@ -66,4 +66,9 @@ public class UsuarioController {
                     .body("Error al editar el usuario");
         }
     }
+
+    @PutMapping("/editar/{idUsuario}")
+    public ResponseEntity<?> actualizarContrasena (String contrasenaNueva, @PathVariable Long id) {
+
+    }
 }
