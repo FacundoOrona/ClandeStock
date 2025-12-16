@@ -132,4 +132,18 @@ public class CategoriaController {
                     .body(null);
         }
     }
+
+    @PutMapping("/{id}/alta")
+    public ResponseEntity<CategoriaResponseDTO> darDeAlta (@PathVariable Long id) {
+        try {
+            CategoriaResponseDTO responseDTO = categoriaService.reactivarCategoria(id);
+            return ResponseEntity.ok(responseDTO);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
 }
