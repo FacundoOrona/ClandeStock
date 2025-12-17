@@ -3,12 +3,13 @@ import {
   getVentaById,
   agregarProductoAVenta,
   quitarProductoDeVenta,
-  getCategorias,
+  getCategoriasActivas,
   getProductosPorCategoria,
   getMetodosPago,
   insertarMetodoPago,
   cerrarVenta,
 } from "../services/ventaService";
+
 import { agruparProductos } from "../utils/agrupadorProductos";
 
 export const useVentaDetalle = (idVenta) => {
@@ -42,15 +43,17 @@ export const useVentaDetalle = (idVenta) => {
     setVenta(data);
   };
 
-  // 🔄 Cargar categorías
+  // 🔄 Cargar categorías activas
   const cargarCategorias = async () => {
     try {
-      const data = await getCategorias(token);
-      const normalizadas = data.map((c) => ({
-        id: c.id,
-        nombreCategoria: c.nombre_categoria,
-        localID: c.local_id,
-      }));
+      const data = await getCategoriasActivas(token);
+      const normalizadas = data
+        .filter((c) => c.activo)
+        .map((c) => ({
+          id: c.id,
+          nombreCategoria: c.nombre_categoria, // 👈 usar el nombre correcto
+          localID: c.local_id,
+        }));
       setCategorias(normalizadas);
     } catch (err) {
       console.error(err);
@@ -96,7 +99,11 @@ export const useVentaDetalle = (idVenta) => {
   // ➖ Quitar producto
   const handleQuitarProducto = async (prod) => {
     try {
-      await quitarProductoDeVenta(idVenta, prod.idProductosPorVenta[prod.idProductosPorVenta.length-1], token);
+      await quitarProductoDeVenta(
+        idVenta,
+        prod.idProductosPorVenta[prod.idProductosPorVenta.length - 1],
+        token
+      );
       await cargarVenta();
       await cargarProductos();
     } catch (err) {
