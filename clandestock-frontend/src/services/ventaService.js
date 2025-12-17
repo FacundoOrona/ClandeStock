@@ -87,3 +87,11 @@ export const cerrarVenta = async (idVenta, token) => {
   if (!res.ok) throw new Error("Error al cerrar venta");
   return await res.json();
 };
+
+export const getCategoriasActivas = async (token) => {
+  const res = await fetch(`${BASE_URL}/categoria/todas/activas`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Error al obtener categorías activas");
+  return await res.json();
+};
