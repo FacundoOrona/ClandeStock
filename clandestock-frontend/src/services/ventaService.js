@@ -95,3 +95,11 @@ export const getCategoriasActivas = async (token) => {
   if (!res.ok) throw new Error("Error al obtener categorías activas");
   return await res.json();
 };
+
+export const getMetodosPagoActivos = async (token) => {
+  const res = await fetch(`${BASE_URL}/metodopago/activos`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Error al obtener métodos de pago activos");
+  return await res.json();
+};
