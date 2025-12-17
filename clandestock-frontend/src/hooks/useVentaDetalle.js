@@ -51,7 +51,7 @@ export const useVentaDetalle = (idVenta) => {
         .filter((c) => c.activo)
         .map((c) => ({
           id: c.id,
-          nombreCategoria: c.nombre_categoria, // 👈 usar el nombre correcto
+          nombreCategoria: c.nombre_categoria,
           localID: c.local_id,
         }));
       setCategorias(normalizadas);
