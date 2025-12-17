@@ -19,7 +19,7 @@ export default function ModeradorTipoSelector({ selected, onChange }) {
               checked={selected === tipo.value}
               onChange={(e) => onChange(e.target.value)}
             />
-            <label className="form-check-label">
+            <label className="form-check-label text-warning">
               Moderador de {tipo.label}
             </label>
           </div>
