@@ -77,23 +77,23 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                     </small>
                   </div>
                   <div className="d-flex gap-2">
-                    
                     <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleQuitarProducto(prod)}
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleQuitarProducto(prod)}
                     >
                       -
                     </button>
                     <span className="badge bg-secondary">{prod.cantidad}</span>
 
-                    {prod.idProducto&&prod.stockDisponible>0 ? (<button
-                      className="btn btn-success btn-sm"
-                      onClick={() => handleAgregarProducto(prod)}
-                      disabled={!prod.idProducto||prod.stockDisponible<1}
-                    >
-                      +
-                    </button>):(null)}
-                    
+                    {prod.idProducto && prod.stockDisponible > 0 ? (
+                      <button
+                        className="btn btn-success btn-sm"
+                        onClick={() => handleAgregarProducto(prod)}
+                        disabled={!prod.idProducto || prod.stockDisponible < 1}
+                      >
+                        +
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               ))}
@@ -107,7 +107,6 @@ export default function PanelDetallePedido({ pedido, onBack }) {
             </div>
           </>
         )}
-
       </div>
 
       {/* Selección de categoría y productos disponibles */}
@@ -125,7 +124,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
             <option value="todos">Todos</option>
             {categorias.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.nombreCategoria} ({c.localID})
+                {c.nombreCategoria}
               </option>
             ))}
           </select>
@@ -239,7 +238,8 @@ export default function PanelDetallePedido({ pedido, onBack }) {
         <TicketCobro venta={venta} metodoSeleccionado={metodoSeleccionado} />
         <TicketComanda
           venta={venta}
-          onVentaActualizada={() => refreshVenta(venta.idVenta)} />
+          onVentaActualizada={() => refreshVenta(venta.idVenta)}
+        />
       </div>
 
       {/* Mensaje */}
