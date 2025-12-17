@@ -5,11 +5,10 @@ import {
   quitarProductoDeVenta,
   getCategoriasActivas,
   getProductosPorCategoria,
-  getMetodosPago,
+  getMetodosPagoActivos,
   insertarMetodoPago,
   cerrarVenta,
 } from "../services/ventaService";
-
 import { agruparProductos } from "../utils/agrupadorProductos";
 
 export const useVentaDetalle = (idVenta) => {
@@ -72,11 +71,18 @@ export const useVentaDetalle = (idVenta) => {
     }
   };
 
-  // 🔄 Cargar métodos de pago
+  // 🔄 Cargar métodos de pago activos
   const cargarMetodosPago = async () => {
     try {
-      const data = await getMetodosPago(token);
-      setMetodosPago(data);
+      const data = await getMetodosPagoActivos(token);
+      // normalizamos para que siempre tengas camelCase y boolean
+      const normalizados = data.map((m) => ({
+        ...m,
+        estadoBool:
+          String(m.estado).trim().toLowerCase() === "true" ||
+          String(m.estado).trim().toLowerCase() === "activo",
+      }));
+      setMetodosPago(normalizados);
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al cargar métodos de pago");
