@@ -100,7 +100,6 @@ export default function ListadoProductosAdministrador() {
             let datos;
             if (tipo === "secundario") {
                 datos = await getProductosSecundarioPorId(id);
-                console.log(datos)
             } else {
                 datos = await getProductosPrimariosPorId(id);
             }
