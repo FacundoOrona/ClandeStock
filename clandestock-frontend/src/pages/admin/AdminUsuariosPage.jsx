@@ -64,10 +64,10 @@ export const AdminUsuariosPage = () => {
         prev.map((u) =>
           u.id === editingUser.id
             ? {
-                ...u,
-                nombreUsuario: nombreUsuarioEdit,
-                tipoUsuario: tipoUsuarioEdit,
-              }
+              ...u,
+              nombreUsuario: nombreUsuarioEdit,
+              tipoUsuario: tipoUsuarioEdit,
+            }
             : u
         )
       );
@@ -103,15 +103,14 @@ export const AdminUsuariosPage = () => {
     }
   };
 
-  return (
-    <div className="container-fluid mt-4">
-      <div className="row align-items-start">
-        {/* 📊 Columna izquierda: listado */}
-        <div className="col-lg-8 col-md-7 ps-4">
-          {" "}
-          {/* margen/padding más amplio */}
-          <h2 className="text-warning mb-4 gothic-font">Lista de usuarios</h2>
-          <table className="table table-hover table-bordered shadow w-100">
+ return (
+  <div className="container-fluid mt-4">
+    <div className="row">
+      {/* 📊 Columna izquierda: listado */}
+      <div className="col-12 col-md-7 col-lg-8 ps-md-4">
+        <h2 className="text-warning mb-4 gothic-font">Lista de usuarios</h2>
+        <div className="table-responsive">
+          <table className="table table-hover table-bordered shadow">
             <thead className="table-warning">
               <tr>
                 <th>Nombre Usuario</th>
@@ -127,8 +126,8 @@ export const AdminUsuariosPage = () => {
                   usuario.estado === "true" || usuario.estado === true;
                 return (
                   <tr key={usuario.id}>
-                    <td>{usuario.nombreUsuario}</td>
-                    <td>{usuario.tipoUsuario}</td>
+                    <td className="text-break">{usuario.nombreUsuario}</td>
+                    <td>{usuario.tipoUsuario.replace("MODERADOR_", "").replaceAll("_", " ")}</td>
                     <td>{usuario.fechaCreacion}</td>
                     <td>
                       <span
@@ -140,27 +139,33 @@ export const AdminUsuariosPage = () => {
                       </span>
                     </td>
                     <td>
-                      <button
-                        className="btn btn-primary btn-sm me-2"
-                        onClick={() => handleEditar(usuario)}
-                      >
-                        Editar
-                      </button>
-                      {isActivo ? (
+                      <div className="d-flex flex-column flex-md-row gap-2">
                         <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleToggleEstado(usuario.id, true)}
+                          className="btn btn-primary btn-sm w-100 w-md-auto"
+                          onClick={() => handleEditar(usuario)}
                         >
-                          Dar baja
+                          Editar
                         </button>
-                      ) : (
-                        <button
-                          className="btn btn-success btn-sm"
-                          onClick={() => handleToggleEstado(usuario.id, false)}
-                        >
-                          Activar
-                        </button>
-                      )}
+                        {isActivo ? (
+                          <button
+                            className="btn btn-danger btn-sm w-100 w-md-auto"
+                            onClick={() =>
+                              handleToggleEstado(usuario.id, true)
+                            }
+                          >
+                            Dar baja
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-success btn-sm w-100 w-md-auto"
+                            onClick={() =>
+                              handleToggleEstado(usuario.id, false)
+                            }
+                          >
+                            Activar
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -168,72 +173,70 @@ export const AdminUsuariosPage = () => {
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* 📌 Columna derecha: acciones + panel de edición */}
-        <div className="col-lg-4 col-md-5 mt-5">
-          {" "}
-          {/* bajamos más los paneles */}
-          <div className="card shadow p-3 mb-4">
-            <h5 className="text-warning gothic-font mb-3">Acciones rápidas</h5>
-            <button className="btn btn-warning w-100" onClick={irARegistro}>
-              Registrar Moderador
-            </button>
-          </div>
-          {editingUser && (
-            <div className="card shadow p-4 mt-5">
-              {" "}
-              {/* más espacio arriba */}
-              <h5 className="text-warning gothic-font mb-3">
-                Editar Usuario: {editingUser.nombreUsuario}
-              </h5>
-              <div className="mb-3">
-                <label className="form-label text-warning">
-                  Nombre de Usuario
-                </label>
-                <input
-                  type="text"
-                  className="form-control border-warning shadow-none"
-                  value={nombreUsuarioEdit}
-                  onChange={(e) => setNombreUsuarioEdit(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label text-warning">
-                  Tipo de Usuario
-                </label>
-                <select
-                  className="form-select border-warning shadow-none"
-                  value={tipoUsuarioEdit}
-                  onChange={(e) => setTipoUsuarioEdit(e.target.value)}
-                >
-                  <option value="">-- Seleccionar --</option>
-                  <option value="MODERADOR_TENEDOR_LIBRE">
-                    Moderador Tenedor Libre
-                  </option>
-                  <option value="MODERADOR_TERMAS">Moderador Termas</option>
-                  <option value="MODERADOR_HELADERIA">
-                    Moderador Heladería
-                  </option>
-                </select>
-              </div>
-              <div className="text-center">
-                <button
-                  className="btn btn-success me-2"
-                  onClick={handleGuardarCambios}
-                >
-                  Guardar cambios
-                </button>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setEditingUser(null)}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          )}
+      {/* 📌 Columna derecha: acciones + panel de edición */}
+      <div className="col-12 col-md-5 col-lg-4 mt-3 mt-md-5">
+        <div className="card shadow p-3 mb-4">
+          <h5 className="text-warning gothic-font mb-3">Acciones rápidas</h5>
+          <button className="btn btn-warning w-100" onClick={irARegistro}>
+            Registrar Moderador
+          </button>
         </div>
+
+        {editingUser && (
+          <div className="card shadow p-4 mt-4 mt-md-5">
+            <h5 className="text-warning gothic-font mb-3">
+              Editar Usuario: {editingUser.nombreUsuario}
+            </h5>
+            <div className="mb-3">
+              <label className="form-label text-warning">
+                Nombre de Usuario
+              </label>
+              <input
+                type="text"
+                className="form-control border-warning shadow-none"
+                value={nombreUsuarioEdit}
+                onChange={(e) => setNombreUsuarioEdit(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label text-warning">
+                Tipo de Usuario
+              </label>
+              <select
+                className="form-select border-warning shadow-none"
+                value={tipoUsuarioEdit}
+                onChange={(e) => setTipoUsuarioEdit(e.target.value)}
+              >
+                <option value="">-- Seleccionar --</option>
+                <option value="MODERADOR_TENEDOR_LIBRE">
+                  Moderador Tenedor Libre
+                </option>
+                <option value="MODERADOR_TERMAS">Moderador Termas</option>
+                <option value="MODERADOR_HELADERIA">
+                  Moderador Heladería
+                </option>
+              </select>
+            </div>
+            <div className="text-center d-flex flex-column flex-md-row gap-2">
+              <button
+                className="btn btn-success w-100 w-md-auto"
+                onClick={handleGuardarCambios}
+              >
+                Guardar cambios
+              </button>
+              <button
+                className="btn btn-secondary w-100 w-md-auto"
+                onClick={() => setEditingUser(null)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
-  );
-};
+  </div>
+);
+}
