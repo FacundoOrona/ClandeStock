@@ -66,10 +66,11 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas}) => {
   };
 
   return (
-    <div className="container-fluid" style={{ height: "calc(100vh - 67px)" }}>
+    <div className="container-fluid overflow-auto bg-light" style={{ height: "calc(100vh - 67px)" }}>
+
       <div className="row h-100">
         {/* Sidebar */}
-        <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column overflow-auto">
+        <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column">
           <h4 className="mb-4 text-center">Administrar productos</h4>
           <button
             className="btn btn-outline-light mb-2 flex-shrink-0 position-relative"
@@ -120,7 +121,7 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas}) => {
         </div>
 
         {/* Panel dinámico */}
-        <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 overflow-auto">
+        <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 ">
           {vistaActiva === "principal" && (
             <div className="card flex-grow-1 d-flex flex-column">
               <div className="card-header bg-warning text-dark">
