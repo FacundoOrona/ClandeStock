@@ -85,7 +85,7 @@ export default function PanelNuevaVenta() {
 
   return (
     <div className="p-4">
-      <h3 className="text-warning gothic-font mb-4">Nueva Venta</h3>
+      <h3 className="text-warning gothic-font mb-4 text-center">Nueva Venta</h3>
 
       {/* Selección tipo de venta */}
       <div className="mb-3">
