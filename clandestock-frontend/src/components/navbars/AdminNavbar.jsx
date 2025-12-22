@@ -1,16 +1,23 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import logo from "../../assets/lc-logo2.png";
 
 export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLeidos = 0 }) {
-  const { logout } = useContext(AuthContext);
+  const { logout, isAuthenticated  } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
   };
+
+  useEffect(() => {
+  if (!isAuthenticated) {
+    navigate("/login");
+  }
+}, [isAuthenticated]);
+
+
   const cerrarMenu = () => {
     const navbar = document.getElementById("adminNavbar");
     if (navbar && navbar.classList.contains("show")) {
