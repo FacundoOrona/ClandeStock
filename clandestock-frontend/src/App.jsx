@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import AppRouter from './routes/AppRouter';
 import { getAlertasStockPrimario, getAlertasStockSecundario } from './api/alertasStock';
@@ -7,6 +8,7 @@ import { obtenerTodosReportes } from './api/reporte';
 function App() {
   const [cantidadAlertas, setCantidadAlertas] = useState(0);
   const [cantidadReportesNoLeidos, setCantidadReportesNoLeidos] = useState(0);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const cargarReportes = async () => {
     try {
@@ -42,9 +44,11 @@ function App() {
   };
 
   useEffect(() => {
-    cargarAlertas();
-    cargarReportes();
-  }, []);
+    if (isAuthenticated) {
+      cargarAlertas();
+      cargarReportes();
+    }
+  }, [isAuthenticated]);
 
   return (
     <>
