@@ -71,7 +71,7 @@ export default function StockVentaPanel() {
                 ) : (
                     <div className="row">
                         {filtrados.map(item => (
-                            <div key={item.productoPrincipalId} className="col-12 col-md-6 col-lg-4">
+                            <div key={item.id} className="col-12 col-md-6 col-lg-4">
                                 <div className="card mb-3 shadow-sm">
                                     <div className="card-body">
                                         <h5 className="card-title">{item.nombreProducto}</h5>
