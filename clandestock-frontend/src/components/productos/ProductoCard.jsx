@@ -47,7 +47,7 @@ export default function ProductoCard({ producto, onEditarClick }) {
                 </p>
                 <p className="card-text mb-1">
                     {producto.tieneSecundarios === "true" ? (
-                        <p className="text-muted">Stock controlado por secundarios</p>
+                        <span className="text-muted">Stock controlado por secundarios</span>
                     ) : (
                         <>
                             <strong>Stock:</strong> {producto.stock}
