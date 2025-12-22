@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 export default function PanelPedidos({
   pedidos,
   cajaAbierta,
@@ -50,10 +48,11 @@ export default function PanelPedidos({
 
   return (
     <div className="d-flex flex-column h-100">
+      <h3 className="text-success gothic-font text-center">Pedidos abiertos</h3>
       {["local", "takeaway", "delivery"].map((tipo) => (
         <div
           key={tipo}
-          className="flex-grow-1 p-3"
+          className="flex-grow-1 p-2"
           style={{ height: "33.33%" }}
         >
           <div
