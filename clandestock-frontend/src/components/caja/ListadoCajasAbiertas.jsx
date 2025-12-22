@@ -15,10 +15,10 @@ export const ListadoCajasAbiertas = () => {
     const [metodos, setMetodos] = useState([]);
 
     const localesMap = {
-    "1": "Tenedor Libre",
-    "2": "Termas",
-    "3": "Heladería",
-};
+        "1": "Tenedor Libre",
+        "2": "Termas",
+        "3": "Heladería",
+    };
 
 
     useEffect(() => {
@@ -61,24 +61,34 @@ export const ListadoCajasAbiertas = () => {
     if (cajaSeleccionada) {
         return (
             <div className="d-flex flex-column h-100">
-                <button
-                    className="btn btn-secondary mb-3 align-self-start"
-                    onClick={() => {
-                        setCajaSeleccionada(null);
-                        setVentasCaja([]);
-                    }}
-                >
-                    ← Volver a listado de cajas
-                </button>
+                {/* Encabezado fijo */}
+                <div className="mb-3">
+                    <button
+                        className="btn btn-secondary align-self-start"
+                        onClick={() => {
+                            setCajaSeleccionada(null);
+                            setVentasCaja([]);
+                        }}
+                    >
+                        ← Volver a listado de cajas
+                    </button>
+                    <h4>Ventas de la Caja #{cajaSeleccionada}</h4>
+                </div>
 
-                <h4>Ventas de la Caja #{cajaSeleccionada}</h4>
-                <div className="row flex-grow-1 overflow-auto gy-2">
-                    {console.log(ventasCaja)}
-                    {ventasCaja.map((venta) => {
-                        const metodo = metodos.find((m) => m.id === venta.idMetodoPago);
-                        return <VentaCerradaCard venta={venta} metodo={metodo} />
-                    })
-                    }
+                {/* Área scrollable */}
+                <div className="flex-grow-1 overflow-auto">
+                    <div className="row gy-2">
+                        {ventasCaja.map((venta) => {
+                            const metodo = metodos.find((m) => m.id === venta.idMetodoPago);
+                            return (
+                                <VentaCerradaCard
+                                    key={venta.id} // ✅ asegurate de tener un key único
+                                    venta={venta}
+                                    metodo={metodo}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
         );
@@ -90,46 +100,51 @@ export const ListadoCajasAbiertas = () => {
     }
 
     return (
-        <div className="d-flex flex-column">
-            <div className="row flex-grow-1 overflow-auto gy-2">
-                <Title text={"Cajas abiertas"}/>
-                {cajasPagina.map((caja) => (
-                    <div
-                        key={caja.cajaId}
-                        className="col-12 col-md-6 col-lg-4"
-                        onClick={() => handleClickCaja(caja.cajaId)}
-                        style={{ cursor: "pointer" }}
-                    >
-                        <div className="card shadow-sm h-100">
-                            <div className="card-body d-flex flex-column">
-                                {!caja.fechaCierre && (
-                                    <PuntoLive/>
-                                )}
-                                <h5 className="card-title">Caja #{caja.cajaId}</h5>
-                                <p className="card-text mb-1">
-                                    <strong>Local:</strong> {localesMap[caja.idLocal]}
-                                </p>
-                                <p className="card-text mb-1">
-                                    <strong>Fecha apertura:</strong> {caja.fechaApertura.replace("T", " ").split(".")[0]}
-                                </p>
-
-                                {caja.fechaCierre && (
-                                    <p className="card-text mb-1">
-                                        <strong>Fecha cierre:</strong> {caja.fechaCierre.replace("T", " ").split(".")[0]}
-                                    </p>
-                                )}
-
-                                <p className="card-text mb-1">
-                                    <strong>Total general:</strong>{" "}
-                                    ${parseFloat(caja.totalGeneral).toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+        <div className="d-flex flex-column h-100 overflow-auto px-2">
+            {/* Título fijo arriba */}
+            <div className="mb-3">
+                <Title text="Cajas abiertas" />
             </div>
 
-            {/* Controles de paginación */}
+            {/* Contenido scrollable */}
+            <div className="flex-grow-1">
+                <div className="row gy-2">
+                    {cajasPagina.map((caja) => (
+                        <div
+                            key={caja.cajaId}
+                            className="col-12 col-md-6 col-lg-4"
+                            onClick={() => handleClickCaja(caja.cajaId)}
+                            style={{ cursor: "pointer" }}
+                        >
+                            <div className="card shadow-sm h-100">
+                                <div className="card-body d-flex flex-column">
+                                    {!caja.fechaCierre && <PuntoLive />}
+                                    <h5 className="card-title">Caja #{caja.cajaId}</h5>
+                                    <p className="card-text mb-1">
+                                        <strong>Local:</strong> {localesMap[caja.idLocal]}
+                                    </p>
+                                    <p className="card-text mb-1">
+                                        <strong>Fecha apertura:</strong>{" "}
+                                        {caja.fechaApertura.replace("T", " ").split(".")[0]}
+                                    </p>
+                                    {caja.fechaCierre && (
+                                        <p className="card-text mb-1">
+                                            <strong>Fecha cierre:</strong>{" "}
+                                            {caja.fechaCierre.replace("T", " ").split(".")[0]}
+                                        </p>
+                                    )}
+                                    <p className="card-text mb-1">
+                                        <strong>Total general:</strong>{" "}
+                                        ${parseFloat(caja.totalGeneral).toLocaleString()}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Paginación fija abajo */}
             <div className="mt-3 d-flex justify-content-center gap-2">
                 <button
                     className="btn btn-outline-primary btn-sm"
