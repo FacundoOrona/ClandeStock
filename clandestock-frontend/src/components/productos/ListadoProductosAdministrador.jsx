@@ -113,7 +113,7 @@ export default function ListadoProductosAdministrador() {
     return (
         <div className="card flex-grow-1 d-flex flex-column">
             <div className="card-header bg-warning text-dark">Productos existentes</div>
-            <div className="card-body overflow-auto">
+            <div className="card-body">
                 {/* Filtros */}
                 <div className="mb-3 d-flex gap-3 flex-wrap">
                     <input
