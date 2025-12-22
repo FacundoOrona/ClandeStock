@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/lc-logo2.png'
 import { AuthContext } from '../../context/AuthContext';
@@ -9,8 +9,13 @@ export default function ModeradorNavbar() {
     const navigate = useNavigate();
     const handleLogout = () => {
         logout();              // borra tokens y limpia el user
-        navigate('/login');    // redirige al login
     };
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate("/login");
+        }
+    }, [isAuthenticated]);
 
     return (
         <nav className="navbar navbar-light bg-light px-3 shadow-sm">
