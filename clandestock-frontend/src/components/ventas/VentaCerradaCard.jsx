@@ -26,13 +26,14 @@ const agruparProductos = (productos) => {
 
 export const VentaCerradaCard = ({ venta, metodo }) => {
     return (
-        <div className="col-12 col-md-6 col-lg-4">
+        <div className="col-12 col-md-6 col-lg-4"
+            key={venta.idVenta}>
             <div className="card shadow-sm">
                 <div className="card-body d-flex flex-column">
                     <h5 className="card-title">Venta #{venta.idVenta}</h5>
                     {/* Punto verde arriba a la derecha */}
                     {!venta.fechaCierre && (
-                        <PuntoLive/>
+                        <PuntoLive />
                     )}
                     <p className="card-text mb-1">
                         <strong>Local:</strong> {localesMap[venta.localId]}
