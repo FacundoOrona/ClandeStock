@@ -20,234 +20,192 @@ export default function PanelDetallePedido({ pedido, onBack }) {
     mensaje,
   } = useVentaDetalle(pedido.idVenta);
 
-  if (!venta) {
-    return <p className="text-muted">Cargando venta...</p>;
-  }
+  if (!venta) return <p className="text-muted">Cargando venta...</p>;
 
   return (
-    <div className="p-4 h-100 d-flex flex-column">
-      {/* Botón retroceso */}
-      <button
-        className="btn btn-link text-warning mb-3 d-flex align-items-center"
-        onClick={onBack}
-      >
-        <i className="bi bi-arrow-left"></i>
-        <span className="ms-2">Volver</span>
-      </button>
+    <div className="d-flex flex-column h-100">
+      <div className="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+        <button
+          className="btn btn-link text-warning d-flex align-items-center"
+          onClick={onBack}
+        >
+          <i className="bi bi-arrow-left"></i>
+          <span className="ms-2">Volver</span>
+        </button>
+        <h3 className="text-warning gothic-font mb-0 text-center flex-grow-1">
+          Detalle del Pedido
+        </h3>
+      </div>
 
-      <h3 className="text-warning gothic-font mb-4">Detalle del Pedido</h3>
-
-      {/* Datos básicos del pedido + productos seleccionados */}
-      <div className="card shadow p-3 mb-4 flex-grow-1">
-        <p>
-          <strong>ID Venta:</strong> {venta.idVenta}
-        </p>
-        {venta.numMesa && (
-          <p>
-            <strong>Mesa:</strong> {venta.numMesa}
-          </p>
-        )}
-        <p>
-          <strong>Detalle de entrega:</strong> {venta.detalleEntrega}
-        </p>
-
-        {/* Productos en la venta */}
-        <h5 className="text-warning gothic-font mt-4 mb-3">
-          Productos en la venta
-        </h5>
-        {productosAgrupados.length === 0 ? (
-          <p className="text-muted">No hay productos agregados</p>
-        ) : (
-          <>
+      <div className="d-flex flex-column flex-md-row flex-grow-1 overflow-hidden">
+        {/* Columna 1: Detalle del pedido */}
+        <div className="p-3 overflow-auto border-end w-100">
+          <h5 className="text-warning gothic-font mb-3">Productos en la venta</h5>
+          {productosAgrupados.length === 0 ? (
+            <p className="text-muted">No hay productos agregados</p>
+          ) : (
             <div className="list-group">
               {productosAgrupados.map((prod) => (
-                <div
-                  key={prod.nombreProducto}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  <div>
-                    <strong>{prod.nombreProducto}</strong>
-                    <br />
-                    <small className="text-muted">
-                      Precio unitario: ${prod.precioProducto ?? 0} | Cantidad:{" "}
-                      {prod.cantidad ?? 0} | Total:{" "}
-                      {typeof prod.total === "number"
-                        ? `$${prod.total.toLocaleString()}`
-                        : "sin total"}
-                    </small>
-                  </div>
-                  <div className="d-flex gap-2">
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleQuitarProducto(prod)}
-                    >
-                      -
-                    </button>
-                    <span className="badge bg-secondary">{prod.cantidad}</span>
+                <div key={prod.nombreProducto} className="list-group-item">
+                  <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div className="min-w-0">
+                      <strong className="d-block text-truncate">{prod.nombreProducto}</strong>
+                      <small className="text-muted d-block">
+                        Precio: ${prod.precioProducto ?? 0} | Cantidad: {prod.cantidad ?? 0} | Total: {typeof prod.total === "number" ? `$${prod.total}` : "sin total"}
+                      </small>
+                    </div>
 
-                    {prod.idProducto && prod.stockDisponible > 0 ? (
+                    <div className="d-flex justify-content-center align-items-center gap-1 mt-2 flex-wrap">
                       <button
-                        className="btn btn-success btn-sm"
+                        type="button"
+                        className="btn btn-danger btn-sm px-2 py-1"
+                        onClick={() => handleQuitarProducto(prod)}
+                        disabled={(prod.cantidad ?? 0) < 1}
+                      >
+                        −
+                      </button>
+
+                      <span className="badge bg-dark px-2 py-1" style={{ fontSize: "0.85rem" }}>
+                        {prod.cantidad ?? 0}
+                      </span>
+
+                      <button
+                        type="button"
+                        className="btn btn-success btn-sm px-2 py-1"
                         onClick={() => handleAgregarProducto(prod)}
-                        disabled={!prod.idProducto || prod.stockDisponible < 1}
+                        disabled={!prod.idProducto || (prod.stockDisponible ?? 0) < 1}
                       >
                         +
                       </button>
-                    ) : null}
+                    </div>
+
                   </div>
                 </div>
               ))}
             </div>
+          )}
 
-            {/* Total dinámico desde backend */}
-            <div className="mt-4 text-end">
-              <h5 className="text-dark">
-                <strong>Total: ${venta.precioTotal ?? 0}</strong>
-              </h5>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Selección de categoría y productos disponibles */}
-      <div className="card shadow p-3 mb-4">
-        <h5 className="text-warning gothic-font mb-3">Agregar productos</h5>
-        <div className="mb-3">
-          <label className="form-label text-dark fw-bold">
-            Seleccionar categoría
-          </label>
-          <select
-            className="form-select border-warning shadow-sm"
-            value={categoriaSeleccionada}
-            onChange={(e) => setCategoriaSeleccionada(e.target.value)}
-          >
-            <option value="todos">Todos</option>
-            {categorias.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombreCategoria}
-              </option>
-            ))}
-          </select>
+          <div className="mt-4 text-end">
+            <h5 className="text-dark"><strong>Total: ${venta.precioTotal ?? 0}</strong></h5>
+          </div>
         </div>
 
-        {productos.length === 0 ? (
-          <p className="text-muted">
-            Seleccione una categoría para ver productos
-          </p>
-        ) : (
-          <div className="list-group">
-            {productos.map((prod) => (
-              <div
-                key={prod.id}
-                className="list-group-item d-flex justify-content-between align-items-center"
-              >
-                <div>
-                  <strong>{prod.nombreProducto}</strong>
-                  <br />
-                  <small className="text-muted">
-                    Precio: ${prod.precio} | Stock: {prod.stockDisponible}
-                  </small>
+        {/* Columna 2: Agregar productos */}
+        <div className="p-3 overflow-auto border-end w-100">
+          <h5 className="text-warning gothic-font mb-3">Agregar productos</h5>
+
+          <div className="mb-3">
+            <label className="form-label text-dark fw-bold">Seleccionar categoría</label>
+            <select
+              className="form-select border-warning shadow-sm"
+              value={categoriaSeleccionada}
+              onChange={(e) => setCategoriaSeleccionada(e.target.value)}
+            >
+              <option value="todos">Todos</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>{c.nombreCategoria}</option>
+              ))}
+            </select>
+          </div>
+
+          {productos.length === 0 ? (
+            <p className="text-muted">Seleccione una categoría para ver productos</p>
+          ) : (
+            <div className="list-group">
+              {productos.map((prod) => (
+                <div key={prod.id} className="list-group-item px-2 py-2">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start gap-2">
+                    <div className="flex-grow-1">
+                      <strong className="d-block text-break">{prod.nombreProducto}</strong>
+                      <small className="text-muted d-block">
+                        Precio: ${prod.precio} | Stock: {prod.stockDisponible}
+                      </small>
+                    </div>
+
+                    <div className="flex-shrink-0">
+                      {prod.stockDisponible > 0 ? (
+                        <button
+                        type="button"
+                        className="btn btn-success btn-sm px-2 py-1"
+                          onClick={() => handleAgregarProducto(prod)}
+                        >
+                          +
+                        </button>
+                      ) : (
+                        <span className="badge bg-secondary">Sin stock</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-
-                {prod.stockDisponible > 0 ? (
-                  <button
-                    className="btn btn-success btn-sm"
-                    onClick={() => handleAgregarProducto(prod)}
-                  >
-                    +
-                  </button>
-                ) : (
-                  <span className="badge bg-secondary">Sin stock</span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Selección de método de pago */}
-      <div className="card shadow p-3 mb-4">
-        <h5 className="text-warning gothic-font mb-3">Método de Pago</h5>
-        <div className="mb-3">
-          <label className="form-label text-dark fw-bold">
-            Seleccionar método
-          </label>
-          {productosAgrupados.length === 0 && (
-            <small className="text-muted">
-              Agregue productos a la venta para habilitar métodos de pago
-            </small>
-          )}
-
-          {/* Mensaje de confirmación si ya hay método seleccionado */}
-          {metodoSeleccionado && (
-            <div className="alert alert-success py-1 mt-2 mb-2">
-              Método de pago cargado:{" "}
-              <strong>
-                {
-                  metodosPago.find(
-                    (m) => m.id.toString() === metodoSeleccionado
-                  )?.nombre_metodo_pago
-                }
-              </strong>
+              ))}
             </div>
           )}
-
-          <select
-            className="form-select border-warning shadow-sm"
-            value={metodoSeleccionado}
-            onChange={(e) => handleSeleccionarMetodoPago(e.target.value)}
-            disabled={productosAgrupados.length === 0}
-          >
-            {/* Solo mostrar "-- Seleccionar --" si no hay método elegido */}
-            {!metodoSeleccionado && <option value="">-- Seleccionar --</option>}
-            {metodosPago.map((m) => (
-              <option key={m.id} value={m.id.toString()}>
-                {m.nombre_metodo_pago}
-              </option>
-            ))}
-          </select>
         </div>
 
-        {/* Mostrar total con método de pago */}
-        {venta.precioTotalConMetodoDePago && (
-          <div className="mt-3 text-end">
-            <h5 className="text-dark">
-              <strong>
-                Total con método: ${venta.precioTotalConMetodoDePago}
-              </strong>
-            </h5>
+
+        {/* Columna 3: Método de pago + acciones (no tocar botones grandes) */}
+        <div className="d-flex flex-column w-100 h-100">
+          <div className="p-3 flex-grow-1 overflow-auto">
+            <div className="mb-3">
+            <p><strong>ID Venta:</strong> {venta.idVenta}</p>
+            {venta.numMesa && <p><strong>Mesa:</strong> {venta.numMesa}</p>}
+            <p><strong>Detalle de entrega:</strong> {venta.detalleEntrega}</p>
           </div>
-        )}
-      </div>
+            <h5 className="text-warning gothic-font mb-3">Método de Pago</h5>
+            <label className="form-label text-dark fw-bold">Seleccionar método</label>
+            {productosAgrupados.length === 0 && (
+              <small className="text-muted d-block mb-2">
+                Agregue productos para habilitar métodos de pago
+              </small>
+            )}
 
-      {/* Botones de acción */}
-      <div className="d-flex justify-content-between mt-4">
-        {!metodoSeleccionado && (
-          <small className="text-muted">
-            Seleccione un método de pago para cerrar la venta o imprimir ticket
-          </small>
-        )}
-        <button
-          className="btn btn-danger fw-bold"
-          onClick={() => handleCerrarVenta(onBack)}
-          disabled={!metodoSeleccionado} // 👈 clave
-        >
-          Cerrar venta - Cobrar
-        </button>
+            {metodoSeleccionado && (
+              <div className="alert alert-success py-1 mt-2 mb-2">
+                Método cargado: <strong>{metodosPago.find(m => m.id.toString() === metodoSeleccionado)?.nombre_metodo_pago}</strong>
+              </div>
+            )}
 
-        <TicketCobro venta={venta} metodoSeleccionado={metodoSeleccionado} />
-        <TicketComanda
-          venta={venta}
-          onVentaActualizada={() => refreshVenta(venta.idVenta)}
-        />
-      </div>
+            <select
+              className="form-select border-warning shadow-sm mb-3"
+              value={metodoSeleccionado}
+              onChange={(e) => handleSeleccionarMetodoPago(e.target.value)}
+              disabled={productosAgrupados.length === 0}
+            >
+              {!metodoSeleccionado && <option value="">-- Seleccionar --</option>}
+              {metodosPago.map((m) => (
+                <option key={m.id} value={m.id.toString()}>{m.nombre_metodo_pago}</option>
+              ))}
+            </select>
 
-      {/* Mensaje */}
-      {mensaje && (
-        <div className="alert alert-info text-center mt-3 gothic-font">
-          {mensaje}
+            {venta.precioTotalConMetodoDePago && (
+              <div className="mt-3 text-end">
+                <h5 className="text-dark"><strong>Total con método: ${venta.precioTotalConMetodoDePago}</strong></h5>
+              </div>
+            )}
+
+            {mensaje && (
+              <div className="alert alert-info text-center mt-3 gothic-font">
+                {mensaje}
+              </div>
+            )}
+            {/* Botones */}
+            <div className="d-grid gap-2 mt-4">
+              <button
+                className="btn btn-danger fw-bold"
+                onClick={() => handleCerrarVenta(onBack)}
+                disabled={!metodoSeleccionado}
+              >
+                Cerrar venta - Cobrar
+              </button>
+
+              <TicketCobro venta={venta} metodoSeleccionado={metodoSeleccionado} />
+              <TicketComanda venta={venta} onVentaActualizada={() => refreshVenta(venta.idVenta)} />
+            </div>
+          </div>
+
+
         </div>
-      )}
+      </div>
     </div>
   );
 }
