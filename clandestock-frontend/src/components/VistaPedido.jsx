@@ -23,11 +23,11 @@ export default function VistaPedidos({
           onBack={() => setPedidoSeleccionado(null)}
         />
       ) : (
-        <PanelPedidos
-          pedidos={pedidos}
-          cajaAbierta={cajaAbierta}
-          setPedidoSeleccionado={setPedidoSeleccionado}
-        />
+          <PanelPedidos
+            pedidos={pedidos}
+            cajaAbierta={cajaAbierta}
+            setPedidoSeleccionado={setPedidoSeleccionado}
+          />
       )}
     </div>
   );
