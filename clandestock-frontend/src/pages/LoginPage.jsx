@@ -7,8 +7,12 @@ import PrimaryButton from '../components/PrimaryButtonSubmit';
 export default function Login() {
     const [username, setUsername] = useState('');
     const [contrasena, setContrasena] = useState('');
-    const { login } = useContext(AuthContext);
+    const { login, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        logout();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,6 +42,7 @@ export default function Login() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        autoComplete="username"
                     />
                 </div>
 
@@ -49,6 +54,7 @@ export default function Login() {
                         value={contrasena}
                         onChange={(e) => setContrasena(e.target.value)}
                         required
+                        autoComplete="current-password"
                     />
                 </div>
 
