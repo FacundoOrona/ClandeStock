@@ -9,11 +9,9 @@ export default function PrivateModeradorRoute({ children }) {
         return <div>Cargando...</div>;
     }
     if (!user) {
-        logout();
         return <Navigate to="/login" />
     };
     if (user.tipoUsuario === 'ADMIN_GENERAL'){
-        logout();
         return <Navigate to="/login" />;
     }
 
