@@ -11,7 +11,7 @@ export const AdminVentasPage = () => {
   const [metodos, setMetodos] = useState([]);
 
   return (
-    <div className="container-fluid overflow-auto bg-light" style={{ height: "calc(100vh - 67px)" }}>
+    <div className="container-fluid" style={{ height: "calc(100vh - 67px)" }}>
       <div className="row h-100">
         {/* Sidebar */}
         <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column overflow-auto">
