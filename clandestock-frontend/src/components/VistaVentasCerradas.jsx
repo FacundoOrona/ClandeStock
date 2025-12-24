@@ -48,6 +48,7 @@ export default function VistaVentasCerradas({
 
   return (
     <div className="d-flex flex-column h-100">
+      <h3 className="text-danger gothic-font text-center">Ventas cerradas</h3>
       {["local", "takeaway", "delivery"].map((tipo) => (
         <div key={tipo} className="p-3" style={{ height: "350px" }}>
           <div
