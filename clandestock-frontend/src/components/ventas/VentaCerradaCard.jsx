@@ -1,4 +1,5 @@
 import { PuntoLive } from "../PuntoLive";
+import { formatFecha } from '../../utils/formatFecha';
 
 const localesMap = {
     "1": "Tenedor Libre",
@@ -52,7 +53,7 @@ export const VentaCerradaCard = ({ venta, metodo }) => {
                     {venta.fechaCierre && (
                         <p className="card-text mb-1">
                             <strong>Fecha cierre:</strong>{" "}
-                            {venta.fechaCierre.replace("T", " ").split(".")[0]}
+                            {venta?.fechaCierre ? formatFecha(venta.fechaCierre) : ""}
                         </p>
                     )}
                     {metodo && (
