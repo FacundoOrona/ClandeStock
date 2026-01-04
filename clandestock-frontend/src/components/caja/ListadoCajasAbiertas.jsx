@@ -5,6 +5,7 @@ import { VentaCerradaCard } from "../ventas/VentaCerradaCard";
 import { getMetodos } from "../../api/metodoPago";
 import { PuntoLive } from "../PuntoLive";
 import Title from "../Title";
+import { formatFecha } from '../../utils/formatFecha';
 
 export const ListadoCajasAbiertas = () => {
     const [cajas, setCajas] = useState([]);
@@ -125,12 +126,12 @@ export const ListadoCajasAbiertas = () => {
                                     </p>
                                     <p className="card-text mb-1">
                                         <strong>Fecha apertura:</strong>{" "}
-                                        {caja.fechaApertura.replace("T", " ").split(".")[0]}
+                                        {caja?.fechaApertura ? formatFecha(caja.fechaApertura) : ""}
                                     </p>
                                     {caja.fechaCierre && (
                                         <p className="card-text mb-1">
                                             <strong>Fecha cierre:</strong>{" "}
-                                            {caja.fechaCierre.replace("T", " ").split(".")[0]}
+                                            {caja?.fechaCierre ? formatFecha(caja.fechaCierre) : ""}
                                         </p>
                                     )}
                                     <p className="card-text mb-1">
