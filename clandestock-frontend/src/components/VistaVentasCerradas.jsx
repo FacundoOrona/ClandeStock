@@ -1,3 +1,5 @@
+import { formatFecha } from '../utils/formatFecha';
+
 export default function VistaVentasCerradas({
   pedidos,
   cajaAbierta,
@@ -87,15 +89,16 @@ export default function VistaVentasCerradas({
                       Total: ${p.precioTotalConMetodoDePago || p.precioTotal}
                       <br />
                       <small className="text-muted">
-                        Cerrada: {new Date(p.fechaCierre).toLocaleString()}
+                        Cerrada: {p?.fechaCierre ? formatFecha(p.fechaCierre) : ""}
                       </small>
                     </div>
-                    <span
+                    {/* SE COMENTO PARA AHORRAR ESPACIO */}
+                    {/* <span
                       className={`badge bg-${coloresPanel[tipo].badge} text-light d-flex align-items-center gap-1`}
                     >
                       <span>{coloresPanel[tipo].icon}</span>
                       <span>{nombresPanel[tipo]}</span>
-                    </span>
+                    </span> */}
                   </div>
                 ))
               )}
