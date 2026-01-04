@@ -4,6 +4,7 @@ import { VentasCerradasPorCaja } from "../../api/ventas";
 import { VentaCerradaCard } from "../ventas/VentaCerradaCard";
 import { getMetodos } from "../../api/metodoPago";
 import Title from "../Title";
+import { formatFecha } from '../../utils/formatFecha';
 
 export const ListadoCajasCerradas = () => {
     const [cajas, setCajas] = useState([]);
@@ -105,11 +106,11 @@ export const ListadoCajasCerradas = () => {
                                 </p>
                                 <p className="card-text mb-1">
                                     <strong>Fecha apertura:</strong>{" "}
-                                    {caja.fechaApertura.replace("T", " ").split(".")[0]}
+                                    {caja?.fechaApertura ? formatFecha(caja.fechaApertura) : ""}
                                 </p>
                                 <p className="card-text mb-1">
                                     <strong>Fecha cierre:</strong>{" "}
-                                    {caja.fechaCierre.replace("T", " ").split(".")[0]}
+                                    {caja?.fechaCierre ? formatFecha(caja.fechaCierre) : ""}
                                 </p>
                                 <p className="card-text mb-1">
                                     <strong>Total general:</strong>{" "}
