@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { formatFecha } from '../utils/formatFecha';
 
 const nombresLocales = {
     MODERADOR_TENEDOR_LIBRE: "Tenedor Libre",
@@ -80,7 +81,7 @@ export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, set
             {cajaAbierta && caja && (
                 <div className="text-light mt-3">
                     <small>
-                        Apertura de caja: {new Date(caja.fechaApertura).toLocaleString()}
+                        Apertura de caja: {caja?.fechaApertura ? formatFecha(caja.fechaApertura) : ""}
                     </small>
                     <br />
                     {detalleCaja && (
