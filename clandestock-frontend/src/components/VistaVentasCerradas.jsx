@@ -37,7 +37,7 @@ export default function VistaVentasCerradas({
 
   const formatDetalle = (tipo, pedido) => {
     if (tipo === "local") {
-      return `${pedido.detalleEntrega} - Mesa ${pedido.numeroMesa || "?"}`;
+      return `${pedido.detalleEntrega} - Mesa ${pedido.numMesa || "?"}`;
     }
     if (tipo === "takeaway") {
       return `Nombre del cliente: ${pedido.detalleEntrega}`;
