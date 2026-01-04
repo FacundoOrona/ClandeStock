@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { enviarReporte, obtenerHistorialReportes } from "../api/reporte";
 import { AuthContext } from "../context/AuthContext";
+import { formatFecha } from '../utils/formatFecha';
 
 export default function PanelReporte() {
   const [descripcion, setDescripcion] = useState("");
@@ -90,7 +91,7 @@ export default function PanelReporte() {
               <div>
                 <strong className="text-muted">Usuario: {r.usuarioEmisor}</strong>
                 <br />
-                <small className="text-muted">{r.fecha}</small>
+                <small className="text-muted">{r?.fecha ? formatFecha(r.fecha) : ""}</small>
                 <br />
                 <small>{r.descripcion}</small>
               </div>
