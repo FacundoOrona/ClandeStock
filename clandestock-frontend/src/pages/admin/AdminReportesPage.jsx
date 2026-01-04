@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { obtenerTodosReportes, checkReporte } from "../../api/reporte";
+import { formatFecha } from '../../utils/formatFecha';
 
 export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
   const [reportes, setReportes] = useState([]);
@@ -67,7 +68,7 @@ export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
               <div>
                 Usuario:<strong> {r.usuarioEmisor}</strong>
                 <br />
-                <small className="text-muted">Fecha: {r.fecha}</small>
+                <small className="text-muted">Fecha: {r?.fecha ? formatFecha(r.fecha) : ""}</small>
                 <br />
                 <small className="text-muted">Asunto:</small>
                 <br />
