@@ -6,6 +6,7 @@ import com.clandestock.backend.auth.dto.RegistroResponse;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.modelos.Token;
 import com.clandestock.backend.auth.repository.TokenRepository;
+import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.usuario.modelos.TipoUsuarioEnum;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -138,5 +140,14 @@ public class AuthService {
             revocarTokens(usuario);
             saveTokenUsuario(usuario, accessToken);
             return new TokenResponse(accessToken, refreshToken);
+        }
+
+        public void logout() {
+            UsuarioContexto usuarioC = (UsuarioContexto) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+            Usuario usuario = usuarioRepository.findByNombreUsuario(usuarioC.getNombreUsuario()).orElseThrow(()->new RuntimeException("Usuario no encontrado al cerrar sesion"));
+            revocarTokens(usuario);
         }
     }

@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { login as loginService } from '../api/auth';
 import { jwtDecode } from 'jwt-decode';
+import { logoutApi } from '../api/logout';
 
 export const AuthContext = createContext();
 
@@ -34,7 +35,8 @@ export const AuthProvider = ({ children }) => {
         return { tipoUsuario };
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await logoutApi();
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         setUser(null);

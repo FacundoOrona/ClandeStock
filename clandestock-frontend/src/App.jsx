@@ -8,18 +8,18 @@ import { obtenerTodosReportes } from './api/reporte';
 function App() {
   const [cantidadAlertas, setCantidadAlertas] = useState(0);
   const [cantidadReportesNoLeidos, setCantidadReportesNoLeidos] = useState(0);
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, loading } = useContext(AuthContext);
 
   const cargarReportes = async () => {
     try {
       const data = await obtenerTodosReportes();
-      // contar solo los "No leído"
       const noLeidos = data.filter(r => r.estado === "No leído").length;
       setCantidadReportesNoLeidos(noLeidos);
     } catch (error) {
-      console.error("Error cargando reportes:", error.response?.data || error.message);
+      console.error("Error cargando reportes:", error);
     }
   };
+
   const cargarAlertas = async () => {
     try {
       const primarios = await getAlertasStockPrimario();
@@ -44,20 +44,30 @@ function App() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!loading && isAuthenticated) {
       cargarAlertas();
       cargarReportes();
     }
-  }, [isAuthenticated]);
+  }, [loading, isAuthenticated]);
+
+  if (loading) {
+    return <div>Cargando sesión...</div>;
+  }
 
   return (
     <>
-      <Navbar
+      {isAuthenticated && (
+        <Navbar
+          cantidadAlertas={cantidadAlertas}
+          cantidadReportesNoLeidos={cantidadReportesNoLeidos}
+        />
+      )}
+      <AppRouter
+        isAuthenticated={isAuthenticated}
+        setCantidadAlertas={setCantidadAlertas}
         cantidadAlertas={cantidadAlertas}
-        cantidadReportesNoLeidos={cantidadReportesNoLeidos} />
-      <AppRouter setCantidadAlertas={setCantidadAlertas}
-        cantidadAlertas={cantidadAlertas}
-        setCantidadReportesNoLeidos={setCantidadReportesNoLeidos} />
+        setCantidadReportesNoLeidos={setCantidadReportesNoLeidos}
+      />
     </>
   );
 }
