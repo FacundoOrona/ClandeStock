@@ -96,7 +96,7 @@ export const ListadoVentasCerradas = () => {
             <div className="row flex-grow-1 overflow-auto gy-2">
                 {ventasPagina.map((venta) => {
                     const metodo = metodos.find((m) => m.id === venta.idMetodoPago);
-                    return <VentaCerradaCard venta={venta} metodo={metodo} />;
+                    return <VentaCerradaCard key={venta.idVenta} venta={venta} metodo={metodo} />;
                 })}
             </div>
 
