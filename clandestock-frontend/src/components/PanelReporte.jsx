@@ -12,9 +12,11 @@ export default function PanelReporte() {
   const cargarHistorial = async () => {
     try {
       const data = await obtenerHistorialReportes();
-      // Tomamos solo los últimos 10
-      const ultimos = data.slice(-10).reverse();
-      setReportes(ultimos);
+      // ordenar por fecha descendente (más nuevos primero)
+      const ordenados = [...data].sort(
+        (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      );
+      setReportes(ordenados);
     } catch (error) {
       console.error(
         "Error cargando historial:",
@@ -22,6 +24,7 @@ export default function PanelReporte() {
       );
     }
   };
+
 
   useEffect(() => {
     cargarHistorial();
@@ -68,9 +71,8 @@ export default function PanelReporte() {
 
       {estado && (
         <div
-          className={`alert mt-3 ${
-            estado.tipo === "success" ? "alert-success" : "alert-danger"
-          }`}
+          className={`alert mt-3 ${estado.tipo === "success" ? "alert-success" : "alert-danger"
+            }`}
         >
           {estado.mensaje}
         </div>
@@ -96,9 +98,8 @@ export default function PanelReporte() {
                 <small>{r.descripcion}</small>
               </div>
               <span
-                className={`badge ${
-                  r.estado === "Leído" ? "bg-success" : "bg-secondary"
-                }`}
+                className={`badge ${r.estado === "Leído" ? "bg-success" : "bg-secondary"
+                  }`}
               >
                 {r.estado}
               </span>
