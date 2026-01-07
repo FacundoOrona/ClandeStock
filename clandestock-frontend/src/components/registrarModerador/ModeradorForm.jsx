@@ -47,6 +47,7 @@ export default function ModeradorForm({ onSubmit }) {
         type="password"
         value={contrasena}
         onChange={setContrasena}
+        newpassword={true}
       />
 
       <InputField
@@ -54,6 +55,7 @@ export default function ModeradorForm({ onSubmit }) {
         type="password"
         value={confirmarContrasena}
         onChange={setConfirmarContrasena}
+        newpassword={true}
       />
 
       <ModeradorTipoSelector
