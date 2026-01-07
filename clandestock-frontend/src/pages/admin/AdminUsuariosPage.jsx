@@ -121,12 +121,16 @@ export const AdminUsuariosPage = () => {
         nuevaContrasena: newPassword,
       };
 
+      const cleanToken = token?.trim();
+
       console.log("🔑 Usuario seleccionado:", changingPasswordUser);
       console.log("📦 Body enviado:", body);
       console.log("🪪 Token usado:", token);
 
+      console.log("📡 Header Authorization:", `Bearer ${cleanToken}`);
+
       const response = await fetch(
-        "http://localhost:8080/usuarios/cambiarContrasenaAdmin",
+        "http://localhost:8080/usuario/cambiarContrasenaAdmin",
         {
           method: "PUT",
           headers: {
@@ -136,6 +140,10 @@ export const AdminUsuariosPage = () => {
           body: JSON.stringify(body),
         }
       );
+
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response headers:", response.headers);
+      console.log("📡 Response body:", await response.text());
 
       if (!response.ok) throw new Error("Error al cambiar contraseña");
 
