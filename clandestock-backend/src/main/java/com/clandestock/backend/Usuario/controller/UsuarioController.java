@@ -86,11 +86,10 @@ public class UsuarioController {
     }
 
     // ACTUALIZAR CONTRASEÑA A MODERADORES DESDE ADMIN
-    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
     @PutMapping("/cambiarContrasenaAdmin")
     public ResponseEntity<?> cambiarContrasenaComoAdmin(@RequestBody ActualizarContraseñaModeradorRequestDTO request) {
         try {
-            ActualizarContrasenaResponse response = usuarioService.actualizarContraseñaAModeradores(request);
+            ActualizarContrasenaResponse response = usuarioService.actualizarContrasenaAModeradores(request);
             return ResponseEntity.ok(response);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
