@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,7 +116,7 @@ public class UsuarioService {
         return new ActualizarContrasenaResponse("La contraseña ha sido actualizada correctamente");
     }
 
-    public ActualizarContrasenaResponse actualizarContrasenaAModeradores(ActualizarContraseñaModeradorRequestDTO request) {
+    public ActualizarContrasenaResponse actualizarContrasenaAModeradores(ActualizarContrasenaModeradorRequestDTO request) {
         Usuario usuario = usuarioRepository.findByNombreUsuario(request.nombreUsuario())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 

@@ -88,7 +88,7 @@ public class UsuarioController {
     // ACTUALIZAR CONTRASEÑA A MODERADORES DESDE ADMIN
     @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
     @PutMapping("/cambiarContrasenaAdmin")
-    public ResponseEntity<?> cambiarContrasenaComoAdmin(@RequestBody ActualizarContraseñaModeradorRequestDTO request) {
+    public ResponseEntity<?> cambiarContrasenaComoAdmin(@RequestBody ActualizarContrasenaModeradorRequestDTO request) {
         try {
             ActualizarContrasenaResponse response = usuarioService.actualizarContrasenaAModeradores(request);
             return ResponseEntity.ok(response);
