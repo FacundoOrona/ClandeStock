@@ -9,6 +9,7 @@ import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.usuario.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +72,8 @@ public class UsuarioController {
         }
     }
 
+    // ACTUALIZAR CONTRASEÑA PROPIA DEL ADMIN
+    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
     @PutMapping("/actualizarContrasena")
     public ResponseEntity<?> actualizarContrasena(@RequestBody ActualizarContrasenaRequestDTO request) {
         try {

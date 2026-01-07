@@ -106,6 +106,7 @@ public class UsuarioService {
 
     public ActualizarContrasenaResponse actualizarContrasena (String nombreUsuario,
                                                               ActualizarContrasenaRequestDTO request){
+
         Usuario usuario = usuarioRepository.findByNombreUsuario(nombreUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
