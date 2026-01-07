@@ -1,12 +1,10 @@
 package com.clandestock.backend.usuario.controller;
 
 import com.clandestock.backend.seguridad.UsuarioContexto;
-import com.clandestock.backend.usuario.dto.ActualizarContrasenaRequestDTO;
-import com.clandestock.backend.usuario.dto.ActualizarContrasenaResponse;
-import com.clandestock.backend.usuario.dto.UsuarioRequestDTO;
-import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
+import com.clandestock.backend.usuario.dto.*;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.usuario.service.UsuarioService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -84,6 +82,22 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la contraseña");
+        }
+    }
+
+    // ACTUALIZAR CONTRASEÑA A MODERADORES DESDE ADMIN
+    @PreAuthorize("hasAuthority('ADMIN_GENERAL')")
+    @PutMapping("/cambiarContrasenaAdmin")
+    public ResponseEntity<?> cambiarContrasenaComoAdmin(@RequestBody ActualizarContraseñaModeradorRequestDTO request) {
+        try {
+            ActualizarContrasenaResponse response = usuarioService.actualizarContraseñaAModeradores(request);
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace(); // 👈 para ver el stacktrace completo
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al cambiar la contraseña del usuario: " + e.getMessage());
         }
     }
 }
