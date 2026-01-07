@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { obtenerTodosReportes, checkReporte } from "../../api/reporte";
 import { formatFecha } from '../../utils/formatFecha';
 
-export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
+export default function AdminReportesPage({ setCantidadReportesNoLeidos }) {
   const [reportes, setReportes] = useState([]);
   const [estado, setEstado] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -10,9 +10,14 @@ export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
   const cargarReportes = async () => {
     try {
       const data = await obtenerTodosReportes();
-      setReportes(data);
-      const noLeidos = data.filter(r => r.estado === "No leído").length;
-      setCantidadReportesNoLeidos(noLeidos)
+      // ordenar por fecha descendente (más nuevos primero)
+      const ordenados = [...data].sort(
+        (a, b) => new Date(b.fecha) - new Date(a.fecha)
+      );
+      setReportes(ordenados);
+
+      const noLeidos = ordenados.filter(r => r.estado === "No leído").length;
+      setCantidadReportesNoLeidos(noLeidos);
     } catch (error) {
       console.error(
         "Error cargando reportes:",
@@ -20,6 +25,7 @@ export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
       );
     }
   };
+
 
   useEffect(() => {
     cargarReportes();
@@ -48,9 +54,8 @@ export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
 
       {estado && (
         <div
-          className={`alert mt-3 ${
-            estado.tipo === "success" ? "alert-success" : "alert-danger"
-          }`}
+          className={`alert mt-3 ${estado.tipo === "success" ? "alert-success" : "alert-danger"
+            }`}
         >
           {estado.mensaje}
         </div>
@@ -76,9 +81,8 @@ export default function AdminReportesPage({setCantidadReportesNoLeidos}) {
               </div>
               <div className="d-flex align-items-center gap-2">
                 <span
-                  className={`badge ${
-                    r.estado === "Leído" ? "bg-success" : "bg-secondary"
-                  }`}
+                  className={`badge ${r.estado === "Leído" ? "bg-success" : "bg-secondary"
+                    }`}
                 >
                   {r.estado}
                 </span>
