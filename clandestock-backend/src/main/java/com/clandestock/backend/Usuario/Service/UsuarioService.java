@@ -1,9 +1,6 @@
 package com.clandestock.backend.usuario.service;
 
-import com.clandestock.backend.usuario.dto.ActualizarContrasenaRequestDTO;
-import com.clandestock.backend.usuario.dto.ActualizarContrasenaResponse;
-import com.clandestock.backend.usuario.dto.UsuarioRequestDTO;
-import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
+import com.clandestock.backend.usuario.dto.*;
 import com.clandestock.backend.usuario.modelos.TipoUsuarioEnum;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -118,5 +115,16 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
 
         return new ActualizarContrasenaResponse("La contraseña ha sido actualizada correctamente");
+    }
+
+    public ActualizarContrasenaResponse actualizarContraseñaAModeradores(ActualizarContraseñaModeradorRequestDTO request){
+        Usuario usuario = usuarioRepository.findById(request.usuarioId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario con ID no encontrado"));
+
+        System.out.println(request.nuevaContrasena());
+        usuario.setContrasena(passwordEncoder.encode(request.nuevaContrasena()));
+        usuarioRepository.save(usuario);
+
+        return new ActualizarContrasenaResponse("la contraseña del usuario "+ usuario.getNombreUsuario() + " ha sido actualizada");
     }
 }
