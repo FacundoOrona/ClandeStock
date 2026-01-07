@@ -117,14 +117,16 @@ public class UsuarioService {
         return new ActualizarContrasenaResponse("La contraseña ha sido actualizada correctamente");
     }
 
-    public ActualizarContrasenaResponse actualizarContraseñaAModeradores(ActualizarContraseñaModeradorRequestDTO request){
-        Usuario usuario = usuarioRepository.findById(request.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException("Usuario con ID no encontrado"));
+    public ActualizarContrasenaResponse actualizarContrasenaAModeradores(ActualizarContraseñaModeradorRequestDTO request) {
+        Usuario usuario = usuarioRepository.findByNombreUsuario(request.nombreUsuario())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        System.out.println(request.nuevaContrasena());
         usuario.setContrasena(passwordEncoder.encode(request.nuevaContrasena()));
         usuarioRepository.save(usuario);
 
-        return new ActualizarContrasenaResponse("la contraseña del usuario "+ usuario.getNombreUsuario() + " ha sido actualizada");
+        return new ActualizarContrasenaResponse(
+                "La contraseña del usuario " + usuario.getNombreUsuario() + " ha sido actualizada"
+        );
     }
+
 }
