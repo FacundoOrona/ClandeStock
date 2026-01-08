@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { formatFecha } from "../../utils/formatFecha"
+import { formatFecha } from "../../utils/formatFecha";
 
 export const AdminUsuariosPage = () => {
   const navigate = useNavigate();
@@ -10,6 +10,14 @@ export const AdminUsuariosPage = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [nombreUsuarioEdit, setNombreUsuarioEdit] = useState("");
   const [tipoUsuarioEdit, setTipoUsuarioEdit] = useState("");
+
+  // 🔑 Estados para cambio de contraseña de moderadores
+  const [changingPasswordUser, setChangingPasswordUser] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
+
+  // 🔑 Estados para cambio de contraseña del propio admin
+  const [myCurrentPassword, setMyCurrentPassword] = useState("");
+  const [myNewPassword, setMyNewPassword] = useState("");
 
   const token = localStorage.getItem("access_token");
 
@@ -65,10 +73,10 @@ export const AdminUsuariosPage = () => {
         prev.map((u) =>
           u.id === editingUser.id
             ? {
-              ...u,
-              nombreUsuario: nombreUsuarioEdit,
-              tipoUsuario: tipoUsuarioEdit,
-            }
+                ...u,
+                nombreUsuario: nombreUsuarioEdit,
+                tipoUsuario: tipoUsuarioEdit,
+              }
             : u
         )
       );
@@ -104,6 +112,81 @@ export const AdminUsuariosPage = () => {
     }
   };
 
+  // 🔒 Función para cambiar contraseña de moderadores (ahora con nombreUsuario)
+  const handleCambiarContrasena = async () => {
+    if (!changingPasswordUser || !newPassword) return;
+    try {
+      const body = {
+        nombreUsuario: changingPasswordUser.nombreUsuario, // 👈 usamos nombreUsuario
+        nuevaContrasena: newPassword,
+      };
+
+      const cleanToken = token?.trim();
+
+      console.log("🔑 Usuario seleccionado:", changingPasswordUser);
+      console.log("📦 Body enviado:", body);
+      console.log("🪪 Token usado:", token);
+
+      console.log("📡 Header Authorization:", `Bearer ${cleanToken}`);
+
+      const response = await fetch(
+        "http://localhost:8080/usuario/cambiarContrasenaAdmin",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response headers:", response.headers);
+      console.log("📡 Response body:", await response.text());
+
+      if (!response.ok) throw new Error("Error al cambiar contraseña");
+
+      alert("Contraseña del usuario actualizada correctamente");
+      setChangingPasswordUser(null);
+      setNewPassword("");
+    } catch (err) {
+      console.error("Error cambiando contraseña:", err);
+      alert("Error al cambiar contraseña");
+    }
+  };
+
+  // 🔒 Función para cambiar contraseña del propio admin
+  const handleCambiarMiContrasena = async () => {
+    try {
+      const body = {
+        contrasenaActual: myCurrentPassword,
+        contrasenaNueva: myNewPassword,
+      };
+
+      const response = await fetch(
+        "http://localhost:8080/usuario/actualizarContrasena",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (!response.ok) throw new Error("Error al cambiar mi contraseña");
+
+      alert("Tu contraseña fue actualizada correctamente");
+      setMyCurrentPassword("");
+      setMyNewPassword("");
+    } catch (err) {
+      console.error("Error cambiando mi contraseña:", err);
+      alert("Error al cambiar mi contraseña");
+    }
+  };
+
   return (
     <div className="container-fluid mt-4">
       <div className="row">
@@ -128,12 +211,21 @@ export const AdminUsuariosPage = () => {
                   return (
                     <tr key={usuario.id}>
                       <td className="text-break">{usuario.nombreUsuario}</td>
-                      <td>{usuario.tipoUsuario.replace("MODERADOR_", "").replaceAll("_", " ")}</td>
-                      <td>{usuario?.fechaCreacion ? formatFecha(usuario.fechaCreacion) : ""}</td>
+                      <td>
+                        {usuario.tipoUsuario
+                          .replace("MODERADOR_", "")
+                          .replaceAll("_", " ")}
+                      </td>
+                      <td>
+                        {usuario?.fechaCreacion
+                          ? formatFecha(usuario.fechaCreacion)
+                          : ""}
+                      </td>
                       <td>
                         <span
-                          className={`fw-bold ${isActivo ? "text-success" : "text-danger"
-                            }`}
+                          className={`fw-bold ${
+                            isActivo ? "text-success" : "text-danger"
+                          }`}
                         >
                           {isActivo ? "Activo" : "Desactivo"}
                         </span>
@@ -145,6 +237,12 @@ export const AdminUsuariosPage = () => {
                             onClick={() => handleEditar(usuario)}
                           >
                             Editar
+                          </button>
+                          <button
+                            className="btn btn-warning btn-sm w-100 w-md-auto"
+                            onClick={() => setChangingPasswordUser(usuario)}
+                          >
+                            Cambiar contraseña
                           </button>
                           {isActivo ? (
                             <button
@@ -175,7 +273,7 @@ export const AdminUsuariosPage = () => {
           </div>
         </div>
 
-        {/* 📌 Columna derecha: acciones + panel de edición */}
+        {/* 📌 Columna derecha: acciones + paneles */}
         <div className="col-12 col-md-5 col-lg-4 mt-3 mt-md-5">
           <div className="card shadow p-3 mb-4">
             <h5 className="text-warning gothic-font mb-3">Acciones rápidas</h5>
@@ -184,6 +282,7 @@ export const AdminUsuariosPage = () => {
             </button>
           </div>
 
+          {/* Panel de edición */}
           {editingUser && (
             <div className="card shadow p-4 mt-4 mt-md-5">
               <h5 className="text-warning gothic-font mb-3">
@@ -235,8 +334,80 @@ export const AdminUsuariosPage = () => {
               </div>
             </div>
           )}
+
+          {/* Panel de cambio de contraseña de moderadores */}
+          {changingPasswordUser && (
+            <div className="card shadow p-4 mt-4 mt-md-5">
+              <h5 className="text-warning gothic-font mb-3">
+                Cambiar contraseña de: {changingPasswordUser.nombreUsuario}
+              </h5>
+              <div className="mb-3">
+                <label className="form-label text-warning">
+                  Nueva contraseña
+                </label>
+                <input
+                  type="password"
+                  className="form-control border-warning shadow-none"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </div>
+              <div className="text-center d-flex flex-column flex-md-row gap-2">
+                <button
+                  className="btn btn-success w-100 w-md-auto"
+                  onClick={handleCambiarContrasena}
+                >
+                  Guardar
+                </button>
+                <button
+                  className="btn btn-secondary w-100 w-md-auto"
+                  onClick={() => {
+                    setChangingPasswordUser(null);
+                    setNewPassword("");
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Panel de cambio de contraseña del propio admin */}
+          <div className="card shadow p-4 mt-4">
+            <h5 className="text-warning gothic-font mb-3">
+              Cambiar mi contraseña
+            </h5>
+            <div className="mb-3">
+              <label className="form-label text-warning">
+                Contraseña actual
+              </label>
+              <input
+                type="password"
+                className="form-control border-warning shadow-none"
+                value={myCurrentPassword}
+                onChange={(e) => setMyCurrentPassword(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label text-warning">
+                Nueva contraseña
+              </label>
+              <input
+                type="password"
+                className="form-control border-warning shadow-none"
+                value={myNewPassword}
+                onChange={(e) => setMyNewPassword(e.target.value)}
+              />
+            </div>
+            <button
+              className="btn btn-success w-100"
+              onClick={handleCambiarMiContrasena}
+            >
+              Guardar
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
