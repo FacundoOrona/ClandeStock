@@ -20,8 +20,7 @@ instance.interceptors.response.use(
     response => response,
     error => {
         if (error.response?.status === 403 && window.location.pathname !== '/login') {
-            // en vez de borrar acá, delegamos al AuthContext.logout
-            console.warn("403 detectado, sesión inválida");
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
