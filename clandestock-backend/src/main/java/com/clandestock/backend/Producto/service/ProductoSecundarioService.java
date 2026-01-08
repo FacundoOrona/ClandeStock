@@ -11,9 +11,11 @@ import com.clandestock.backend.venta.service.LocalService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.clandestock.backend.producto.repository.ProductoSecundarioRepository;
+import com.clandestock.backend.seguridad.UsuarioContexto;
 
 @Service
 public class ProductoSecundarioService {
@@ -138,28 +140,30 @@ public class ProductoSecundarioService {
         productoSecundarioRepository.save(pSecundario);
     }
 
-    private ProductoSecundario toEntity(ProductoSecundarioRequestDTO dto) {
-        Local local = localService.obtenerPorId(Long.parseLong(dto.local()));
-
-        ProductoSecundario.ProductoSecundarioBuilder builder = ProductoSecundario.builder()
-                .nombreProducto(dto.nombre_producto())
-                .stock(Integer.parseInt(dto.stock()))
-                .estado(Boolean.valueOf(dto.estado()))
-                .local(local);
-
-        if (dto.id() != null) {
-            builder.id(Long.parseLong(dto.id()));
-        }
-
-        return builder.build();
-    }
-
     public List<ProductoSecundario> obtenerTodos() {
-        return productoSecundarioRepository.findAll();
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        List<ProductoSecundario> secundarios;
+        if (usuario.esAdminGeneral()) {
+            secundarios = productoSecundarioRepository.findAll();
+        } else {
+            secundarios = productoSecundarioRepository.findByLocal_NombreLocal(usuario.getLocal());
+        }
+        return secundarios;
     }
 
     public List<ProductoSecundarioResponseDTO> obtenerTodosDTO() {
-        List<ProductoSecundario> todosEntity = productoSecundarioRepository.findAll();
+        UsuarioContexto usuario = (UsuarioContexto) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        List<ProductoSecundario> todosEntity;
+        if (usuario.esAdminGeneral()) {
+            todosEntity = productoSecundarioRepository.findAll();
+        } else {
+            todosEntity = productoSecundarioRepository.findByLocal_NombreLocal(usuario.getLocal());
+        }
         return todosEntity
                 .stream()
                 .map(this::toResponseDTO)
@@ -185,7 +189,7 @@ public class ProductoSecundarioService {
     public void incrementarStock(String id) {
         ProductoSecundario producto = productoSecundarioRepository.findById(Long.parseLong(id))
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        producto.setStock(producto.getStock()+1);
+        producto.setStock(producto.getStock() + 1);
         productoSecundarioRepository.save(producto);
     }
 

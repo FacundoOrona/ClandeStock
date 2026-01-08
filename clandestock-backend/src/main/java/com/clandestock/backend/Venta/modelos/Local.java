@@ -38,6 +38,7 @@ public class Local {
     @OneToMany(mappedBy = "local")
     private List<Mesa> mesas;
 
+    @Builder.Default
     @OneToMany(mappedBy = "local", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Mozo> mozos = new ArrayList<>();
 }

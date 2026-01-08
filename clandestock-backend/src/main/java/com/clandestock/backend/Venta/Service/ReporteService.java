@@ -1,6 +1,5 @@
 package com.clandestock.backend.venta.service;
 
-import com.clandestock.backend.auth.dto.RegistroRequest;
 import com.clandestock.backend.seguridad.UsuarioContexto;
 import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;

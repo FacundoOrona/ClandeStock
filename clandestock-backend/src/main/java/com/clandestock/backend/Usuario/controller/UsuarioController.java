@@ -1,8 +1,14 @@
 package com.clandestock.backend.usuario.controller;
 
 import com.clandestock.backend.seguridad.UsuarioContexto;
+
+import com.clandestock.backend.usuario.dto.ActualizarContrasenaRequestDTO;
+import com.clandestock.backend.usuario.dto.ActualizarContrasenaResponse;
+import com.clandestock.backend.usuario.dto.UsuarioRequestDTO;
+import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
 import com.clandestock.backend.usuario.dto.*;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
+
 import com.clandestock.backend.usuario.service.UsuarioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;

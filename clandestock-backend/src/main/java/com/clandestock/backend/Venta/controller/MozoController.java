@@ -1,11 +1,9 @@
 package com.clandestock.backend.venta.controller;
 
 import com.clandestock.backend.seguridad.UsuarioContexto;
-import com.clandestock.backend.venta.dto.MesaRequestDTO;
 import com.clandestock.backend.venta.dto.MozoRequestDTO;
 import com.clandestock.backend.venta.dto.MozoResponseDTO;
 import com.clandestock.backend.venta.service.MozoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

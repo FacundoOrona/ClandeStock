@@ -34,6 +34,7 @@ public class Categoria {
     @JoinColumn(name = "localID", nullable = false)
     private Local local;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean activo = true;
 }

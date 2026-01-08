@@ -50,7 +50,7 @@ public class ProductoStockService {
                     principal.getNombreProducto(),
                     String.valueOf(stockDisponible),
                     principal.getPrecioProducto().toString(),
-                    principal.getAletarStock()>=stockDisponible ?"true":"false",
+                    principal.getAletarStock() >= stockDisponible ? "true" : "false",
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString(),
@@ -86,7 +86,7 @@ public class ProductoStockService {
                     principal.getNombreProducto(),
                     String.valueOf(stockDisponible),
                     principal.getPrecioProducto().toString(),
-                    principal.getAletarStock()>=stockDisponible ?"true":"false",
+                    principal.getAletarStock() >= stockDisponible ? "true" : "false",
                     principal.getStockBajo().toString(),
                     principal.getSinStock().toString(),
                     principal.getLocal().getId().toString(),
@@ -154,8 +154,7 @@ public class ProductoStockService {
                         principal.getLocal().getId().toString(),
                         secundarios.isEmpty() ? "false" : "true",
                         principal.getComanda().toString()));
-            }
-            else if (alertaPorCantidad) {
+            } else if (alertaPorCantidad) {
                 resultado.add(new ProductoStockResponseDTO(
                         principal.getId().toString(),
                         principal.getNombreProducto(),
@@ -194,8 +193,7 @@ public class ProductoStockService {
                         sec.getLocal().getId().toString(),
                         "false",
                         "false"));
-            }
-            else if (alertaPorCantidad) {
+            } else if (alertaPorCantidad) {
                 resultado.add(new ProductoStockResponseDTO(
                         sec.getId().toString(),
                         sec.getNombreProducto(),

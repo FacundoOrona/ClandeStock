@@ -75,7 +75,7 @@ export const ListadoCajasCerradas = () => {
                 <div className="row flex-grow-1 overflow-auto gy-2">
                     {ventasCaja.map((venta) => {
                         const metodo = metodos.find((m) => m.id === venta.idMetodoPago);
-                        return <VentaCerradaCard venta={venta} metodo={metodo} />;
+                        return <VentaCerradaCard venta={venta} metodo={metodo} key={venta.idVenta} />;
                     })}
                 </div>
             </div>
