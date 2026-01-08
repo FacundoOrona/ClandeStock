@@ -37,7 +37,6 @@ public class VentaService {
 
     private final VentaRepository ventaRepository;
     private final UsuarioService usuarioService;
-    private final MetodoPagoService metodoPagoService;
     private final ProductoPrincipalService productoPrincipalService;
     private final ProductoSecundarioPorPrincipalService productoSecundarioPorPrincipalService;
     private final ProductoStockService productoStockService;
@@ -51,7 +50,6 @@ public class VentaService {
     public VentaService(
             VentaRepository ventaRepository,
             UsuarioService usuarioService,
-            MetodoPagoService metodoPagoService,
             ProductoPrincipalService prodPrincipalService,
             ProductoSecundarioPorPrincipalService psxpps,
             ProductoStockService prodStockService,
@@ -63,7 +61,6 @@ public class VentaService {
             MesaRepository mesaRepository) {
         this.ventaRepository = ventaRepository;
         this.usuarioService = usuarioService;
-        this.metodoPagoService = metodoPagoService;
         this.productoPrincipalService = prodPrincipalService;
         this.productoSecundarioPorPrincipalService = psxpps;
         this.productoStockService = prodStockService;
@@ -180,7 +177,7 @@ public class VentaService {
 
             venta.setPrecioTotalConMetodoDePago(precioFinal);
 
-            Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+            ventaRepository.save(venta);
         }
 
         return toResponseDTO(venta);
@@ -229,7 +226,7 @@ public class VentaService {
 
             venta.setPrecioTotalConMetodoDePago(precioFinal);
 
-            Venta ventaConMetodoDePagoIncluido = ventaRepository.save(venta);
+            ventaRepository.save(venta);
         }
 
         return toResponseDTO(venta);
