@@ -36,6 +36,7 @@ public class Reporte {
     @JoinColumn(name = "usuarioEmisor", nullable = false)
     private Usuario usuarioEmisor;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean estado = false;
 
