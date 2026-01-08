@@ -84,19 +84,6 @@ public class ProductoSecundarioPorPrincipalService {
                 entidad.getProductoSecundario().getId().toString());
     }
 
-    private ProductoSecundarioPorPrincipal toEntitySinID(ProductoSecundarioPorPrincipalRequestDTO dto) {
-        ProductoPrincipal productoPrincipal = productoPrincipalService.obtenerPorId(
-                Long.parseLong(dto.id_producto_principal()));
-
-        ProductoSecundario productoSecundario = productoSecundarioService.obtenerPorId(
-                Long.parseLong(dto.id_producto_secundario()));
-
-        return ProductoSecundarioPorPrincipal.builder()
-                .productoPrimario(productoPrincipal)
-                .productoSecundario(productoSecundario)
-                .build();
-    }
-
     private ProductoSecundarioPorPrincipal toEntity(ProductoSecundarioPorPrincipalRequestDTO dto) {
         ProductoPrincipal productoPrincipal = productoPrincipalService.obtenerPorId(
                 Long.parseLong(dto.id_producto_principal()));
