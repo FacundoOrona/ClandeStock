@@ -4,6 +4,7 @@ import com.clandestock.backend.auth.dto.LoginRequest;
 import com.clandestock.backend.auth.dto.RegistroRequest;
 import com.clandestock.backend.auth.dto.TokenResponse;
 import com.clandestock.backend.auth.service.AuthService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,15 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> registro(@RequestBody final RegistroRequest request) {
-        final TokenResponse token = service.registro(request);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> registro(@RequestBody final RegistroRequest request) {
+        try {
+            final TokenResponse token = service.registro(request);
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
