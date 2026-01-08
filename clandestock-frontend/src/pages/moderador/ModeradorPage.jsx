@@ -90,18 +90,21 @@ export const ModeradorPage = () => {
           (p) => p.tipoVenta === "ENVIO_DOMICILIO"
         ),
       });
+      if (cajaAbierta) {
 
-      const cerradosData = await getVentasCerradas();
-      setPedidosCerrados({
-        local: cerradosData.filter((p) => p.tipoVenta === "CONSUMO_LOCAL"),
-        takeaway: cerradosData.filter((p) => p.tipoVenta === "TAKE_AWAY"),
-        delivery: cerradosData.filter(
-          (p) => p.tipoVenta === "ENVIO_DOMICILIO"
-        ),
-      });
 
-      const detalle = await getDetalleCaja();
-      setDetalleCaja(detalle[0]);
+        const cerradosData = await getVentasCerradas();
+        setPedidosCerrados({
+          local: cerradosData.filter((p) => p.tipoVenta === "CONSUMO_LOCAL"),
+          takeaway: cerradosData.filter((p) => p.tipoVenta === "TAKE_AWAY"),
+          delivery: cerradosData.filter(
+            (p) => p.tipoVenta === "ENVIO_DOMICILIO"
+          ),
+        });
+
+        const detalle = await getDetalleCaja();
+        setDetalleCaja(detalle[0]);
+      }
     } catch (error) {
       console.error("Error cargando datos del moderador:", error);
     }
