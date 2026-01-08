@@ -5,7 +5,6 @@ import com.clandestock.backend.usuario.dto.ActualizarContrasenaRequestDTO;
 import com.clandestock.backend.usuario.dto.ActualizarContrasenaResponse;
 import com.clandestock.backend.usuario.dto.UsuarioRequestDTO;
 import com.clandestock.backend.usuario.dto.UsuarioResponseDTO;
-import com.clandestock.backend.usuario.repository.UsuarioRepository;
 import com.clandestock.backend.usuario.service.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
