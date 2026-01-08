@@ -81,6 +81,7 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                 comanda: formData.comanda,
                 aletarStockBajo: formData.aletarStockBajo || "0"
             };
+            if (!formData.idCategoria) { alert("Selecciona una categoría"); return; }
 
             await putProductosPrimario(dto);
             onClose();
@@ -164,16 +165,23 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
             {/* Categoría */}
             <div className="mb-3">
                 <label className="form-label">Categoría</label>
-                <Select
-                    options={categorias.map(c => ({ value: c.id, label: c.nombre_categoria }))}
-                    value={categorias.find(c => c.id === formData.idCategoria) ? {
-                        value: formData.idCategoria,
-                        label: categorias.find(c => c.id === formData.idCategoria).nombre_categoria
-                    } : null}
-                    onChange={handleCategoriaChange}
-                    placeholder="Seleccione una categoría"
-                    isClearable
-                />
+                {categorias.length > 0 && (
+                    <Select
+                        options={categorias.map(c => ({ value: c.id, label: c.nombre_categoria }))}
+                        value={
+                            formData.idCategoria
+                                ? categorias
+                                    .map(c => ({ value: c.id, label: c.nombre_categoria }))
+                                    .find(option => option.value === Number(formData.idCategoria))
+                                : null
+                        }
+                        onChange={handleCategoriaChange}
+                        placeholder="Seleccione una categoría"
+                        isClearable
+                    />
+                )}
+
+
             </div>
 
             {/* Estado toggle */}
@@ -184,12 +192,13 @@ export default function FormEditarProductoPrincipal({ producto, onClose }) {
                         type="button"
                         className={`btn btn-sm ${formData.estado ? "btn-success" : "btn-outline-secondary"}`}
                         onClick={() => setFormData({ ...formData, estado: !formData.estado })}
-                    >
+                        >
                         {formData.estado ? "Activo" : "Inactivo"}
                     </button>
                 </div>
             </div>
 
+            {/* imporime comanda? */}
             <div className="mb-3">
                 <label className="form-label">Comanda</label>
                 <div>
