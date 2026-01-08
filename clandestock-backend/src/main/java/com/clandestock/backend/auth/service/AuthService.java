@@ -39,6 +39,16 @@ public class AuthService {
             throw new RuntimeException("Tipo de usuario invalido");
         }
 
+        if (tipo.esAdminGeneral()) {
+            int admins = usuarioRepository.countByTipoUsuario(TipoUsuarioEnum.ADMIN_GENERAL);
+            if (admins > 0) {
+                throw new RuntimeException("Ya existe un usuario ADMIN_GENERAL, no se puede crear otro.");
+            }
+        }
+        else{
+            throw new RuntimeException("Solo se puede insertar admin general");
+        }
+
         var usuario = Usuario.builder()
                 .nombreUsuario(request.nombreUsuario())
                 .contrasena(passwordEncoder.encode(request.contrasena()))
@@ -74,8 +84,7 @@ public class AuthService {
         return new RegistroResponse(
                 usuario.getNombreUsuario(),
                 usuario.getTipoUsuario().name(), // devuelve el nombre del enum
-                usuario.getFechaCreacion().toString()
-        );
+                usuario.getFechaCreacion().toString());
     }
 
     private void saveTokenUsuario(Usuario usuario, String jwtToken) {
@@ -101,52 +110,53 @@ public class AuthService {
             throw new DisabledException("El usuario está deshabilitado");
         }
 
-            String accessToken = jwtService.generateToken(usuario);
-            String refreshToken = jwtService.generateRefreshToken(usuario);
-            revocarTokens(usuario);
-            saveTokenUsuario(usuario, accessToken);
-            return new TokenResponse(accessToken, refreshToken);
+        String accessToken = jwtService.generateToken(usuario);
+        String refreshToken = jwtService.generateRefreshToken(usuario);
+        revocarTokens(usuario);
+        saveTokenUsuario(usuario, accessToken);
+        return new TokenResponse(accessToken, refreshToken);
+    }
+
+    private void revocarTokens(Usuario usuario) {
+        List<Token> tokenValidos = tokenRepository.findAllValidTokenByUser(usuario.getId());
+        if (!tokenValidos.isEmpty()) {
+            tokenValidos.forEach(token -> {
+                token.setIsExpired(true);
+                token.setIsRevoked(true);
+            });
+            tokenRepository.saveAll(tokenValidos);
+        }
+    }
+
+    public TokenResponse refreshToken(String authentication) {
+        if (authentication == null || !authentication.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid auth header");
         }
 
-        private void revocarTokens (Usuario usuario){
-            List<Token> tokenValidos = tokenRepository.findAllValidTokenByUser(usuario.getId());
-            if (!tokenValidos.isEmpty()) {
-                tokenValidos.forEach(token -> {
-                    token.setIsExpired(true);
-                    token.setIsRevoked(true);
-                });
-                tokenRepository.saveAll(tokenValidos);
-            }
+        final String refreshToken = authentication.substring(7);
+        final String nombreUsuario = jwtService.extractUsername(refreshToken);
+        if (nombreUsuario == null) {
+            return null;
         }
 
-        public TokenResponse refreshToken (String authentication){
-            if (authentication == null || !authentication.startsWith("Bearer ")) {
-                throw new IllegalArgumentException("Invalid auth header");
-            }
-
-            final String refreshToken = authentication.substring(7);
-            final String nombreUsuario = jwtService.extractUsername(refreshToken);
-            if (nombreUsuario == null) {
-                return null;
-            }
-
-            final Usuario usuario = usuarioRepository.findByNombreUsuario(nombreUsuario).orElseThrow();
-            final boolean isTokenValid = jwtService.isTokenValid(refreshToken, usuario);
-            if (!isTokenValid) {
-                return null;
-            }
-            final String accessToken = jwtService.generateRefreshToken(usuario);
-            revocarTokens(usuario);
-            saveTokenUsuario(usuario, accessToken);
-            return new TokenResponse(accessToken, refreshToken);
+        final Usuario usuario = usuarioRepository.findByNombreUsuario(nombreUsuario).orElseThrow();
+        final boolean isTokenValid = jwtService.isTokenValid(refreshToken, usuario);
+        if (!isTokenValid) {
+            return null;
         }
+        final String accessToken = jwtService.generateRefreshToken(usuario);
+        revocarTokens(usuario);
+        saveTokenUsuario(usuario, accessToken);
+        return new TokenResponse(accessToken, refreshToken);
+    }
 
-        public void logout() {
-            UsuarioContexto usuarioC = (UsuarioContexto) SecurityContextHolder.getContext()
+    public void logout() {
+        UsuarioContexto usuarioC = (UsuarioContexto) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();
 
-            Usuario usuario = usuarioRepository.findByNombreUsuario(usuarioC.getNombreUsuario()).orElseThrow(()->new RuntimeException("Usuario no encontrado al cerrar sesion"));
-            revocarTokens(usuario);
-        }
+        Usuario usuario = usuarioRepository.findByNombreUsuario(usuarioC.getNombreUsuario())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado al cerrar sesion"));
+        revocarTokens(usuario);
     }
+}
