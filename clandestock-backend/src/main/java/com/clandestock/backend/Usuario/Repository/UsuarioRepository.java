@@ -14,4 +14,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     Optional<Usuario> findByNombreUsuario(String username);
     List<Usuario> findByTipoUsuarioIn(List<TipoUsuarioEnum> tipos);
+    int countByTipoUsuario(TipoUsuarioEnum tipoUsuario);
 }
