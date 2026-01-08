@@ -1,11 +1,9 @@
 package com.clandestock.backend.venta.service;
 
 import com.clandestock.backend.seguridad.UsuarioContexto;
-import com.clandestock.backend.venta.dto.MesaRequestDTO;
 import com.clandestock.backend.venta.dto.MozoRequestDTO;
 import com.clandestock.backend.venta.dto.MozoResponseDTO;
 import com.clandestock.backend.venta.modelos.Local;
-import com.clandestock.backend.venta.modelos.Mesa;
 import com.clandestock.backend.venta.modelos.Mozo;
 import com.clandestock.backend.venta.repository.MozoRepository;
 import lombok.RequiredArgsConstructor;
