@@ -19,6 +19,7 @@ export const useVentaDetalle = (idVenta) => {
   const [metodosPago, setMetodosPago] = useState([]);
   const [metodoSeleccionado, setMetodoSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [loadingId, setLoadingId] = useState(null);
 
   const token = localStorage.getItem("access_token");
 
@@ -104,19 +105,22 @@ export const useVentaDetalle = (idVenta) => {
 
   // ➖ Quitar producto
   const handleQuitarProducto = async (prod) => {
+    const idProdVenta = prod.idProductosPorVenta.at(-1);
+    if (!idProdVenta) return;
+
+    setLoadingId(idProdVenta);
     try {
-      await quitarProductoDeVenta(
-        idVenta,
-        prod.idProductosPorVenta[prod.idProductosPorVenta.length - 1],
-        token
-      );
+      await quitarProductoDeVenta(idVenta, idProdVenta, token);
       await cargarVenta();
       await cargarProductos();
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al quitar producto");
+    } finally {
+      setLoadingId(null);
     }
   };
+
 
   // 💳 Seleccionar método de pago
   const handleSeleccionarMetodoPago = async (idMetodoPago) => {
@@ -176,5 +180,6 @@ export const useVentaDetalle = (idVenta) => {
     handleSeleccionarMetodoPago,
     handleCerrarVenta,
     mensaje,
+    loadingId,
   };
 };

@@ -1,11 +1,14 @@
+
+import axios from "../../api/axios";
 import { imprimioComanda } from "../../api/ventas";
 
 export default function TicketComanda({ venta, onVentaActualizada }) {
 
-    // Simula salto de línea sin crear párrafos
     const simulateLineBreaks = (text, width = 25) => {
-        const lines = text.split("\n");
-        return lines.map(line => line.padEnd(width) + "\r").join("");
+        return text
+            .split("\n")
+            .map(line => line.padEnd(width))
+            .join("\r");
     };
 
     const handlePrint = async () => {
@@ -76,20 +79,17 @@ export default function TicketComanda({ venta, onVentaActualizada }) {
         // PRODUCTOS
         productosAgrupados.forEach(p => {
             content += `${p.cantidad} x ${p.nombreProducto}\n`;
-        });
 
+        });
         content += "-------------------------\n";
         // Convertir a formato térmico sin \n
         const finalContent = simulateLineBreaks(content);
 
-        // Enviar al backend
-        await fetch("http://localhost:3001/print", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ content: finalContent })
+        // 🔥 ACA ESTÁ EL CAMBIO CLAVE
+        await axios.post("/print", {
+            content: finalContent
         });
 
-        // Marcar comanda como impresa
         await imprimioComanda(venta.idVenta);
         onVentaActualizada(venta.idVenta);
     };

@@ -6,7 +6,7 @@ import { ListadoCajasCerradas } from "../../components/caja/ListadoCajasCerradas
 import { ListadoCajasAbiertas } from "../../components/caja/ListadoCajasAbiertas";
 
 export const AdminVentasPage = () => {
-  const [vistaActiva, setVistaActiva] = useState("listado");
+  const [vistaActiva, setVistaActiva] = useState("cajasAbiertas");
   const [estado, setEstado] = useState(null);
   const [metodos, setMetodos] = useState([]);
 

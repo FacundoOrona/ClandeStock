@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
 import { getDetalleCaja, getEstadoCaja, obtenerProductosVendidos } from "../../api/caja";
+import axios from "../../api/axios";
 
 export default function TicketCierreCaja() {
     const [apertura, setApertura] = useState(null);
     const [detalle, setDetalle] = useState(null);
     const [productos, setProductos] = useState([]);
 
-
-    const cargarDatos = async ()=>{
+    const cargarDatos = async () => {
         const detalle = await getDetalleCaja();
         setDetalle(detalle[0]);
 
         const cajas = await getEstadoCaja();
         const abierta =
-        Array.isArray(cajas) && cajas.length > 0 ? cajas[0] : null;
+            Array.isArray(cajas) && cajas.length > 0 ? cajas[0] : null;
         setApertura(abierta);
 
-        const prodxVenta = await obtenerProductosVendidos()
+        const prodxVenta = await obtenerProductosVendidos();
         setProductos(prodxVenta);
-    }
-    useEffect( () => {
+    };
+
+    useEffect(() => {
         cargarDatos();
-    }, [])
+    }, []);
 
     // Simula salto de línea sin crear párrafos
     const simulateLineBreaks = (text, width = 25) => {
@@ -110,11 +111,9 @@ export default function TicketCierreCaja() {
         // Convertir a formato térmico sin \n
         const finalContent = simulateLineBreaks(content);
 
-        // Enviar al backend
-        await fetch("http://localhost:3001/print", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ content: finalContent })
+        // 🔥 Cambio clave: igual que TicketComanda y TicketCobro
+        await axios.post("/print", {
+            content: finalContent
         });
     };
 

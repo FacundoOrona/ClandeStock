@@ -18,6 +18,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
     handleSeleccionarMetodoPago,
     handleCerrarVenta,
     mensaje,
+    loadingId,
   } = useVentaDetalle(pedido.idVenta);
 
   if (!venta) return <p className="text-muted">Cargando venta...</p>;
@@ -60,10 +61,11 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                         type="button"
                         className="btn btn-danger btn-sm px-2 py-1"
                         onClick={() => handleQuitarProducto(prod)}
-                        disabled={(prod.cantidad ?? 0) < 1}
+                        disabled={(prod.cantidad ?? 0) < 1 || loadingId === prod.idProductosPorVenta.at(-1)}
                       >
                         −
                       </button>
+
 
                       <span className="badge bg-dark px-2 py-1" style={{ fontSize: "0.85rem" }}>
                         {prod.cantidad ?? 0}
@@ -125,8 +127,8 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                     <div className="flex-shrink-0">
                       {prod.stockDisponible > 0 ? (
                         <button
-                        type="button"
-                        className="btn btn-success btn-sm px-2 py-1"
+                          type="button"
+                          className="btn btn-success btn-sm px-2 py-1"
                           onClick={() => handleAgregarProducto(prod)}
                         >
                           +
@@ -147,10 +149,10 @@ export default function PanelDetallePedido({ pedido, onBack }) {
         <div className="d-flex flex-column w-100 h-100">
           <div className="p-3 flex-grow-1 overflow-auto">
             <div className="mb-3">
-            <p><strong>ID Venta:</strong> {venta.idVenta}</p>
-            {venta.numMesa && <p><strong>Mesa:</strong> {venta.numMesa}</p>}
-            <p><strong>Detalle de entrega:</strong> {venta.detalleEntrega}</p>
-          </div>
+              <p><strong>ID Venta:</strong> {venta.idVenta}</p>
+              {venta.numMesa && <p><strong>Mesa:</strong> {venta.numMesa}</p>}
+              <p><strong>Detalle de entrega:</strong> {venta.detalleEntrega}</p>
+            </div>
             <h5 className="text-warning gothic-font mb-3">Método de Pago</h5>
             <label className="form-label text-dark fw-bold">Seleccionar método</label>
             {productosAgrupados.length === 0 && (
@@ -169,7 +171,6 @@ export default function PanelDetallePedido({ pedido, onBack }) {
               className="form-select border-warning shadow-sm mb-3"
               value={metodoSeleccionado}
               onChange={(e) => handleSeleccionarMetodoPago(e.target.value)}
-              disabled={productosAgrupados.length === 0}
             >
               {!metodoSeleccionado && <option value="">-- Seleccionar --</option>}
               {metodosPago.map((m) => (

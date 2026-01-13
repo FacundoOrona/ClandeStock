@@ -24,7 +24,7 @@ export const AdminUsuariosPage = () => {
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const response = await fetch("http://localhost:8080/usuario", {
+        const response = await fetch("/api/usuario", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) throw new Error("Error al obtener usuarios");
@@ -56,7 +56,7 @@ export const AdminUsuariosPage = () => {
       };
 
       const response = await fetch(
-        `http://localhost:8080/usuario/${editingUser.id}/editar`,
+        `/api/usuario/${editingUser.id}/editar`,
         {
           method: "PUT",
           headers: {
@@ -92,8 +92,8 @@ export const AdminUsuariosPage = () => {
   const handleToggleEstado = async (id, isActivo) => {
     try {
       const endpoint = isActivo
-        ? `http://localhost:8080/usuario/${id}/baja`
-        : `http://localhost:8080/usuario/${id}/alta`;
+        ? `/api/usuario/${id}/baja`
+        : `/api/usuario/${id}/alta`;
 
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -123,14 +123,9 @@ export const AdminUsuariosPage = () => {
 
       const cleanToken = token?.trim();
 
-      console.log("🔑 Usuario seleccionado:", changingPasswordUser);
-      console.log("📦 Body enviado:", body);
-      console.log("🪪 Token usado:", token);
-
-      console.log("📡 Header Authorization:", `Bearer ${cleanToken}`);
-
+      
       const response = await fetch(
-        "http://localhost:8080/usuario/cambiarContrasenaAdmin",
+        "/api/usuario/cambiarContrasenaAdmin",
         {
           method: "PUT",
           headers: {
@@ -140,10 +135,6 @@ export const AdminUsuariosPage = () => {
           body: JSON.stringify(body),
         }
       );
-
-      console.log("📡 Response status:", response.status);
-      console.log("📡 Response headers:", response.headers);
-      console.log("📡 Response body:", await response.text());
 
       if (!response.ok) throw new Error("Error al cambiar contraseña");
 
@@ -165,7 +156,7 @@ export const AdminUsuariosPage = () => {
       };
 
       const response = await fetch(
-        "http://localhost:8080/usuario/actualizarContrasena",
+        "/api/usuario/actualizarContrasena",
         {
           method: "PUT",
           headers: {

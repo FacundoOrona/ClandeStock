@@ -20,16 +20,10 @@ export const CerrarCaja = ({ onSuccess }) => {
         <div className="card flex-grow-1 d-flex flex-column">
             <Title text={"Cerrar Caja"} />
             <div className="card-body">
-                <p>¿Está seguro que desea cerrar la caja?</p>
+                <p>{`¿Está seguro que desea cerrar la caja? \n Recuerde primero imprimir cierre de caja.`}</p>
                 <div className="d-flex gap-2">
                     <button className="btn btn-danger" onClick={handleCerrar}>
                         Sí, cerrar caja
-                    </button>
-                    <button
-                        className="btn btn-secondary"
-                        onClick={() => alert("Operación cancelada")}
-                    >
-                        Cancelar
                     </button>
                     <TicketCierreCaja/>
                 </div>

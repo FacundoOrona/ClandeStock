@@ -1,3 +1,5 @@
+import axios from "../../api/axios";
+
 export default function TicketCobro({ venta, metodoSeleccionado }) {
 
     const simulateLineBreaks = (text, width = 25) => {
@@ -59,13 +61,13 @@ export default function TicketCobro({ venta, metodoSeleccionado }) {
         content += `${fechaActual} - ${horaActual}\n`;
         content += `Tipo de venta: \n`;
         content += `${tipoVenta}\n`;
-        
+
         if (venta.detalleEntrega) content += `Detalle:\n`;
         if (venta.detalleEntrega) content += `${venta.detalleEntrega}\n`;
         if (venta.numMesa) content += `Mesa: ${venta.numMesa}\n`;
-        
+
         content += "-------------------------\n";
-        
+
         productosAgrupados.forEach(p => {
             const precio = parseFloat(p.precioProducto).toFixed(2);
             content += `${p.cantidad} x ${p.nombreProducto}\n`;
@@ -73,11 +75,11 @@ export default function TicketCobro({ venta, metodoSeleccionado }) {
         });
 
         content += "-------------------------\n";
-        
+
         const subtotal = parseFloat(venta.precioTotal).toFixed(2);
         const total = parseFloat(venta.precioTotalConMetodoDePago).toFixed(2);
         const diferencia = (total - subtotal).toFixed(2);
-        
+
         if (diferencia != 0) content += `Subtotal: $${subtotal}\n`;
         if (diferencia > 0) content += `Recargo: +$${diferencia}\n`;
         else if (diferencia < 0) content += `Descuento: -$${Math.abs(diferencia)}\n`;
@@ -89,10 +91,9 @@ export default function TicketCobro({ venta, metodoSeleccionado }) {
         // Y antes de enviar, lo convertís:
         const finalContent = simulateLineBreaks(content);
 
-        await fetch("http://localhost:3001/print", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ content: finalContent })
+        // 🔥 Cambio clave: igual que TicketComanda
+        await axios.post("/print", {
+            content: finalContent
         });
     };
 

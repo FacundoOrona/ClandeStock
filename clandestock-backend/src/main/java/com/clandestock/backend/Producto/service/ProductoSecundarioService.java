@@ -56,6 +56,7 @@ public class ProductoSecundarioService {
         productoSecundario.setNombreProducto(dto.nombre_producto());
         productoSecundario.setStock(Integer.parseInt(dto.stock()));
         productoSecundario.setEstado(Boolean.valueOf(dto.estado()));
+        productoSecundario.setAletarStock(Integer.parseInt(dto.alertaStockBajo()));
         productoSecundario.setLocal(local);
 
         ProductoSecundario actualizado = productoSecundarioRepository.save(productoSecundario);
@@ -127,8 +128,8 @@ public class ProductoSecundarioService {
                 .stock(Integer.parseInt(dto.stock()))
                 .estado(true)
                 .local(local)
-                .aletarStock((dto.aletarStockBajo() == null || dto.aletarStockBajo().isBlank() ? 1
-                        : Integer.parseInt(dto.aletarStockBajo())))
+                .aletarStock((dto.alertaStockBajo() == null || dto.alertaStockBajo().isBlank() ? 1
+                        : Integer.parseInt(dto.alertaStockBajo())))
                 .build();
 
         return productoSecundario;

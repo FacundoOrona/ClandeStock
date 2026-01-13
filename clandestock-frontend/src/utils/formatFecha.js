@@ -1,12 +1,14 @@
 export const formatFecha = (fechaStr) => {
     if (!fechaStr) return "";
 
-    // Aseguramos que el string tenga formato ISO válido
-    const [fecha, horaConMs] = fechaStr.split("T");
-    if (!fecha || !horaConMs) return fechaStr;
+    const fecha = new Date(fechaStr);
+    if (isNaN(fecha)) return fechaStr;
 
-    const [year, month, day] = fecha.split("-");
-    const [hh, mm] = horaConMs.split(":");
+    const day = String(fecha.getDate()).padStart(2, "0");
+    const month = String(fecha.getMonth() + 1).padStart(2, "0");
+    const year = fecha.getFullYear();
+    const hh = String(fecha.getHours()).padStart(2, "0");
+    const mm = String(fecha.getMinutes()).padStart(2, "0");
 
     return `${day}/${month}/${year} ${hh}:${mm}`;
 };

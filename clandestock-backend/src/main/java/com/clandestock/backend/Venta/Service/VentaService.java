@@ -217,7 +217,7 @@ public class VentaService {
         venta.getProductos().removeIf(p -> p.getId().equals(idProductoxVenta));
 
         BigDecimal nuevoTotal = venta.getPrecioTotal().subtract(pxv.getPrecioProducto());
-        venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : null);
+        venta.setPrecioTotal(nuevoTotal.compareTo(BigDecimal.ZERO) > 0 ? nuevoTotal : BigDecimal.ZERO);
         ventaRepository.save(venta);
 
         // Actualizar monto en caso de tener metodo de pago insertado
@@ -278,7 +278,7 @@ public class VentaService {
 
         BigDecimal precioOriginal = venta.getPrecioTotal();
         if (precioOriginal == null) {
-            throw new RuntimeException("La venta aún no tiene un precio total definido");
+            precioOriginal = new BigDecimal(0);
         }
 
         BigDecimal precioFinal = calcularPrecioFinal(precioOriginal, metodoPago);
