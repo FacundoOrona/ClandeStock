@@ -1,5 +1,15 @@
 package com.clandestock.backend.auth.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.clandestock.backend.auth.dto.LoginRequest;
 import com.clandestock.backend.auth.dto.RegistroRequest;
 import com.clandestock.backend.auth.dto.RegistroResponse;
@@ -12,16 +22,6 @@ import com.clandestock.backend.usuario.modelos.Usuario;
 import com.clandestock.backend.usuario.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +41,8 @@ public class AuthService {
 
         if (tipo.esAdminGeneral()) {
             int admins = usuarioRepository.countByTipoUsuario(TipoUsuarioEnum.ADMIN_GENERAL);
-            if (admins > 0) {
-                throw new RuntimeException("Ya existe un usuario ADMIN_GENERAL, no se puede crear otro.");
+            if (admins > 2) {
+                throw new RuntimeException("Ya existen 3 administradores, no se puede crear otro.");
             }
         }
         else{
