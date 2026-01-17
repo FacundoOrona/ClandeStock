@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
-set -ex
+#!/bin/sh
+set -e
 
 echo "⏳ Esperando 10 segundos para asegurar que backend esté listo..."
 sleep 10
