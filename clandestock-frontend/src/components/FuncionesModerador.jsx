@@ -8,7 +8,7 @@ const nombresLocales = {
     MODERADOR_HELADERIA: "Heladeria",
 };
 
-export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, setVistaActiva, cantidadAlertas }) {
+export default function FuncionesModerador({ cajaAbierta, caja, setVistaActiva, cantidadAlertas }) {
     const { user } = useContext(AuthContext);
     const nombreLocal = user?.tipoUsuario ? nombresLocales[user.tipoUsuario] : "";
 
@@ -84,25 +84,6 @@ export default function FuncionesModerador({ cajaAbierta, caja, detalleCaja, set
                         Apertura de caja: {caja?.fechaApertura ? formatFecha(caja.fechaApertura) : ""}
                     </small>
                     <br />
-                    {detalleCaja && (
-                        <div className="mt-2">
-                            <div className="mt-2">
-                                <strong><p>Total general: ${(detalleCaja.totalGeneral + Number(caja.montoApertura)).toFixed(2)}</p></strong>
-                            </div>
-                            <h6>Detalle por método de pago:</h6>
-                            <ul className="list-unstyled">
-                                {/* monto de apertura como primer método */}
-                                <li>
-                                    • Monto de apertura: ${caja.montoApertura}
-                                </li>
-                                {detalleCaja.detallePorMetodo.map((d, idx) => (
-                                    <li key={idx}>
-                                        {"• " + d.metodoPago}: ${d.totalCobrado}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                 </div>
             )}
         </>
