@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function PanelNuevaVenta() {
+export default function PanelNuevaVenta({ onVentaCreada }) {
   const [tipoVenta, setTipoVenta] = useState("");
   const [detalleEntrega, setDetalleEntrega] = useState("");
   const [mesas, setMesas] = useState([]);
@@ -11,28 +11,17 @@ export default function PanelNuevaVenta() {
 
   const token = localStorage.getItem("access_token");
 
-  // 🔐 Cargar mesas y mozos si es consumo local
+  // Cargar mesas y mozos si es consumo local
   useEffect(() => {
     if (tipoVenta === "CONSUMO_LOCAL") {
-      // Mesas
-      fetch("/api/mesas", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      fetch("/api/mesas", { headers: { Authorization: `Bearer ${token}` } })
         .then((res) => res.json())
-        .then((data) => {
-          const ordenadas = data.sort((a, b) => a.numeroMesa - b.numeroMesa);
-          setMesas(ordenadas);
-        })
+        .then((data) => setMesas(data.sort((a, b) => a.numeroMesa - b.numeroMesa)))
         .catch((err) => console.error("Error cargando mesas:", err));
 
-      // Mozos
-      fetch("/api/mozos", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      fetch("/api/mozos", { headers: { Authorization: `Bearer ${token}` } })
         .then((res) => res.json())
-        .then((data) => {
-          setMozos(data);
-        })
+        .then((data) => setMozos(data))
         .catch((err) => console.error("Error cargando mozos:", err));
     }
   }, [tipoVenta, token]);
@@ -57,15 +46,32 @@ export default function PanelNuevaVenta() {
         body: JSON.stringify(body),
       });
 
-      if (!response.ok) throw new Error("Error creando venta");
+      if (!response.ok) {
+        const text = await response.text().catch(() => null);
+        console.error("Error creando venta:", response.status, text);
+        throw new Error("Error creando venta");
+      }
+
+      const pedidoCreado = await response.json();
 
       setMensaje("✅ Venta generada correctamente");
+
+      // Resetear formulario
       setTipoVenta("");
       setDetalleEntrega("");
       setNumeroMesa(null);
       setMozoSeleccionado("");
       setMesas([]);
       setMozos([]);
+
+      // Redirigir a detalle después de 2 segundos
+      setTimeout(() => {
+        if (typeof onVentaCreada === "function") {
+          onVentaCreada(pedidoCreado);
+        } else {
+          console.warn("onVentaCreada no fue provisto por el componente padre");
+        }
+      }, 2000);
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al generar la venta");
@@ -74,9 +80,7 @@ export default function PanelNuevaVenta() {
 
   const handleSeleccionMesa = (mesa) => {
     if (mesa.ocupada) {
-      setMensaje(
-        `⚠️ La Mesa ${mesa.numeroMesa} está ocupada y no se puede seleccionar`
-      );
+      setMensaje(`⚠️ La Mesa ${mesa.numeroMesa} está ocupada y no se puede seleccionar`);
       return;
     }
     setNumeroMesa(mesa.numeroMesa);
@@ -87,7 +91,6 @@ export default function PanelNuevaVenta() {
     <div className="p-4">
       <h3 className="text-warning gothic-font mb-4 text-center">Nueva Venta</h3>
 
-      {/* Selección tipo de venta */}
       <div className="mb-3">
         <label className="form-label text-dark fw-bold">Tipo de Venta</label>
         <select
@@ -102,12 +105,9 @@ export default function PanelNuevaVenta() {
         </select>
       </div>
 
-      {/* Inputs dinámicos */}
       {tipoVenta === "ENVIO_DOMICILIO" && (
         <div className="mb-3">
-          <label className="form-label text-dark fw-bold">
-            Domicilio de entrega
-          </label>
+          <label className="form-label text-dark fw-bold">Domicilio de entrega</label>
           <input
             type="text"
             className="form-control border-warning shadow-sm"
@@ -120,9 +120,7 @@ export default function PanelNuevaVenta() {
 
       {tipoVenta === "TAKE_AWAY" && (
         <div className="mb-3">
-          <label className="form-label text-dark fw-bold">
-            Nombre del cliente
-          </label>
+          <label className="form-label text-dark fw-bold">Nombre del cliente</label>
           <input
             type="text"
             className="form-control border-warning shadow-sm"
@@ -135,11 +133,8 @@ export default function PanelNuevaVenta() {
 
       {tipoVenta === "CONSUMO_LOCAL" && (
         <>
-          {/* Dropdown mozo */}
           <div className="mb-3">
-            <label className="form-label text-dark fw-bold">
-              Seleccione Mozo
-            </label>
+            <label className="form-label text-dark fw-bold">Seleccione Mozo</label>
             <select
               className="form-select border-warning shadow-sm"
               value={mozoSeleccionado}
@@ -154,11 +149,8 @@ export default function PanelNuevaVenta() {
             </select>
           </div>
 
-          {/* Mesas */}
           <div className="mb-3">
-            <label className="form-label text-dark fw-bold">
-              Seleccione mesa
-            </label>
+            <label className="form-label text-dark fw-bold">Seleccione mesa</label>
             <div className="d-flex flex-wrap gap-2">
               {mesas.map((mesa) => (
                 <button
@@ -180,22 +172,19 @@ export default function PanelNuevaVenta() {
         </>
       )}
 
-      {/* Botón crear venta */}
       <div className="text-center mt-4">
         <button
           className="btn btn-warning px-4"
           onClick={handleCrearVenta}
           disabled={
             !tipoVenta ||
-            (tipoVenta === "CONSUMO_LOCAL" &&
-              (!numeroMesa || !mozoSeleccionado))
+            (tipoVenta === "CONSUMO_LOCAL" && (!numeroMesa || !mozoSeleccionado))
           }
         >
           Generar Venta
         </button>
       </div>
 
-      {/* Mensaje */}
       {mensaje && (
         <div className="alert alert-info text-center mt-3 gothic-font">
           {mensaje}
