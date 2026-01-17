@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useVentaDetalle } from "../hooks/useVentaDetalle";
 import TicketCobro from "./tickets/TicketCobro";
 import TicketComanda from "./tickets/TicketComanda";
@@ -20,6 +21,14 @@ export default function PanelDetallePedido({ pedido, onBack }) {
     mensaje,
     loadingId,
   } = useVentaDetalle(pedido.idVenta);
+
+  // Estado local para bloquear el botón de ticket (se pierde al refresh)
+  const [ticketBloqueado, setTicketBloqueado] = useState(false);
+
+  // Si cambia el metodoSeleccionado, levantamos el bloqueo
+  useEffect(() => {
+    setTicketBloqueado(false);
+  }, [metodoSeleccionado, venta?.idVenta]);
 
   if (!venta) return <p className="text-muted">Cargando venta...</p>;
 
@@ -65,7 +74,6 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                       >
                         −
                       </button>
-
 
                       <span className="badge bg-dark px-2 py-1" style={{ fontSize: "0.85rem" }}>
                         {prod.cantidad ?? 0}
@@ -144,8 +152,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
           )}
         </div>
 
-
-        {/* Columna 3: Método de pago + acciones (no tocar botones grandes) */}
+        {/* Columna 3: Método de pago + acciones */}
         <div className="d-flex flex-column w-100 h-100">
           <div className="p-3 flex-grow-1 overflow-auto">
             <div className="mb-3">
@@ -189,6 +196,7 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                 {mensaje}
               </div>
             )}
+
             {/* Botones */}
             <div className="d-grid gap-2 mt-4">
               <button
@@ -199,12 +207,14 @@ export default function PanelDetallePedido({ pedido, onBack }) {
                 Cerrar venta - Cobrar
               </button>
 
-              <TicketCobro venta={venta} metodoSeleccionado={metodoSeleccionado} />
+              {/* TicketCobro usa estado local para bloquearse; onPrinted opcional */}
+              <TicketCobro venta={venta} metodoSeleccionado={metodoSeleccionado} onPrinted={() => {
+                refreshVenta(venta.idVenta);
+              }}
+              />
               <TicketComanda venta={venta} onVentaActualizada={() => refreshVenta(venta.idVenta)} />
             </div>
           </div>
-
-
         </div>
       </div>
     </div>
