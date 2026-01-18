@@ -13,6 +13,22 @@ curl -X POST http://backend:8080/auth/register \
     "tipoUsuario": "ADMIN_GENERAL"
   }' || echo "⚠ Aviso: el usuario ya existe o el endpoint falló"
 
+curl -X POST http://backend:8080/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombreUsuario": "facundo",
+    "contrasena": "44047980",
+    "tipoUsuario": "ADMIN_GENERAL"
+  }' || echo "⚠ Aviso: el usuario ya existe o el endpoint falló"
+
+curl -X POST http://backend:8080/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombreUsuario": "vanesa",
+    "contrasena": "669660",
+    "tipoUsuario": "ADMIN_GENERAL"
+  }' || echo "⚠ Aviso: el usuario ya existe o el endpoint falló"
+
 echo "➤ Creando tabla local_tb e insertando locales iniciales..."
 
 SQL="
