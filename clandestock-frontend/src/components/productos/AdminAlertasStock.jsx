@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAlertasStockSecundario, getAlertasStockPrimario, actualizarStockPrimario, actualizarStockSecundario, desactivarAlertaPrimario, desactivarAlertaSecundario } from "../../api/alertasStock";
+import { actualizarStockPrimario, actualizarStockSecundario, desactivarAlertaPrimario, desactivarAlertaSecundario, getAlertasStockPrimario, getAlertasStockSecundario } from "../../api/alertasStock";
 
 const localesMap = {
     "1": "Tenedor Libre",
@@ -20,13 +20,22 @@ export default function AdminAlertasStock({ setCantidadAlertas }) {
             const primarios = await getAlertasStockPrimario();
             const secundarios = await getAlertasStockSecundario();
 
-            const primariosMapped = primarios.map(p => ({
-                ...p,
-                tipo: "principal",
-                alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
-                    ? "sin stock"
-                    : "poco stock"
-            }));
+            const primariosMapped = primarios
+                // se filtra pasa sacar primarios que no tienen alerta y tienen secundarios
+                .filter(p => {
+                    const sinAlertas = p.alertaStockBajo === "false" && p.alertaSinStock === "false";
+                    const tieneSecundarios = p.tieneSecundarios === "true";
+                    return !(sinAlertas && tieneSecundarios);
+                })
+                // luego mapeamos
+                .map(p => ({
+                    ...p,
+                    tipo: "principal",
+                    alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
+                        ? "sin stock"
+                        : "poco stock"
+                }));
+
 
             const secundariosMapped = secundarios.map(p => ({
                 ...p,
