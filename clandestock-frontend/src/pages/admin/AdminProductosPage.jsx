@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import FormProductoSecundario from "../../components/productos/FormNuevoProductoSecundario";
-import { guardarProductoSecundario } from "../../api/productoSecundario";
-import ListadoProductosAdministrador from "../../components/productos/ListadoProductosAdministrador";
-import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProductoPrincipal";
-import { guardarProductoPrincipal } from "../../api/productoPrimario";
-import AdminCategorias from "../../components/productos/AdminCategorias";
-import StockVentaPanel from "../../components/productos/StockVentaPanel";
-import AdminAlertasStock from "../../components/productos/AdminAlertasStock";
 import { getAlertasStockPrimario, getAlertasStockSecundario } from "../../api/alertasStock";
+import { guardarProductoPrincipal } from "../../api/productoPrimario";
+import { guardarProductoSecundario } from "../../api/productoSecundario";
+import AdminAlertasStock from "../../components/productos/AdminAlertasStock";
+import AdminCategorias from "../../components/productos/AdminCategorias";
+import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProductoPrincipal";
+import FormProductoSecundario from "../../components/productos/FormNuevoProductoSecundario";
+import ListadoProductosAdministrador from "../../components/productos/ListadoProductosAdministrador";
+import StockVentaPanel from "../../components/productos/StockVentaPanel";
 
 export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
   const [productos, setProductos] = useState([]);
@@ -88,7 +88,7 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
             Stock a la venta
           </button>
           <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("listado")}>
-            Listado de productos
+            Editar productos
           </button>
           <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("principal")}>
             Agregar producto principal
