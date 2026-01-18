@@ -22,8 +22,8 @@ services:
     image: node:20
     working_dir: /app
     volumes:
-      - ./clandestock-frontend:/app
-      - /app/node_modules
+      - ./clandestock-frontend:/app   # ✅ Monta tu código local
+      # ❌ Eliminado: - /app/node_modules (esto rompía el hot reload)
     command: sh -c "npm install && npm run dev -- --host"
     ports:
       - "5173:5173"
