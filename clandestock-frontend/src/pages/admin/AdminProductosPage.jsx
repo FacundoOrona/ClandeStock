@@ -24,12 +24,22 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
       const primarios = await getAlertasStockPrimario();
       const secundarios = await getAlertasStockSecundario();
 
-      const primariosMapped = primarios.map(p => ({
-        ...p,
-        tipo: "principal",
-        alerta: p.sinStock === "true" || p.stockDisponible === "0" ? "sin stock" : "poco stock"
-      }));
-
+      const primariosMapped = primarios
+        // se filtra pasa sacar primarios que no tienen alerta y tienen secundarios
+        .filter(p => {
+          const sinAlertas = p.alertaStockBajo === "false" && p.alertaSinStock === "false";
+          const tieneSecundarios = p.tieneSecundarios === "true";
+          return !(sinAlertas && tieneSecundarios);
+        })
+        // luego mapeamos
+        .map(p => ({
+          ...p,
+          tipo: "principal",
+          alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
+            ? "sin stock"
+            : "poco stock"
+        }));
+        
       const secundariosMapped = secundarios.map(p => ({
         ...p,
         tipo: "secundario",
