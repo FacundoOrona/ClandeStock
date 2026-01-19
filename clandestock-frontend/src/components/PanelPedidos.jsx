@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { formatFecha } from '../utils/formatFecha';
 
 export default function PanelPedidos({
   pedidos,
@@ -160,7 +161,7 @@ export default function PanelPedidos({
                     <small className="text-muted d-block text-truncate">
                       {p.precioTotal && Number(p.precioTotal) > 0 ? `Total: $${p.precioTotal}` : "Sin total"}
                       {" • "}
-                      {p.fechaApertura ? new Date(p.fechaApertura).toLocaleString() : ""}
+                      {p?.fechaApertura ? formatFecha(p.fechaApertura) : ""}
                     </small>
                   </div>
 
