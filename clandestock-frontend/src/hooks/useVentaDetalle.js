@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-  getVentaById,
   agregarProductoAVenta,
-  quitarProductoDeVenta,
-  getCategoriasActivas,
-  getProductosPorCategoria,
-  getMetodosPagoActivos,
-  insertarMetodoPago,
   cerrarVenta,
+  getCategoriasActivas,
+  getMetodosPagoActivos,
+  getProductosPorCategoria,
+  getVentaById,
+  insertarMetodoPago,
+  quitarProductoDeVenta,
 } from "../services/ventaService";
 import { agruparProductos } from "../utils/agrupadorProductos";
 
@@ -20,6 +20,7 @@ export const useVentaDetalle = (idVenta) => {
   const [metodoSeleccionado, setMetodoSeleccionado] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loadingId, setLoadingId] = useState(null);
+  const [productosTodos, setProductosTodos] = useState([]);
 
   const token = localStorage.getItem("access_token");
 
@@ -66,6 +67,8 @@ export const useVentaDetalle = (idVenta) => {
     try {
       const data = await getProductosPorCategoria(categoriaSeleccionada, token);
       setProductos(data);
+      const todos = await getProductosPorCategoria("todos", token);
+      setProductosTodos(todos);
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al cargar productos");
@@ -162,7 +165,7 @@ export const useVentaDetalle = (idVenta) => {
   }, [categoriaSeleccionada]);
 
   const productosAgrupados = venta
-    ? agruparProductos(venta.productos, productos)
+    ? agruparProductos(venta.productos, productosTodos)
     : [];
 
   return {
