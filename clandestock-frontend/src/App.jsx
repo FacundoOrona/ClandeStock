@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from './context/AuthContext';
-import Navbar from './components/Navbar';
-import AppRouter from './routes/AppRouter';
 import { getAlertasStockPrimario, getAlertasStockSecundario } from './api/alertasStock';
 import { obtenerTodosReportes } from './api/reporte';
+import Navbar from './components/Navbar';
+import { AuthContext } from './context/AuthContext';
+import AppRouter from './routes/AppRouter';
 
 function App() {
   const [cantidadAlertas, setCantidadAlertas] = useState(0);
@@ -25,12 +25,21 @@ function App() {
       const primarios = await getAlertasStockPrimario();
       const secundarios = await getAlertasStockSecundario();
 
-      const primariosMapped = primarios.map(p => ({
-        ...p,
-        tipo: "principal",
-        alerta: p.sinStock === "true" || p.stockDisponible === "0" ? "sin stock" : "poco stock"
-      }));
-
+      const primariosMapped = primarios
+        // se filtra pasa sacar primarios que no tienen alerta y tienen secundarios
+        .filter(p => {
+          const sinAlertas = p.alertaStockBajo === "false" && p.alertaSinStock === "false";
+          const tieneSecundarios = p.tieneSecundarios === "true";
+          return !(sinAlertas && tieneSecundarios);
+        })
+        // luego mapeamos
+        .map(p => ({
+          ...p,
+          tipo: "principal",
+          alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
+            ? "sin stock"
+            : "poco stock"
+        }));
       const secundariosMapped = secundarios.map(p => ({
         ...p,
         tipo: "secundario",
