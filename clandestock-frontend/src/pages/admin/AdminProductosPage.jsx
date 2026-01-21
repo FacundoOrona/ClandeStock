@@ -35,9 +35,10 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
         .map((p) => ({
           ...p,
           tipo: "principal",
-          alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
-            ? "sin stock"
-            : "poco stock"
+          alerta:
+            p.alertaSinStock === "true" || p.stockDisponible === "0"
+              ? "sin stock"
+              : "poco stock",
         }));
         
       const secundariosMapped = secundarios.map(p => ({
