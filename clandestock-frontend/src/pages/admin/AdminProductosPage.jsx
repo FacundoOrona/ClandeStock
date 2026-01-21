@@ -48,13 +48,11 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
             ? "sin stock"
             : "poco stock",
       }));
-
       setCantidadAlertas(primariosMapped.length + secundariosMapped.length);
     } catch (err) {
       console.error("Error cargando alertas:", err);
     }
   };
-
   const handleNuevoProductoSecundario = async (producto) => {
     try {
       const saved = await guardarProductoSecundario(producto);
@@ -65,7 +63,6 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
       setEstado({ tipo: "error", mensaje: "Error al crear producto ❌" });
     }
   };
-
   const handleNuevoProductoPrincipal = async (producto) => {
     try {
       const saved = await guardarProductoPrincipal(producto);
