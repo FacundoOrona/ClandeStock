@@ -3,8 +3,11 @@ import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import logo from "../../assets/lc-logo2.png";
 
-export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLeidos = 0 }) {
-  const { logout, isAuthenticated  } = useContext(AuthContext);
+export default function AdminNavbar({
+  cantidadAlertas = 0,
+  cantidadReportesNoLeidos = 0,
+}) {
+  const { logout, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -12,11 +15,10 @@ export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLei
   };
 
   useEffect(() => {
-  if (!isAuthenticated) {
-    navigate("/login");
-  }
-}, [isAuthenticated]);
-
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated]);
 
   const cerrarMenu = () => {
     const navbar = document.getElementById("adminNavbar");
@@ -47,7 +49,11 @@ export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLei
         <div className="collapse navbar-collapse" id="adminNavbar">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/productos" onClick={cerrarMenu}>
+              <Link
+                className="nav-link"
+                to="/admin/productos"
+                onClick={cerrarMenu}
+              >
                 <span className="d-inline-block position-relative">
                   Administrar productos
                   {cantidadAlertas > 0 && (
@@ -62,17 +68,29 @@ export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLei
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/usuarios" onClick={cerrarMenu}>
+              <Link
+                className="nav-link"
+                to="/admin/usuarios"
+                onClick={cerrarMenu}
+              >
                 Administrar usuarios
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/ventas" onClick={cerrarMenu}>
+              <Link
+                className="nav-link"
+                to="/admin/ventas"
+                onClick={cerrarMenu}
+              >
                 Administrar ventas
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/reportes" onClick={cerrarMenu}>
+              <Link
+                className="nav-link"
+                to="/admin/reportes"
+                onClick={cerrarMenu}
+              >
                 <span className="d-inline-block position-relative">
                   Reportes
                   {cantidadReportesNoLeidos > 0 && (
@@ -87,7 +105,11 @@ export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLei
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/estadisticas" onClick={cerrarMenu}>
+              <Link
+                className="nav-link"
+                to="/admin/estadisticas"
+                onClick={cerrarMenu}
+              >
                 Estadísticas
               </Link>
             </li>
@@ -97,6 +119,6 @@ export default function AdminNavbar({ cantidadAlertas = 0, cantidadReportesNoLei
           </button>
         </div>
       </div>
-    </nav >
+    </nav>
   );
 }
