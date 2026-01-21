@@ -26,6 +26,9 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
       const primarios = await getAlertasStockPrimario();
       const secundarios = await getAlertasStockSecundario();
       const primariosMapped = primarios
+        .filter((p) => {
+          const sinAlertas =
+            p.alertaStockBajo === "false" && p.alertaSinStock === "false";
           const tieneSecundarios = p.tieneSecundarios === "true";
           return !(sinAlertas && tieneSecundarios);
         })
