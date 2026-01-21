@@ -98,14 +98,6 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
                 {" "}
                 {cantidadAlertas}{" "}
               </span>
-          </button>
-          <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("secundario")}>
-            Agregar producto secundario
-          </button>
-          <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("categorias")}>
-            Categorías
-          </button>
-        </div>
 
         {/* Panel dinámico */}
         <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 overflow-auto">
