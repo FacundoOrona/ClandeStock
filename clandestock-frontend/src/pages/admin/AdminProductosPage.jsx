@@ -119,6 +119,24 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
             onClick={() => setVistaActiva("principal")}
           >
             {" "}
+            Agregar producto principal{" "}
+          </button>{" "}
+          <button
+            className="btn btn-outline-light mb-2"
+            onClick={() => setVistaActiva("secundario")}
+          >
+            {" "}
+            Agregar producto secundario{" "}
+          </button>{" "}
+          <button
+            className="btn btn-outline-light mb-2"
+            onClick={() => setVistaActiva("categorias")}
+          >
+            {" "}
+            Categorías{" "}
+          </button>{" "}
+        </div>{" "}
+        {/* Panel dinámico */}{" "}
         <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 overflow-auto">
           {estado && (
             <div className={`alert ${estado.tipo === "success" ? "alert-success" : "alert-danger"}`}>
