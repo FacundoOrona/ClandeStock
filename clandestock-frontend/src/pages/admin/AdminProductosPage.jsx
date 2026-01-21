@@ -72,10 +72,11 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
       setEstado({ tipo: "error", mensaje: "Error al crear producto ❌" });
     }
   };
-
   return (
-    <div className="container-fluid d-flex flex-column" style={{ height: "100vh" }}>
-
+    <div
+      className="container-fluid d-flex flex-column"
+      style={{ height: "100vh" }}
+    >
       <div className="row flex-grow-1 overflow-auto">
         {/* Sidebar */}
         <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column">
