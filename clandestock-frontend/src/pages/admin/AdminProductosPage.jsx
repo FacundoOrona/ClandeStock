@@ -109,6 +109,16 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
           </button>{" "}
           <button
             className="btn btn-outline-light mb-2"
+            onClick={() => setVistaActiva("listado")}
+          >
+            {" "}
+            Editar productos{" "}
+          </button>{" "}
+          <button
+            className="btn btn-outline-light mb-2"
+            onClick={() => setVistaActiva("principal")}
+          >
+            {" "}
         <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 overflow-auto">
           {estado && (
             <div className={`alert ${estado.tipo === "success" ? "alert-success" : "alert-danger"}`}>
