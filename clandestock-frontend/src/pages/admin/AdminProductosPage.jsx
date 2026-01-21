@@ -32,8 +32,7 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
           const tieneSecundarios = p.tieneSecundarios === "true";
           return !(sinAlertas && tieneSecundarios);
         })
-        // luego mapeamos
-        .map(p => ({
+        .map((p) => ({
           ...p,
           tipo: "principal",
           alerta: p.alertaSinStock === "true" || p.stockDisponible === "0"
