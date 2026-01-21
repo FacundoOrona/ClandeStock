@@ -178,15 +178,38 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
                   estado={estado}
                   setEstado={setEstado}
                 />{" "}
+              </div>{" "}
             </div>
-          )}
-
-          {vistaActiva === "categorias" && <AdminCategorias />}
-          {vistaActiva === "listado" && <ListadoProductosAdministrador />}
-          {vistaActiva === "stock" && <StockVentaPanel />}
-          {vistaActiva === "alertas" && <AdminAlertasStock setCantidadAlertas={setCantidadAlertas} />}
-        </div>
-      </div>
+          )}{" "}
+          {vistaActiva === "categorias" && <AdminCategorias />}{" "}
+          {vistaActiva === "listado" && <ListadoProductosAdministrador />}{" "}
+          {vistaActiva === "stock" && <StockVentaPanel />}{" "}
+          {vistaActiva === "alertas" && (
+            <>
+              {" "}
+              {/* Dropdown de locales */}{" "}
+              <div className="mb-3">
+                {" "}
+                <select
+                  className="form-select"
+                  value={filtroLocal}
+                  onChange={(e) => setFiltroLocal(e.target.value)}
+                >
+                  {" "}
+                  <option value="">Todos los locales</option>{" "}
+                  <option value="1">Tenedor Libre</option>{" "}
+                  <option value="2">Termas</option>{" "}
+                  <option value="3">Heladería</option>{" "}
+                </select>{" "}
+              </div>{" "}
+              <AdminAlertasStock
+                setCantidadAlertas={setCantidadAlertas}
+                filtroLocal={filtroLocal}
+              />{" "}
+            </>
+          )}{" "}
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 };
