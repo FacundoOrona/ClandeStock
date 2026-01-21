@@ -95,18 +95,9 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
                 className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                 style={{ fontSize: "0.75rem" }}
               >
-                {cantidadAlertas}
+                {" "}
+                {cantidadAlertas}{" "}
               </span>
-            )}
-          </button>
-          <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("stock")}>
-            Stock a la venta
-          </button>
-          <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("listado")}>
-            Editar productos
-          </button>
-          <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("principal")}>
-            Agregar producto principal
           </button>
           <button className="btn btn-outline-light mb-2" onClick={() => setVistaActiva("secundario")}>
             Agregar producto secundario
