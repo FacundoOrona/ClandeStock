@@ -11,11 +11,11 @@ import FormNuevoProductoPrincipal from "../../components/productos/FormNuevoProd
 import FormProductoSecundario from "../../components/productos/FormNuevoProductoSecundario";
 import ListadoProductosAdministrador from "../../components/productos/ListadoProductosAdministrador";
 import StockVentaPanel from "../../components/productos/StockVentaPanel";
-
 export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
   const [productos, setProductos] = useState([]);
   const [vistaActiva, setVistaActiva] = useState("listado");
   const [estado, setEstado] = useState(null);
+  const [filtroLocal, setFiltroLocal] = useState("");
 
   useEffect(() => {
     cargarAlertas();
