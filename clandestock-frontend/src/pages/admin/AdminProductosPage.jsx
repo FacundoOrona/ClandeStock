@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAlertasStockPrimario, getAlertasStockSecundario } from "../../api/alertasStock";
+import {
+  getAlertasStockPrimario,
+  getAlertasStockSecundario,
+} from "../../api/alertasStock";
 import { guardarProductoPrincipal } from "../../api/productoPrimario";
 import { guardarProductoSecundario } from "../../api/productoSecundario";
 import AdminAlertasStock from "../../components/productos/AdminAlertasStock";
