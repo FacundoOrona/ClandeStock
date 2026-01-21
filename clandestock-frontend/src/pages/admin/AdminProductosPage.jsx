@@ -40,11 +40,10 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
               ? "sin stock"
               : "poco stock",
         }));
-        
-      const secundariosMapped = secundarios.map(p => ({
+      const secundariosMapped = secundarios.map((p) => ({
         ...p,
         tipo: "secundario",
-        alerta: p.sinStock === "true" || p.stockDisponible === "0" ? "sin stock" : "poco stock"
+        alerta:
       }));
 
       setCantidadAlertas(primariosMapped.length + secundariosMapped.length);
