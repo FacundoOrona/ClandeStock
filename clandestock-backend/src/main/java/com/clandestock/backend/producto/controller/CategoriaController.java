@@ -56,7 +56,6 @@ public class CategoriaController {
         }
     }
 
-    //validad que sea admin gral o el moderador adecuado
     @GetMapping("/local/{id}")
     public ResponseEntity<?> obtenerPorLocal(@PathVariable String id) {
         try {
