@@ -21,16 +21,11 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
     cargarAlertas();
     setEstado(null);
   }, []);
-
   const cargarAlertas = async () => {
     try {
       const primarios = await getAlertasStockPrimario();
       const secundarios = await getAlertasStockSecundario();
-
       const primariosMapped = primarios
-        // se filtra pasa sacar primarios que no tienen alerta y tienen secundarios
-        .filter(p => {
-          const sinAlertas = p.alertaStockBajo === "false" && p.alertaSinStock === "false";
           const tieneSecundarios = p.tieneSecundarios === "true";
           return !(sinAlertas && tieneSecundarios);
         })
