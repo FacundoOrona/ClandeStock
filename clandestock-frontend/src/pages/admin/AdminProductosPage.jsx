@@ -160,21 +160,24 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
                   onSubmit={handleNuevoProductoPrincipal}
                   estado={estado}
                   setEstado={setEstado}
-                />
-              </div>
+                />{" "}
+              </div>{" "}
             </div>
-          )}
-
+          )}{" "}
           {vistaActiva === "secundario" && (
             <div className="card flex-grow-1 d-flex flex-column">
-              <div className="card-header bg-warning text-dark">Agregar producto secundario</div>
+              {" "}
+              <div className="card-header bg-warning text-dark">
+                {" "}
+                Agregar producto secundario{" "}
+              </div>{" "}
               <div className="card-body overflow-auto">
+                {" "}
                 <FormProductoSecundario
                   onSubmit={handleNuevoProductoSecundario}
                   estado={estado}
                   setEstado={setEstado}
-                />
-              </div>
+                />{" "}
             </div>
           )}
 
