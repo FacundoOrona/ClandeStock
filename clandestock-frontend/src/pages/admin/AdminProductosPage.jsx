@@ -77,10 +77,13 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
       className="container-fluid d-flex flex-column"
       style={{ height: "100vh" }}
     >
+      {" "}
       <div className="row flex-grow-1 overflow-auto">
-        {/* Sidebar */}
+        {" "}
+        {/* Sidebar */}{" "}
         <div className="col-md-3 bg-dark text-light p-3 d-flex flex-column">
-          <h4 className="mb-4 text-center">Administrar productos</h4>
+          {" "}
+          <h4 className="mb-4 text-center">Administrar productos</h4>{" "}
           <button
             className="btn btn-outline-light mb-2 flex-shrink-0 position-relative"
             onClick={() => setVistaActiva("alertas")}
