@@ -88,7 +88,8 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
             className="btn btn-outline-light mb-2 flex-shrink-0 position-relative"
             onClick={() => setVistaActiva("alertas")}
           >
-            Alertas de stock
+            {" "}
+            Alertas de stock{" "}
             {cantidadAlertas > 0 && (
               <span
                 className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
