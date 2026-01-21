@@ -138,16 +138,24 @@ export const AdminProductosPage = ({ setCantidadAlertas, cantidadAlertas }) => {
         </div>{" "}
         {/* Panel dinámico */}{" "}
         <div className="col-md-9 bg-light text-dark p-4 d-flex flex-column h-100 overflow-auto">
+          {" "}
           {estado && (
-            <div className={`alert ${estado.tipo === "success" ? "alert-success" : "alert-danger"}`}>
-              {estado.mensaje}
+            <div
+              className={`alert ${estado.tipo === "success" ? "alert-success" : "alert-danger"}`}
+            >
+              {" "}
+              {estado.mensaje}{" "}
             </div>
-          )}
-
+          )}{" "}
           {vistaActiva === "principal" && (
             <div className="card flex-grow-1 d-flex flex-column">
-              <div className="card-header bg-warning text-dark">Agregar producto principal</div>
+              {" "}
+              <div className="card-header bg-warning text-dark">
+                {" "}
+                Agregar producto principal{" "}
+              </div>{" "}
               <div className="card-body overflow-auto">
+                {" "}
                 <FormNuevoProductoPrincipal
                   onSubmit={handleNuevoProductoPrincipal}
                   estado={estado}
