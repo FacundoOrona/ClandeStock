@@ -77,21 +77,23 @@ public class ProductoStockService {
             List<ProductoSecundarioPorPrincipal> secundarios = productoSecundarioPorPrincipalService
                     .obtenerSecundariosPorPrincipal(principal);
 
-            int stockDisponible = secundarios.isEmpty()
-                    ? principal.getStock()
-                    : calcularStockDisponible(secundarios);
-
-            resultado.add(new ProductoStockResponseDTO(
-                    principal.getId().toString(),
-                    principal.getNombreProducto(),
-                    String.valueOf(stockDisponible),
-                    principal.getPrecioProducto().toString(),
-                    principal.getAletarStock() >= stockDisponible ? "true" : "false",
-                    principal.getStockBajo().toString(),
-                    principal.getSinStock().toString(),
-                    principal.getLocal().getId().toString(),
-                    secundarios.isEmpty() ? "false" : "true",
-                    principal.getComanda().toString()));
+            if(principal.getEstado()==true){
+                int stockDisponible = secundarios.isEmpty()
+                        ? principal.getStock()
+                        : calcularStockDisponible(secundarios);
+    
+                resultado.add(new ProductoStockResponseDTO(
+                        principal.getId().toString(),
+                        principal.getNombreProducto(),
+                        String.valueOf(stockDisponible),
+                        principal.getPrecioProducto().toString(),
+                        principal.getAletarStock() >= stockDisponible ? "true" : "false",
+                        principal.getStockBajo().toString(),
+                        principal.getSinStock().toString(),
+                        principal.getLocal().getId().toString(),
+                        secundarios.isEmpty() ? "false" : "true",
+                        principal.getComanda().toString()));
+            }
         }
 
         return resultado;
