@@ -154,10 +154,10 @@ export default function TicketCobro({ venta, metodoSeleccionado, onPrinted }) {
                     ? "Seleccione un método de pago"
                     : disabled
                         ? "Ticket generado con este método (cambie el método para habilitar)"
-                        : "Imprimir ticket"
+                        : "Imprimir la cuenta"
             }
         >
-            {disabled ? "Ticket generado" : "Imprimir ticket"}
+            {disabled ? "Ticket generado" : "Imprimir la cuenta"}
         </button>
     ) : null;
 }
