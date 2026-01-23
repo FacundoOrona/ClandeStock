@@ -136,7 +136,15 @@ export default function AdminAlertasStock({ setCantidadAlertas, filtroLocal }) {
                     <p className="card-text mb-1">
                       Stock disponible: {p.stockDisponible}
                     </p>
-
+                    {(p.alertaStockBajo === "true" ||
+                          p.alertaSinStock === "true") && (
+                          <button
+                            className="btn btn-sm btn-warning"
+                            onClick={() => handleDesactivarAlerta(p)}
+                          >
+                            Desactivar alerta
+                          </button>
+                        )}
                     {p.tieneSecundarios === "true" ? (
                       <p className="text-muted">
                         Stock controlado por secundarios
@@ -164,15 +172,6 @@ export default function AdminAlertasStock({ setCantidadAlertas, filtroLocal }) {
                             Actualizar stock
                           </button>
                         </div>
-                        {(p.alertaStockBajo === "true" ||
-                          p.alertaSinStock === "true") && (
-                          <button
-                            className="btn btn-sm btn-warning"
-                            onClick={() => handleDesactivarAlerta(p)}
-                          >
-                            Desactivar alerta
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>
