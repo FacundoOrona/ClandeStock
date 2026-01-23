@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { formatFecha } from '../utils/formatFecha';
+import { postBorrarColaImpresion } from '../api/ticket';
 
 const nombresLocales = {
     MODERADOR_TENEDOR_LIBRE: "Tenedor Libre",
@@ -11,7 +12,17 @@ const nombresLocales = {
 export default function FuncionesModerador({ cajaAbierta, caja, setVistaActiva, cantidadAlertas }) {
     const { user } = useContext(AuthContext);
     const nombreLocal = user?.tipoUsuario ? nombresLocales[user.tipoUsuario] : "";
-
+    const borrarColaImpresion = async () => {
+        const confirmar = window.confirm("¿Estás seguro que querés borrar la cola de impresión?");
+        if (!confirmar) return;
+        try {
+            await postBorrarColaImpresion();
+            window.alert("✅ Cola de impresión borrada correctamente.");
+        }
+        catch (error) {
+            window.alert("❌ Hubo un error al borrar la cola de impresión."); console.error(error);
+        }
+    };
     return (
         <>
             <div className="mb-3 text-center">
@@ -76,6 +87,14 @@ export default function FuncionesModerador({ cajaAbierta, caja, setVistaActiva, 
                 onClick={() => cajaAbierta ? setVistaActiva("cerrarCaja") : setVistaActiva("abrirCaja")}
             >
                 {cajaAbierta ? 'Cerrar caja' : 'Abrir caja'}
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                onClick={() => borrarColaImpresion()}
+            >
+                Borrar cola de impresion
             </button>
 
             {cajaAbierta && caja && (
